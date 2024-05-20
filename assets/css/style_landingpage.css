@@ -76,8 +76,7 @@
   bottom: 0;
   left: 0;
 }
-.hero-section,
-.container {
+.hero-section .container {
   height: 100vh;
   z-index: 1;
   position: relative;
@@ -89,5 +88,5 @@
   font-size: 1.2rem;
 }
 .navbar img {
-  width: 130px;
+  width: 100px;
 }
