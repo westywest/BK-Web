@@ -90,3 +90,37 @@
 .navbar img {
   width: 100px;
 }
+.quote {
+  margin-top: 100px;
+}
+.about {
+  margin-top: 100px;
+}
+.event {
+  margin-top: 100px;
+}
+.teacher {
+  margin-top: 100px;
+}
+.btn-learn {
+  background-color: #009970;
+  color: #fff;
+  font-size: 14px;
+  padding: 8px 20px;
+  border-radius: 50px;
+  text-decoration: none;
+  transition: 0.3s background-color;
+}
+.btn-learn:hover {
+  background-color: #00b383;
+  border-color: #8ad3d3;
+  color: #fff;
+}
+.card {
+  margin-top: 10px;
+  box-shadow: 15px 15px 40px rgba(0, 0, 0, 0.15);
+  margin-bottom: 100px;
+}
+.img-area img {
+  width: 100%;
+}
