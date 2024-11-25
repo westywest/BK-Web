@@ -1,0 +1,19 @@
+@import url("https://fonts.cdnfonts.com/css/roboto");
+body {
+  font-family: "Roboto Medium", sans-serif;
+  background: #f6f6f6;
+}
+.sidebar {
+  height: 100%;
+  width: 160px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  overflow-x: hidden;
+  padding-top: 20px;
+  background: #d6e6f2;
+}
+a {
+  text-decoration: none;
+}
