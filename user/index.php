@@ -13,7 +13,38 @@
 <body class="d-grid align-content-center background-countainer">
     <div class="wrapper">
         <form class="border rounded mx-auto w-100 p-4 rounded-3" method="post">
-            <h2 class="fw-bold text-center">LOGIN FORM</h2>
+            
+            <?php 
+            session_start();
+            include '../function/connectDB.php';
+
+            if(isset($_POST['login'])){
+                $user = $_POST['username'];
+                $pass = $_POST['password'];
+
+                $query = mysqli_query($conn, "SELECT * FROM user WHERE username='$user' AND password='$pass'");
+                $data = mysqli_fetch_array($query);
+                $cekdata = mysqli_num_rows($query);
+
+                if($cekdata > 0) {
+                    if($data['role']=="admin") {
+                        $_SESSION['role']=$data['role'];
+                        $_SESSION['username']=$data['username'];
+                        header('location:/BK/user/user-admin/dashboard.php');
+                    }elseif($data['role']=="guru") {
+                        $_SESSION['role']=$data['role'];
+                        $_SESSION['username']=$data['username'];
+                        header('location:/BK/user/user-guru/dashboard.php');
+                    }elseif($data['role']=="siswa") {
+                        $_SESSION['role']=$data['role'];
+                        $_SESSION['username']=$data['username'];
+                        header('location:/BK/user/user-siswa/dashboard.php');
+                    }
+                }else{
+                    $_SESSION['error'] = "Gagal login, silahkan cek kembali username dan password anda!";
+                }
+            }
+            ?>
             <div class="text-center">
                 <img src="../assets/images/logoname.png" class="img-fluid profile-image-pic my-3" width="200px" alt="profile">
             </div>
@@ -34,9 +65,9 @@
                 </div>
             </div>
 
-            <p style="color: red; font-size: 12px;">
+            <p style="color: red; font-size: 12px;"><?php if(isset($_SESSION['error'])){ echo($_SESSION['error']);} ?>
             </p>
-            <button type="submit" name="submit" class="btn btn-color px-5 mb-5 w-100">Login</button>
+            <button type="submit" name="login" class="btn btn-color px-5 mb-5 w-100">Login</button>
             <div id="emailHelp" class="form-text text-center mb-4 text-dark">
                 Forgot
                     <a href="#" class="a fw-bold" style="text-decoration:none;">Password</a>?
@@ -44,6 +75,9 @@
                     <a href="/BK/index.php" class="a fw-bold" style="text-decoration:none;">Back to Home</a>
             </div>
         </form>
+        <?php
+            unset($_SESSION['error']);
+        ?>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>
     
