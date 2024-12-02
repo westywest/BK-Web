@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link href="https://cdn.lineicons.com/5.0/lineicons.css" rel="stylesheet" />
-    <link rel="stylesheet" href="../../../assets/css/style_admin.css">
-    <title>Edit Data</title>
+    <link rel="stylesheet" href="../../../assets/css/style_user.css">
+    <title>Tambah Data</title>
 </head>
 <body>
     <div class="wrapper">
@@ -27,13 +27,13 @@
                         <span>Dashboard</span>
                     </a>
                 </li>
-                <li class="sidebar-item active">
-                    <a href="index.php" class="sidebar-link">
+                <li class="sidebar-item">
+                    <a href="../guru/index.php" class="sidebar-link">
                         <i class="lni lni-user-4"></i>
                         <span>Guru</span>
                     </a>
                 </li>
-                <li class="sidebar-item">
+                <li class="sidebar-item active">
                     <a href="../siswa/index.php" class="sidebar-link">
                         <i class="lni lni-user-multiple-4"></i>
                         <span>Siswa</span>
@@ -60,32 +60,36 @@
                 <div class="container-fluid">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="index.php">Daftar Guru</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Edit Data</li>
+                            <li class="breadcrumb-item"><a href="index.php">Daftar Siswa</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Menambahkan Data</li>
                         </ol>
                     </nav>
-                    <h1 class="h2">Edit Data</h1>
-                    <p>Anda sedang mengedit data guru ....</p>
+                    <h1 class="h2">Menambahkan Data</h1>
+                    <p>Anda sedang menambahkan data siswa baru.</p>
 
                     <div class="card">
                         <div class="card-body">
                             <form action="" method="post" enctype="multipart/form-data">
                                 <div class="mb-3">
-                                    <label for="nip" class="form-label">NIP</label>
-                                    <input type="text" class="form-control" id="nip" name="nip" placeholder="Masukkan NIP" required>
+                                    <label for="nip" class="form-label">NIS</label>
+                                    <input type="text" class="form-control" id="nip" name="nip" placeholder="Masukkan NIS" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="name" class="form-label">Nama</label>
                                     <input type="text" class="form-control" id="name" name="name" placeholder="Masukkan Nama" required>
                                 </div>
                                 <div class="mb-3">
-                                <label for="foto" class="form-label">Upload Foto</label>
-                                    <input type="file" class="form-control" id="foto" name="foto" placeholder="foto" required>
+                                    <label for="jk" class="form-label">Jenis Kelamin</label>
+                                    <select name="jk" id="jk" class="form-control" required>
+                                        <option value="">--Pilih Jenis Kelamin--</option>
+                                        <option value="Laki-Laki">Laki-Laki</option>
+                                        <option value="Perempuan">Perempuan</option>
+                                    </select>
                                 </div>
                                 <div class="mb-3">
                                     <label for="kelas" class="form-label">Kelas</label>
                                     <select name="kelas" id="kelas" class="form-control" required>
-                                        <option value="">--Pilih kelas yang diampu--</option>
+                                        <option value="">--Pilih kelas--</option>
                                         <option value="VII A">VII A</option>
                                         <option value="VII B">VII B</option>
                                         <option value="VII C">VII C</option>

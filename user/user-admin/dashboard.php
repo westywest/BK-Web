@@ -48,6 +48,13 @@ if(!isset($_SESSION['role'])) {
                     </a>
                 </li>
             </ul>
+            <div class="user-profile-footer p-2 d-flex align-items-center">
+                <img src="../../assets/images/profile.jpg" alt="User Avatar" class="rounded-circle me-2" style="width: 40px; height: 40px;">
+                <div class="user-info">
+                    <h6 class="text-white mb-0">Maharani Dian Prawesty</h6>
+                    <small>Guru</small>
+                </div>
+            </div>
             <div class="sidebar-footer">
                 <a href="../../function/logout.php" class="sidebar-link">
                     <i class="lni lni-exit"></i>

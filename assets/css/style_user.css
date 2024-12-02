@@ -27,13 +27,22 @@ h1 {
 
 .main {
   min-height: 100vh;
+  margin-left: 70px;
   width: 100%;
   overflow: hidden;
-  transition: all 0.35s ease-in-out;
+  transition: margin-left 0.25s ease-in-out;
   background-color: #fafbfe;
 }
 
+#sidebar.expand ~ .main {
+  margin-left: 260px; /* Sesuaikan margin saat sidebar expand */
+}
+
 #sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
   width: 70px;
   min-width: 70px;
   z-index: 1000;
@@ -138,7 +147,6 @@ a.sidebar-link:hover {
   transition: all 0.2s ease-out;
 }
 
-
 .sidebar-item.active > .sidebar-link {
   background-color: #007bff;
   color: #fff;
@@ -146,4 +154,55 @@ a.sidebar-link:hover {
 }
 .sidebar-item.active > .sidebar-link i {
   color: #fff;
+}
+
+/* Sidebar Footer Profil User */
+.user-profile-footer {
+  background-color: #0e2238;
+  border-top: 1px solid #1a3a57;
+  padding: 10px 1.625rem;
+  transition: all 0.25s ease-in-out;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.user-profile-footer img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+}
+
+.user-profile-footer .user-info {
+  margin-left: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.user-profile-footer h6 {
+  font-size: 0.9rem;
+  margin: 0;
+  color: #fff;
+  font-weight: 600;
+}
+
+.user-profile-footer small {
+  font-size: 0.8rem;
+  color: #c2c7cf;
+}
+
+/* Saat Sidebar Collapse */
+#sidebar:not(.expand) .user-profile-footer {
+  justify-content: center;
+  flex-direction: column;
+  padding: 10px 0;
+}
+
+#sidebar:not(.expand) .user-profile-footer img {
+  margin: 0 auto;
+}
+
+#sidebar:not(.expand) .user-profile-footer .user-info {
+  display: none; /* Sembunyikan teks */
 }
