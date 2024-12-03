@@ -1,7 +1,9 @@
 <?php
 session_start();
-if(!isset($_SESSION['role'])) {
-    header('location:/BK/user/index.php');
+if (!isset($_SESSION['status']) || $_SESSION['role'] !== "siswa") {
+    // Redirect ke halaman login jika bukan siswa
+    header("Location:/BK/users/index.php");
+    exit;
 }
 ?>
 

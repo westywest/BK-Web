@@ -10,6 +10,48 @@
     <title>Tambah Data</title>
 </head>
 <body>
+    <?php
+    session_start();
+    if (!isset($_SESSION['status']) || $_SESSION['role'] !== "admin") {
+        // Redirect ke halaman login jika bukan admin
+        header("Location: /BK/users/index.php");
+        exit;
+    }
+    
+    include '../../../function/connectDB.php';
+
+    if(isset($_POST['submit'])){
+        $nip = $_POST['nip'];
+        $name = $_POST['name'];
+        $phone = $_POST['phone'];
+        $username = $_POST['username'];
+        $pass = password_hash($_POST['pass'], PASSWORD_DEFAULT);
+
+        $sql = "INSERT INTO users (id, username, password, role) VALUES (null, ?, ?, 'guru')";
+        $datas = $conn->prepare($sql);
+        $datas->bind_param("ss", $username, $pass);
+        $datas->execute();
+
+        if ($datas->affected_rows > 0) {
+            $userId = $conn->insert_id;
+
+            $sql = "INSERT INTO guru (id, user_id, nip, name, phone) VALUES (null, ?, ?, ?, ?, ?)";
+            $datas = $conn->prepare($sql);
+            $datas->bind_param("isss", $userId, $nip, $name, $phone);
+            $datas->execute();
+
+            if ($datas->affected_rows > 0) {
+                header("Location: /BK/users/user-admin/guru/index.php");
+                exit;
+            } else {
+                $_SESSION['error'] = "Gagal menyimpan data guru!";
+            }
+        } else {
+            $_SESSION['error'] = "Gagal menyimpan data pengguna!";
+        }
+    }
+
+    ?>
     <div class="wrapper">
         <aside id="sidebar">
             <div class="d-flex">
@@ -79,22 +121,12 @@
                                     <input type="text" class="form-control" id="name" name="name" placeholder="Masukkan Nama" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="kelas" class="form-label">Kelas</label>
-                                    <select name="kelas" id="kelas" class="form-control" required>
-                                        <option value="">--Pilih kelas yang diampu--</option>
-                                        <option value="VII A">VII A</option>
-                                        <option value="VII B">VII B</option>
-                                        <option value="VII C">VII C</option>
-                                        <option value="VII D">VII D</option>
-                                        <option value="VII E">VII E</option>
-                                        <option value="VII F">VII F</option>
-                                        <option value="VII G">VII G</option>
-                                        <option value="VII H">VII H</option>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
                                     <label for="phone" class="form-label">No. Telepon</label>
                                     <input type="text" class="form-control" id="phone" name="phone" placeholder="08xxxxxxxxxx" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="username" class="form-label">Username</label>
+                                    <input type="text" class="form-control" id="username" name="username" placeholder="Username" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="pass" class="form-label">Password</label>

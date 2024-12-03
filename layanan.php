@@ -63,7 +63,7 @@
             </ul>
           </div>
         </div>
-        <a href="user/index.php" class="login-button"
+        <a href="users/index.php" class="login-button"
           ><i class="fa-solid fa-user"></i> Login</a
         >
         <button

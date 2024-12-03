@@ -61,9 +61,7 @@
             </ul>
           </div>
         </div>
-        <a class="login-button" href="user/index.php"
-          ><i class="fa-solid fa-user"></i> Login</a
-        >
+        <a class="login-button" href="users/index.php"><i class="fa-solid fa-user"></i> Login</a>
         <button
           class="navbar-toggler pe-0"
           type="button"

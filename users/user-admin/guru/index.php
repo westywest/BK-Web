@@ -10,6 +10,20 @@
     <title>Kelola Guru</title>
 </head>
 <body>
+    <?php 
+    session_start();
+    if (!isset($_SESSION['status']) || $_SESSION['role'] !== "admin") {
+        // Redirect ke halaman login jika bukan admin
+        header("Location: /BK/users/index.php");
+        exit;
+    }
+    include '../../../function/connectDB.php';
+    $sql = "SELECT guru.id AS guru_id, guru.user_id, guru.nip, guru.name, guru.phone, users.id as user_id, users.username, users.role FROM guru 
+    JOIN users on guru.user_id = users.id
+    WHERE users.role = 'guru'
+    ORDER BY id DESC";
+    $datas = $conn->query($sql);
+    ?>
     <div class="wrapper">
         <aside id="sidebar">
             <div class="d-flex">
@@ -77,15 +91,32 @@
                                         <tr>
                                             <th scope="col">#</th>
                                             <th scope="col">NIP</th>
+                                            <th scope="col">Username</th>
                                             <th scope="col">Nama</th>
                                             <th scope="col">No Telepon</th>
-                                            <th scope="col">Kelas</th>
-                                            <th scope="col">Password</th>
                                             <th scope="col"></th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        
+                                        <?php
+                                            foreach($datas as $key => $data){
+                                                echo '
+                                                    <tr>
+                                                        <td>'.($key+1).'</td>
+                                                        <td>'.$data['nip'].'</td>
+                                                        <td>'.$data['username'].'</td>
+                                                        <td>'.$data['name'].'</td>
+                                                        <td>'.$data['phone'].'</td>
+                                                        <td>
+                                                            <a class="btn btn-sm btn-info buttons" href="show.php?id='.$data['id'].'" style="color: white;">Lihat</a>
+                                                            <a class="btn btn-sm btn-success buttons" href="edit.php?id='.$data['id'].'" style="color: white;">Edit</a>
+                                                            <a onclick="return confirm(`Apakah anda yakin?`)" class="btn btn-sm btn-danger buttons" href="delete.php?id='.$data['id'].'" style="color: white;">Hapus</a>
+                                                            <a class="btn btn-sm btn-primary buttons" href="../../cetak_detailNews.php?id='.$data['id'].'"><i class="fa-solid fa-print"></i></a>
+                                                        </td>
+                                                    </tr>
+                                                ';
+                                            }
+                                        ?>
                                     </tbody>
                                 </table>
                             </div>

@@ -1,7 +1,9 @@
 <?php
 session_start();
-if(!isset($_SESSION['role'])) {
-    header('location:/BK/user/index.php');
+if (!isset($_SESSION['status']) || $_SESSION['role'] !== "guru") {
+    // Redirect ke halaman login jika bukan guru
+    header("Location:/BK/users/index.php");
+    exit;
 }
 ?>
 
@@ -15,7 +17,7 @@ if(!isset($_SESSION['role'])) {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link href="https://cdn.lineicons.com/5.0/lineicons.css" rel="stylesheet" />
     <link rel="stylesheet" href="../../assets/css/style_user.css">
-    <title>Dashboard | Admin</title>
+    <title>Dashboard | Guru</title>
 </head>
 <body>
     <div class="wrapper">
@@ -48,13 +50,6 @@ if(!isset($_SESSION['role'])) {
                     </a>
                 </li>
             </ul>
-            <div class="user-profile-footer p-2 d-flex align-items-center">
-                <img src="../../assets/images/profile.jpg" alt="User Avatar" class="rounded-circle me-2" style="width: 40px; height: 40px;">
-                <div class="user-info">
-                    <h6 class="text-white mb-0">Maharani Dian Prawesty</h6>
-                    <small>Guru</small>
-                </div>
-            </div>
             <div class="sidebar-footer">
                 <a href="../../function/logout.php" class="sidebar-link">
                     <i class="lni lni-exit"></i>
