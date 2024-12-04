@@ -35,7 +35,7 @@
         if ($datas->affected_rows > 0) {
             $userId = $conn->insert_id;
 
-            $sql = "INSERT INTO guru (id, user_id, nip, name, phone) VALUES (null, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO guru (id, user_id, nip, name, phone) VALUES (null, ?, ?, ?, ?)";
             $datas = $conn->prepare($sql);
             $datas->bind_param("isss", $userId, $nip, $name, $phone);
             $datas->execute();

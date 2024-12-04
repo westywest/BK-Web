@@ -6,8 +6,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link href="https://cdn.lineicons.com/5.0/lineicons.css" rel="stylesheet" />
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="../../../assets/css/style_user.css">
     <title>Kelola Guru</title>
+    <style>
+        .buttons{
+            width: 40px;                   /* Pastikan ukuran button seragam */
+            font-size: 18px;               /* Ukuran ikon */
+        }.btn{
+            display: inline-flex;          /* Membuat button sebagai fleksibel */
+            align-items: center;           /* Ikon berada di tengah secara vertikal */
+            justify-content: center;       /* Ikon berada di tengah secara horizontal */
+            height: 40px;                  /* Tinggi seragam */
+            padding: 0;                    /* Hapus padding default */
+            border-radius: 5px;            /* Tambahkan sedikit pembulatan */
+        }
+    </style>
 </head>
 <body>
     <?php 
@@ -21,7 +35,7 @@
     $sql = "SELECT guru.id AS guru_id, guru.user_id, guru.nip, guru.name, guru.phone, users.id as user_id, users.username, users.role FROM guru 
     JOIN users on guru.user_id = users.id
     WHERE users.role = 'guru'
-    ORDER BY id DESC";
+    ORDER BY guru_id DESC";
     $datas = $conn->query($sql);
     ?>
     <div class="wrapper">
@@ -83,8 +97,8 @@
 
                     <div class="card">
                         <div class="card-body">
-                            <a class="btn btn-primary mb-4" href="create.php" style="color: white"><i class="lni lni-plus"></i> Tambah Data</a>
-                            <a href="../../cetak_author.php" class="btn btn-block btn-primary mb-4"><i class="lni lni-printer"></i></a>
+                            <a class="btn btn-primary mb-4" href="create.php" style="color: white; width: 135px;"><i class="lni lni-plus"></i> Tambah Data</a>
+                            <a href="../../cetak_author.php" class="btn btn-block btn-primary mb-4 buttons"><i class="lni lni-printer"></i></a>
                             <div class="table-responsive">
                                 <table class="table" id="table">
                                     <thead>
@@ -107,11 +121,11 @@
                                                         <td>'.$data['username'].'</td>
                                                         <td>'.$data['name'].'</td>
                                                         <td>'.$data['phone'].'</td>
+
                                                         <td>
-                                                            <a class="btn btn-sm btn-info buttons" href="show.php?id='.$data['id'].'" style="color: white;">Lihat</a>
-                                                            <a class="btn btn-sm btn-success buttons" href="edit.php?id='.$data['id'].'" style="color: white;">Edit</a>
-                                                            <a onclick="return confirm(`Apakah anda yakin?`)" class="btn btn-sm btn-danger buttons" href="delete.php?id='.$data['id'].'" style="color: white;">Hapus</a>
-                                                            <a class="btn btn-sm btn-primary buttons" href="../../cetak_detailNews.php?id='.$data['id'].'"><i class="fa-solid fa-print"></i></a>
+                                                            <a class="btn btn-sm btn-warning buttons" href="edit.php?id='.$data['guru_id'].'"><i class="lni lni-pencil-1"></i></a>
+                                                            <a onclick="return confirm(`Apakah anda yakin?`)" class="btn btn-sm btn-danger buttons" href="delete.php?id='.$data['guru_id'].'"><i class="lni lni-trash-3"></i></a>
+                                                            <a class="btn btn-sm btn-primary buttons" href="../../cetak_detailNews.php?id=' . $data['guru_id'] . '"><i class="lni lni-printer"></i></a>
                                                         </td>
                                                     </tr>
                                                 ';
