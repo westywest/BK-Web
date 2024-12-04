@@ -1,7 +1,10 @@
 <?php
     include '../../../function/connectDB.php';
     $id = $_GET['id'];
-    $sql = "DELETE FROM guru WHERE id='$id'";
+    $sql = "DELETE guru, users
+            FROM guru
+            JOIN users ON guru.user_id = users.id
+            WHERE guru.id='$id'";
     $datas = $conn->query($sql);
 
     if(mysqli_affected_rows($conn) > 0){

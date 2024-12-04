@@ -7,19 +7,20 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link href="https://cdn.lineicons.com/5.0/lineicons.css" rel="stylesheet" />
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" href="../../../assets/css/style_user.css">
     <title>Kelola Guru</title>
     <style>
         .buttons{
-            width: 40px;                   /* Pastikan ukuran button seragam */
-            font-size: 18px;               /* Ukuran ikon */
+            width: 40px;                
+            font-size: 18px;              
         }.btn{
-            display: inline-flex;          /* Membuat button sebagai fleksibel */
-            align-items: center;           /* Ikon berada di tengah secara vertikal */
-            justify-content: center;       /* Ikon berada di tengah secara horizontal */
-            height: 40px;                  /* Tinggi seragam */
-            padding: 0;                    /* Hapus padding default */
-            border-radius: 5px;            /* Tambahkan sedikit pembulatan */
+            display: inline-flex;       
+            align-items: center;      
+            justify-content: center;       
+            height: 40px;                  
+            padding: 0;                    
+            border-radius: 5px;            
         }
     </style>
 </head>
@@ -71,8 +72,8 @@
             <div class="user-profile-footer p-2 d-flex align-items-center">
                 <img src="../../../assets/images/profile.jpg" alt="User Avatar" class="rounded-circle me-2" style="width: 40px; height: 40px;">
                 <div class="user-info">
-                    <h6 class="text-white mb-0">Maharani Dian Prawesty</h6>
-                    <small>Guru</small>
+                    <h6 class="text-white mb-0">Administrator</h6>
+                    <small><?php echo($_SESSION['username']) ?></small>
                 </div>
             </div>
             <div class="sidebar-footer">
@@ -151,5 +152,13 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../../assets/script/script_admin.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap5.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#table').DataTable();
+        });
+    </script>
     </body>
 </html>

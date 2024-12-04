@@ -53,8 +53,8 @@ if (!isset($_SESSION['status']) || $_SESSION['role'] !== "admin") {
             <div class="user-profile-footer p-2 d-flex align-items-center">
                 <img src="../../assets/images/profile.jpg" alt="User Avatar" class="rounded-circle me-2" style="width: 40px; height: 40px;">
                 <div class="user-info">
-                    <h6 class="text-white mb-0">Maharani Dian Prawesty</h6>
-                    <small>Guru</small>
+                    <h6 class="text-white mb-0">Administrator</h6>
+                    <small><?php echo($_SESSION['username']) ?></small>
                 </div>
             </div>
             <div class="sidebar-footer">

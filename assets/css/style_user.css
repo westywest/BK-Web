@@ -79,6 +79,8 @@ h1 {
   font-weight: 600;
 }
 
+
+
 #sidebar:not(.expand) .sidebar-logo,
 #sidebar:not(.expand) a.sidebar-link span {
   display: none;
@@ -89,10 +91,11 @@ h1 {
   flex: 1 1 auto;
 }
 
-a.sidebar-link {
+.sidebar-link {
   padding: 0.625rem 1.625rem;
   color: #fff;
-  display: block;
+  display: flex; /* Tambahkan flex untuk ikon dan teks sejajar */
+  align-items: center; /* Pastikan ikon dan teks sejajar secara vertikal */
   font-size: 0.9rem;
   white-space: nowrap;
   border-left: 3px solid transparent;
