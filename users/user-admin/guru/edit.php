@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link href="https://cdn.lineicons.com/5.0/lineicons.css" rel="stylesheet" />
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="../../../assets/css/style_admin.css">
     <title>Edit Data</title>
 </head>
@@ -37,6 +38,12 @@
                     <a href="../siswa/index.php" class="sidebar-link">
                         <i class="lni lni-user-multiple-4"></i>
                         <span>Siswa</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="../Kelas/index.php" class="sidebar-link">
+                        <i class='bx bx-spreadsheet' ></i>
+                        <span>Kelas</span>
                     </a>
                 </li>
             </ul>

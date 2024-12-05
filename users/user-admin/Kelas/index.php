@@ -9,7 +9,7 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" href="../../../assets/css/style_user.css">
-    <title>Kelola Guru</title>
+    <title>Kelola Kelas</title>
     <style>
         .buttons{
             width: 40px;                
@@ -33,11 +33,15 @@
         exit;
     }
     include '../../../function/connectDB.php';
-    $sql = "SELECT guru.id AS guru_id, guru.user_id, guru.nip, guru.name, guru.phone, users.id as user_id, users.username, users.role FROM guru 
-    JOIN users on guru.user_id = users.id
-    WHERE users.role = 'guru'
-    ORDER BY guru_id DESC";
-    $datas = $conn->query($sql);
+    $sql = "SELECT kelas.id AS kelas_id, kelas.class_name, kelas.guru_id, guru.id as guru_id, guru.name FROM kelas 
+    JOIN guru on kelas.guru_id = guru.id
+    ORDER BY kelas_id DESC";
+
+    $datas = $conn->prepare($sql);
+    $datas->execute();
+    $resultKelas = $datas->get_result();
+
+
     ?>
     <div class="wrapper">
         <aside id="sidebar">
@@ -56,8 +60,8 @@
                         <span>Dashboard</span>
                     </a>
                 </li>
-                <li class="sidebar-item active">
-                    <a href="index.php" class="sidebar-link">
+                <li class="sidebar-item">
+                    <a href="../guru/index.php" class="sidebar-link">
                         <i class="lni lni-user-4"></i>
                         <span>Guru</span>
                     </a>
@@ -68,7 +72,7 @@
                         <span>Siswa</span>
                     </a>
                 </li>
-                <li class="sidebar-item">
+                <li class="sidebar-item active">
                     <a href="../Kelas/index.php" class="sidebar-link">
                         <i class='bx bx-spreadsheet' ></i>
                         <span>Kelas</span>
@@ -95,12 +99,12 @@
                 <div class="container-fluid">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="#">Guru</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Daftar Guru BK</li>
+                            <li class="breadcrumb-item"><a href="#">Kelas</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Daftar Kelas</li>
                         </ol>
                     </nav>
-                    <h1 class="h2">Daftar Guru BK</h1>
-                    <p>Untuk menambah Guru silahkan klik tombol<b> + Tambah Data</b> dibawah.</p>
+                    <h1 class="h2">Daftar Kelas</h1>
+                    <p>Untuk menambah Kelas silahkan klik tombol<b> + Tambah Data</b> dibawah.</p>
 
                     <div class="card">
                         <div class="card-body">
@@ -111,31 +115,28 @@
                                     <thead>
                                         <tr>
                                             <th scope="col">#</th>
-                                            <th scope="col">NIP</th>
-                                            <th scope="col">Username</th>
-                                            <th scope="col">Nama</th>
-                                            <th scope="col">No Telepon</th>
-                                            <th scope="col"></th>
+                                            <th scope="col">Kelas</th>
+                                            <th scope="col">Guru Pengampu</th>
+                                            <th scope="col">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php
-                                            foreach($datas as $key => $data){
+                                            $rowNumber = 1;  
+                                            while ($row = $resultKelas->fetch_assoc()) {
                                                 echo '
                                                     <tr>
-                                                        <td>'.($key+1).'</td>
-                                                        <td>'.$data['nip'].'</td>
-                                                        <td>'.$data['username'].'</td>
-                                                        <td>'.$data['name'].'</td>
-                                                        <td>'.$data['phone'].'</td>
-
+                                                        <td>'.$rowNumber.'</td>
+                                                        <td>'.$row['class_name'].'</td>
+                                                        <td>'.$row['name'].'</td>
                                                         <td>
-                                                            <a class="btn btn-sm btn-warning buttons" href="edit.php?id='.$data['guru_id'].'"><i class="lni lni-pencil-1"></i></a>
-                                                            <a onclick="return confirm(`Apakah anda yakin?`)" class="btn btn-sm btn-danger buttons" href="delete.php?id='.$data['guru_id'].'"><i class="lni lni-trash-3"></i></a>
-                                                            <a class="btn btn-sm btn-primary buttons" href="../../cetak_detailNews.php?id=' . $data['guru_id'] . '"><i class="lni lni-printer"></i></a>
+                                                            <a class="btn btn-sm btn-warning buttons" href="edit.php?id='.$row['kelas_id'].'"><i class="lni lni-pencil-1"></i></a>
+                                                            <a onclick="return confirm(`Apakah anda yakin?`)" class="btn btn-sm btn-danger buttons" href="delete.php?id='.$row['kelas_id'].'"><i class="lni lni-trash-3"></i></a>
+                                                            <a class="btn btn-sm btn-primary buttons" href="../../cetak_detailNews.php?id=' . $row['kelas_id'] . '"><i class="lni lni-printer"></i></a>
                                                         </td>
                                                     </tr>
                                                 ';
+                                                $rowNumber++;  
                                             }
                                         ?>
                                     </tbody>

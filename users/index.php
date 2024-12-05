@@ -49,6 +49,19 @@
                         $_SESSION['username'] = $data['username'];
                         $_SESSION['status'] = "login";
             
+                        if ($data['role'] === "guru") {
+                            $queryGuru = $conn->prepare("SELECT name FROM guru WHERE user_id = ?");
+                            $queryGuru->bind_param("i", $data['id']);
+                            $queryGuru->execute();
+                            $resultGuru = $queryGuru->get_result();
+                            
+                            if($resultGuru->num_rows > 0) {
+                                $guru = $resultGuru->fetch_assoc();
+                                $_SESSION['name'] = $guru['name'];
+                            }
+                            
+                        }
+
                         // Redirect sesuai role
                         if ($data['role'] === "admin") {
                             header('location:/BK/users/user-admin/dashboard.php');
