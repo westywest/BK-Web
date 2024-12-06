@@ -37,9 +37,9 @@
         $phone = $data['phone'];
     }
     if(isset($_POST['submit'])){
-        $nip = $_POST['nip'];
-        $name = $_POST['name'];
-        $phone = $_POST['phone'];
+        $nip = intval(trim($_POST['nip']));
+        $name = htmlspecialchars(trim($_POST['name']));
+        $phone = trim($_POST['phone']);
 
         $sql = "UPDATE guru SET nip=?, name=?, phone=? WHERE id=?";
         $updStmt = $conn->prepare($sql);
@@ -49,11 +49,17 @@
         if ($updStmt->affected_rows > 0) {
             // Hapus pesan error jika ada
             unset($_SESSION['error']);
-            
-            header("Location: /BK/users/user-admin/guru/index.php");
+            echo "<script>
+                    alert('Data berhasil diupdate!');
+                    window.location.href = '/BK/users/user-admin/guru/index.php';
+                  </script>";
             exit;
         } else {
-            $_SESSION['error'] = "Gagal menyimpan data!";
+            echo "<script>
+                    alert('Gagal Mengupdate Data!');
+                    window.location.href = '/BK/users/user-admin/guru/index.php';
+                  </script>";
+            exit;
         }
     }
     ?>

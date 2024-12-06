@@ -41,6 +41,8 @@
     $datas->execute();
     $resulGuru = $datas->get_result();
     ?>
+
+    
     <div class="wrapper">
         <aside id="sidebar">
             <div class="d-flex">

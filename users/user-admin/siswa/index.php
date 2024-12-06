@@ -115,9 +115,9 @@
                                             <th scope="col">#</th>
                                             <th scope="col">NIS</th>
                                             <th scope="col">Nama</th>
-                                            <th scope="col">No Telepon</th>
                                             <th scope="col">L/P</th>
                                             <th scope="col">Tepat, Tanggal Lahir</th>
+                                            <th scope="col">No Telepon</th>
                                             <th scope="col">Kelas</th>
                                             <th scope="col">Aksi</th>
                                         </tr>
@@ -131,9 +131,9 @@
                                                         <td>'.$rowNumber.'</td>
                                                         <td>'.$row['nis'].'</td>
                                                         <td>'.$row['name'].'</td>
-                                                        <td>'.$row['phone'].'</td>
                                                         <td>'.$row['jk'].'</td>
                                                         <td>'.$row['tmp_lahir'].', '.$row['tgl_lahir'].'</td>
+                                                        <td>'.$row['phone'].'</td>
                                                         <td>'.$row['name_class'].'</td>
 
                                                         <td>

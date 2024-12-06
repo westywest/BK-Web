@@ -23,6 +23,17 @@
     <title>Tambah Data</title>
 </head>
 <body>
+    <?php 
+    session_start();
+    if (!isset($_SESSION['status']) || $_SESSION['role'] !== "admin") {
+        // Redirect ke halaman login jika bukan admin
+        header("Location: /BK/users/index.php");
+        exit;
+    }
+    
+    include '../../../function/connectDB.php';
+
+    ?>
     <div class="wrapper">
         <aside id="sidebar">
             <div class="d-flex">
@@ -90,8 +101,8 @@
                         <div class="card-body">
                             <form action="" method="post" enctype="multipart/form-data">
                                 <div class="mb-3">
-                                    <label for="nip" class="form-label">NIS</label>
-                                    <input type="text" class="form-control" id="nip" name="nip" placeholder="Masukkan NIS" required>
+                                    <label for="nis" class="form-label">NIS</label>
+                                    <input type="text" class="form-control" id="nis" name="nis" placeholder="Masukkan NIS" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="name" class="form-label">Nama</label>

@@ -49,11 +49,17 @@
         if ($updStmt->affected_rows > 0) {
             // Hapus pesan error jika ada
             unset($_SESSION['error']);
-            
-            header("Location: /BK/users/user-admin/kelas/index.php");
+            echo "<script>
+                    alert('Data berhasil diupdate!');
+                    window.location.href = '/BK/users/user-admin/kelas/index.php';
+                  </script>";
             exit;
         } else {
-            $_SESSION['error'] = "Gagal menyimpan data!";
+            echo "<script>
+                    alert('Gagal Mengupdate Data!');
+                    window.location.href = '/BK/users/user-admin/kelas/index.php';
+                  </script>";
+            exit;
         }
     }
 

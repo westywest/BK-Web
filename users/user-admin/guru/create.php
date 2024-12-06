@@ -21,36 +21,58 @@
     
     include '../../../function/connectDB.php';
 
-    if(isset($_POST['submit'])){
-        $nip = $_POST['nip'];
-        $name = $_POST['name'];
-        $phone = $_POST['phone'];
-        $username = $_POST['username'];
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $nip = intval(trim($_POST['nip']));
+        $name = htmlspecialchars(trim($_POST['name']));
+        $phone = trim($_POST['phone']);
+        $username = htmlspecialchars(trim($_POST['username']));
         $pass = password_hash($_POST['pass'], PASSWORD_DEFAULT);
-
-        $sql = "INSERT INTO users (id, username, password, role) VALUES (null, ?, ?, 'guru')";
-        $datas = $conn->prepare($sql);
-        $datas->bind_param("ss", $username, $pass);
-        $datas->execute();
-
-        if ($datas->affected_rows > 0) {
-            $userId = $conn->insert_id;
-
-            $sql = "INSERT INTO guru (id, user_id, nip, name, phone) VALUES (null, ?, ?, ?, ?)";
-            $datas = $conn->prepare($sql);
-            $datas->bind_param("isss", $userId, $nip, $name, $phone);
-            $datas->execute();
-
-            if ($datas->affected_rows > 0) {
-                header("Location: /BK/users/user-admin/guru/index.php");
-                exit;
-            } else {
-                $_SESSION['error'] = "Gagal menyimpan data guru!";
-            }
+    
+        // Cek apakah username sudah ada di database
+        $query = "SELECT COUNT(*) FROM users WHERE username = ?";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $stmt->bind_result($count);
+        $stmt->fetch();
+        $stmt->free_result();
+    
+        if ($count > 0) {
+            // Jika username sudah ada, tampilkan pesan error
+            $_SESSION['error'] = "Username sudah terdaftar, silakan pilih yang lain!";
+            header("Location: " . $_SERVER['PHP_SELF']); // Refresh halaman agar pesan error muncul
+            exit;
         } else {
-            $_SESSION['error'] = "Gagal menyimpan data pengguna!";
+            // Jika username belum ada, lanjutkan untuk memasukkan data
+            $sql = "INSERT INTO users (id, username, password, role) VALUES (null, ?, ?, 'guru')";
+            $datas = $conn->prepare($sql);
+            $datas->bind_param("ss", $username, $pass);
+            $datas->execute();
+    
+            if ($datas->affected_rows > 0) {
+                $userId = $conn->insert_id;
+    
+                $sql = "INSERT INTO guru (id, user_id, nip, name, phone) VALUES (null, ?, ?, ?, ?)";
+                $datas = $conn->prepare($sql);
+                $datas->bind_param("isss", $userId, $nip, $name, $phone);
+                
+    
+                if ($datas->execute() && $datas->affected_rows > 0) {
+                    echo "<script>
+                            alert('Data berhasil ditambahkan!');
+                            window.location.href = '/BK/users/user-admin/guru/index.php';
+                          </script>";
+                    exit;
+                    
+                } else {
+                    $_SESSION['error'] = "Gagal menyimpan data guru!";
+                }
+            } else {
+                $_SESSION['error'] = "Gagal menyimpan data pengguna!";
+            }
         }
     }
+
 
     ?>
     <div class="wrapper">
@@ -118,7 +140,7 @@
 
                     <div class="card">
                         <div class="card-body">
-                            <form action="" method="post" enctype="multipart/form-data">
+                            <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post" enctype="multipart/form-data">
                                 <div class="mb-3">
                                     <label for="nip" class="form-label">NIP</label>
                                     <input type="text" class="form-control" id="nip" name="nip" placeholder="Masukkan NIP" required>
@@ -135,11 +157,17 @@
                                     <label for="username" class="form-label">Username</label>
                                     <input type="text" class="form-control" id="username" name="username" placeholder="Username" required>
                                 </div>
+
+                                <!-- Menampilkan pesan error jika ada -->
+                                <?php if (isset($_SESSION['error'])): ?>
+                                    <p style="color:red; font-size: 12px;"><?php echo $_SESSION['error']; unset($_SESSION['error']); ?></p>
+                                <?php endif; ?>
+                                
                                 <div class="mb-3">
                                     <label for="pass" class="form-label">Password</label>
                                     <input type="text" class="form-control" id="pass" name="pass" placeholder="**********" required>
                                 </div>
-                                <p style="color:red; font-size: 12px;"></p>
+
                                 <button class="btn btn-primary my-3" type="submit" name="submit" style="color: white;">Save</button>
                             </form>
                         </div>

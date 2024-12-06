@@ -20,22 +20,54 @@
         exit;
     }
     include '../../../function/connectDB.php';
-    
-    if(isset($_POST['submit'])){
-        $class_name = $_POST['class_name'];
-        $guru_id = $_POST['guru_id'];
-        
-        $sql = "INSERT INTO kelas (id, class_name, guru_id) VALUES (null, ?, ?)";
-        $datas = $conn->prepare($sql);
-        $datas->bind_param("si", $class_name, $guru_id);
-        $datas->execute();
 
-        if ($datas->affected_rows > 0) {
-            header("Location: /BK/users/user-admin/kelas/index.php");
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $class_name = htmlspecialchars(trim($_POST['class_name']));
+        $guru_id = intval($_POST['guru_id']);
+
+        // Cek apakah username sudah ada di database
+        $query = "SELECT COUNT(*) FROM kelas WHERE class_name = ?";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("s", $class_name);
+        $stmt->execute();
+        $stmt->bind_result($count);
+        $stmt->fetch();
+        $stmt->free_result();
+        
+        // Validasi input
+        if ($count > 0) {
+            // Jika username sudah ada, tampilkan pesan error
+            $_SESSION['error'] = "Kelas sudah ada!";
+            header("Location: " . $_SERVER['PHP_SELF']); // Refresh halaman agar pesan error muncul
             exit;
         } else {
-            $_SESSION['error'] = "Gagal menyimpan data!";
+            if (empty($class_name)) {
+                $_SESSION['error'] = "Semua field wajib diisi!";
+                header("Location: " . $_SERVER['PHP_SELF']);
+                exit;
+            } elseif (empty($guru_id) || $guru_id == 0) {
+                $_SESSION['error'] = "Harap pilih guru pengampu yang valid!";
+                header("Location: " . $_SERVER['PHP_SELF']);
+                exit;
+            } else {
+                $sql = "INSERT INTO kelas (id, class_name, guru_id) VALUES (null, ?, ?)";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("si", $class_name, $guru_id);
+        
+                if ($stmt->execute() && $stmt->affected_rows > 0) {
+                    echo "<script>
+                            alert('Data berhasil ditambahkan!');
+                            window.location.href = '/BK/users/user-admin/kelas/index.php';
+                          </script>";
+                    exit;
+                } else {
+                    $_SESSION['error'] = "Gagal menyimpan data!";
+                    header("Location: " . $_SERVER['PHP_SELF']);
+                    exit;
+                }
+            }
         }
+        
     }
     
     ?>
@@ -112,7 +144,7 @@
                                 <div class="mb-3">
                                     <label for="guru_id" class="form-label">Guru Pengampu</label>
                                     <select class="form-select" aria-label="Default select example" name="guru_id" required>
-                                        <option>--Pilih Guru Pengampu--</option>
+                                        <option value="0">--Pilih Guru Pengampu--</option>
                                         <?php
                                             $query = mysqli_query($conn, "SELECT * FROM guru") or die (mysqli_error($conn));
                                             while($data = mysqli_fetch_array($query)){
@@ -121,8 +153,12 @@
                                         ?>
                                     </select>
                                 </div>
-                                <p style="color:red; font-size: 12px;"></p>
-                            <button class="btn btn-primary my-3" type="submit" name="submit" style="color: white;">Save</button>
+                                
+                                <?php if (isset($_SESSION['error'])): ?>
+                                    <p style="color:red; font-size: 12px;"><?php echo $_SESSION['error']; unset($_SESSION['error']); ?></p>
+                                <?php endif; ?>
+
+                                <button class="btn btn-primary my-3" type="submit" name="submit" style="color: white;">Save</button>
                             </form>
                         </div>
                     </div>

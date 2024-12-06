@@ -33,6 +33,7 @@
         exit;
     }
     include '../../../function/connectDB.php';
+
     $sql = "SELECT kelas.id AS kelas_id, kelas.class_name, kelas.guru_id, guru.id as guru_id, guru.nip, guru.name FROM kelas 
     JOIN guru on kelas.guru_id = guru.id
     ORDER BY kelas_id DESC";
