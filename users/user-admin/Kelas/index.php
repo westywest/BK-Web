@@ -33,7 +33,7 @@
         exit;
     }
     include '../../../function/connectDB.php';
-    $sql = "SELECT kelas.id AS kelas_id, kelas.class_name, kelas.guru_id, guru.id as guru_id, guru.name FROM kelas 
+    $sql = "SELECT kelas.id AS kelas_id, kelas.class_name, kelas.guru_id, guru.id as guru_id, guru.nip, guru.name FROM kelas 
     JOIN guru on kelas.guru_id = guru.id
     ORDER BY kelas_id DESC";
 
@@ -117,6 +117,7 @@
                                             <th scope="col">#</th>
                                             <th scope="col">Kelas</th>
                                             <th scope="col">Guru Pengampu</th>
+                                            <th scope="col">NIP</th>
                                             <th scope="col">Aksi</th>
                                         </tr>
                                     </thead>
@@ -129,10 +130,11 @@
                                                         <td>'.$rowNumber.'</td>
                                                         <td>'.$row['class_name'].'</td>
                                                         <td>'.$row['name'].'</td>
+                                                        <td>'.$row['nip'].'</td>
                                                         <td>
                                                             <a class="btn btn-sm btn-warning buttons" href="edit.php?id='.$row['kelas_id'].'"><i class="lni lni-pencil-1"></i></a>
                                                             <a onclick="return confirm(`Apakah anda yakin?`)" class="btn btn-sm btn-danger buttons" href="delete.php?id='.$row['kelas_id'].'"><i class="lni lni-trash-3"></i></a>
-                                                            <a class="btn btn-sm btn-primary buttons" href="../../cetak_detailNews.php?id=' . $row['kelas_id'] . '"><i class="lni lni-printer"></i></a>
+                                                            
                                                         </td>
                                                     </tr>
                                                 ';

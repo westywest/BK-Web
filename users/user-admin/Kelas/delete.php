@@ -1,10 +1,7 @@
 <?php
     include '../../../function/connectDB.php';
     $id = $_GET['id'];
-    $sql = "DELETE guru, users
-            FROM guru
-            JOIN users ON guru.user_id = users.id
-            WHERE guru.id=?";
+    $sql = "DELETE FROM kelas Where id=?";
     $delStmt = $conn->prepare($sql);
     $delStmt->bind_param("i", $id);
     $delStmt->execute();

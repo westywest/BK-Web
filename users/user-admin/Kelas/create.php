@@ -116,7 +116,7 @@
                                         <?php
                                             $query = mysqli_query($conn, "SELECT * FROM guru") or die (mysqli_error($conn));
                                             while($data = mysqli_fetch_array($query)){
-                                                echo "<option value=$data[id]>$data[name]</option>";
+                                                echo "<option value=$data[id]>$data[nip] - $data[name]</option>";
                                             }
                                         ?>
                                     </select>

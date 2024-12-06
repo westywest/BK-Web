@@ -9,10 +9,37 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="../../../assets/css/style_user.css">
     <title>Kelola Siswa</title>
+    <style>
+        .buttons{
+            width: 40px;                
+            font-size: 18px;              
+        }.btn{
+            display: inline-flex;       
+            align-items: center;      
+            justify-content: center;       
+            height: 40px;                  
+            padding: 0;                    
+            border-radius: 5px;            
+        }
+    </style>
 </head>
 <body>
     <?php 
-    
+    session_start();
+    if (!isset($_SESSION['status']) || $_SESSION['role'] !== "admin") {
+        // Redirect ke halaman login jika bukan admin
+        header("Location: /BK/users/index.php");
+        exit;
+    }
+    include '../../../function/connectDB.php';
+    $sql = "SELECT siswa.id AS siswa_id, siswa.user_id, siswa.nis, siswa.name, siswa.jk, siswa.tmp_lahir, siswa.tgl_lahir, siswa.phone, siswa.kelas_id, kelas.id AS kelas_id, kelas.class_name, kelas.guru_id, guru.id AS guru_id, guru.name, users.id AS user_id, users.username, users.password
+    FROM siswa JOIN kelas ON siswa.kelas_id = kelas.id
+    JOIN guru ON kelas.guru_id = guru.id
+    JOIN users ON siswa.user_id = users.id
+    ORDER BY siswa_id DESC";
+    $datas = $conn->prepare($sql);
+    $datas->execute();
+    $resulSiswa = $datas->get_result();
     ?>
     <div class="wrapper">
         <aside id="sidebar">
@@ -79,8 +106,8 @@
 
                     <div class="card">
                         <div class="card-body">
-                            <a class="btn btn-primary mb-4" href="create.php" style="color: white"><i class="lni lni-plus"></i> Tambah Data</a>
-                            <a href="../../cetak_author.php" class="btn btn-block btn-primary mb-4"><i class="lni lni-printer"></i></a>
+                            <a class="btn btn-primary mb-4" href="create.php" style="color: white; width: 135px;"><i class="lni lni-plus"></i> Tambah Data</a>
+                            <a href="../../cetak_author.php" class="btn btn-block btn-primary mb-4 buttons"><i class="lni lni-printer"></i></a>
                             <div class="table-responsive">
                                 <table class="table" id="table">
                                     <thead>
@@ -88,15 +115,36 @@
                                             <th scope="col">#</th>
                                             <th scope="col">NIS</th>
                                             <th scope="col">Nama</th>
-                                            <th scope="col">Jenis Kelamin</th>
-                                            <th scope="col">Kelas</th>
                                             <th scope="col">No Telepon</th>
-                                            <th scope="col">Password</th>
-                                            <th scope="col"></th>
+                                            <th scope="col">L/P</th>
+                                            <th scope="col">Tepat, Tanggal Lahir</th>
+                                            <th scope="col">Kelas</th>
+                                            <th scope="col">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        
+                                        <?php
+                                            $rowNumber = 1;  
+                                            while ($row = $resulSiswa->fetch_assoc()) {
+                                                echo '
+                                                    <tr>
+                                                        <td>'.$rowNumber.'</td>
+                                                        <td>'.$row['nis'].'</td>
+                                                        <td>'.$row['name'].'</td>
+                                                        <td>'.$row['phone'].'</td>
+                                                        <td>'.$row['jk'].'</td>
+                                                        <td>'.$row['tmp_lahir'].', '.$row['tgl_lahir'].'</td>
+                                                        <td>'.$row['name_class'].'</td>
+
+                                                        <td>
+                                                            <a class="btn btn-sm btn-warning buttons" href="edit.php?id='.$row['siswa_id'].'"><i class="lni lni-pencil-1"></i></a>
+                                                            <a onclick="return confirm(`Apakah anda yakin?`)" class="btn btn-sm btn-danger buttons" href="delete.php?id='.$row['siswa_id'].'"><i class="lni lni-trash-3"></i></a>
+                                                            <a class="btn btn-sm btn-primary buttons" href="../../cetak_detailNews.php?id=' . $row['siswa_id'] . '"><i class="lni lni-printer"></i></a>
+                                                        </td>
+                                                    </tr>
+                                                ';
+                                            }
+                                        ?>
                                     </tbody>
                                 </table>
                             </div>

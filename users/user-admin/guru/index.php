@@ -34,10 +34,12 @@
     }
     include '../../../function/connectDB.php';
     $sql = "SELECT guru.id AS guru_id, guru.user_id, guru.nip, guru.name, guru.phone, users.id as user_id, users.username, users.role FROM guru 
-    JOIN users on guru.user_id = users.id
+    JOIN users ON guru.user_id = users.id
     WHERE users.role = 'guru'
     ORDER BY guru_id DESC";
-    $datas = $conn->query($sql);
+    $datas = $conn->prepare($sql);
+    $datas->execute();
+    $resulGuru = $datas->get_result();
     ?>
     <div class="wrapper">
         <aside id="sidebar">
@@ -115,24 +117,25 @@
                                             <th scope="col">Username</th>
                                             <th scope="col">Nama</th>
                                             <th scope="col">No Telepon</th>
-                                            <th scope="col"></th>
+                                            <th scope="col">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php
-                                            foreach($datas as $key => $data){
+                                            $rowNumber = 1;  
+                                            while ($row = $resulGuru->fetch_assoc()) {
                                                 echo '
                                                     <tr>
-                                                        <td>'.($key+1).'</td>
-                                                        <td>'.$data['nip'].'</td>
-                                                        <td>'.$data['username'].'</td>
-                                                        <td>'.$data['name'].'</td>
-                                                        <td>'.$data['phone'].'</td>
+                                                        <td>'.$rowNumber.'</td>
+                                                        <td>'.$row['nip'].'</td>
+                                                        <td>'.$row['username'].'</td>
+                                                        <td>'.$row['name'].'</td>
+                                                        <td>'.$row['phone'].'</td>
 
                                                         <td>
-                                                            <a class="btn btn-sm btn-warning buttons" href="edit.php?id='.$data['guru_id'].'"><i class="lni lni-pencil-1"></i></a>
-                                                            <a onclick="return confirm(`Apakah anda yakin?`)" class="btn btn-sm btn-danger buttons" href="delete.php?id='.$data['guru_id'].'"><i class="lni lni-trash-3"></i></a>
-                                                            <a class="btn btn-sm btn-primary buttons" href="../../cetak_detailNews.php?id=' . $data['guru_id'] . '"><i class="lni lni-printer"></i></a>
+                                                            <a class="btn btn-sm btn-warning buttons" href="edit.php?id='.$row['guru_id'].'"><i class="lni lni-pencil-1"></i></a>
+                                                            <a onclick="return confirm(`Apakah anda yakin?`)" class="btn btn-sm btn-danger buttons" href="delete.php?id='.$row['guru_id'].'"><i class="lni lni-trash-3"></i></a>
+                                                            <a class="btn btn-sm btn-primary buttons" href="../../cetak_detailNews.php?id=' . $row['guru_id'] . '"><i class="lni lni-printer"></i></a>
                                                         </td>
                                                     </tr>
                                                 ';

@@ -51,7 +51,7 @@ if (!isset($_SESSION['status']) || $_SESSION['role'] !== "admin") {
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="../Kelas/index.php" class="sidebar-link">
+                    <a href="Kelas/index.php" class="sidebar-link">
                         <i class='bx bx-spreadsheet' ></i>
                         <span>Kelas</span>
                     </a>
