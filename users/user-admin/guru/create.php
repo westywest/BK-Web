@@ -141,6 +141,14 @@
                     <div class="card">
                         <div class="card-body">
                             <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post" enctype="multipart/form-data">
+                                <!-- Menampilkan pesan error jika ada -->
+                                <?php if (isset($_SESSION['error'])): ?>
+                                    <div class="alert alert-warning alert-dismissible fade show">
+                                        <strong>WARNING!</strong> <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                <?php endif; ?>
+                                
                                 <div class="mb-3">
                                     <label for="nip" class="form-label">NIP</label>
                                     <input type="text" class="form-control" id="nip" name="nip" placeholder="Masukkan NIP" required>
@@ -157,12 +165,6 @@
                                     <label for="username" class="form-label">Username</label>
                                     <input type="text" class="form-control" id="username" name="username" placeholder="Username" required>
                                 </div>
-
-                                <!-- Menampilkan pesan error jika ada -->
-                                <?php if (isset($_SESSION['error'])): ?>
-                                    <p style="color:red; font-size: 12px;"><?php echo $_SESSION['error']; unset($_SESSION['error']); ?></p>
-                                <?php endif; ?>
-                                
                                 <div class="mb-3">
                                     <label for="pass" class="form-label">Password</label>
                                     <input type="text" class="form-control" id="pass" name="pass" placeholder="**********" required>

@@ -31,7 +31,7 @@
     $datas->execute();
     $resultKelas = $datas->get_result();
 
-    while($data = mysqli_fetch_array($resultKelas)){
+    if ($data = $resultKelas->fetch_assoc()){
         $class_name = $data['class_name'];
         $guru_id = $data['guru_id'];
         $guru_name = $data['name'];
@@ -130,7 +130,7 @@
                     <div class="card">
                         <div class="card-body">
                             <form action="<?php echo $_SERVER['PHP_SELF']."?id=".$id ?>" method="post" enctype="multipart/form-data">
-                                <input type="hidden" name="id" value="<?= $data['id'];?>">
+                                <input type="hidden" name="id" value="<?= $data['kelas_id'];?>">
                                 <div class="mb-3">
                                     <label for="class_name" class="form-label">Nama Kelas</label>
                                     <input type="text" class="form-control" id="class_name" name="class_name" placeholder="class_name" required value="<?php echo $class_name ?>">

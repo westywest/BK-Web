@@ -30,7 +30,7 @@
     $datas->execute();
     $resultGuru = $datas->get_result();
 
-    while($data = mysqli_fetch_array($resultGuru)){
+    if ($data = $resultGuru->fetch_assoc()) {
         $nip = $data['nip'];
         $username = $data['username'];
         $name = $data['name'];
@@ -128,8 +128,8 @@
 
                     <div class="card">
                         <div class="card-body">
-                            <form action="<?php echo $_SERVER['PHP_SELF']."?id=".$id ?>" method="post" enctype="multipart/form-data">
-                                <input type="hidden" name="id" value="<?= $data['id'];?>">
+                            <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'])."?id=".$id ?>" method="post" enctype="multipart/form-data">
+                                <input type="hidden" name="id" value="<?= $data['guru_id'];?>">
                                 <div class="mb-3">
                                     <label for="nip" class="form-label">NIP</label>
                                     <input type="text" class="form-control" id="nip" name="nip" placeholder="nip" required value="<?php echo $nip ?>">

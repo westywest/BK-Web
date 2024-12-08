@@ -27,12 +27,12 @@
 
         // Cek apakah username sudah ada di database
         $query = "SELECT COUNT(*) FROM kelas WHERE class_name = ?";
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param("s", $class_name);
-        $stmt->execute();
-        $stmt->bind_result($count);
-        $stmt->fetch();
-        $stmt->free_result();
+        $checkUSN = $conn->prepare($query);
+        $checkUSN->bind_param("s", $class_name);
+        $checkUSN->execute();
+        $checkUSN->bind_result($count);
+        $checkUSN->fetch();
+        $checkUSN->close();
         
         // Validasi input
         if ($count > 0) {
@@ -51,10 +51,10 @@
                 exit;
             } else {
                 $sql = "INSERT INTO kelas (id, class_name, guru_id) VALUES (null, ?, ?)";
-                $stmt = $conn->prepare($sql);
-                $stmt->bind_param("si", $class_name, $guru_id);
+                $insKelas = $conn->prepare($sql);
+                $insKelas->bind_param("si", $class_name, $guru_id);
         
-                if ($stmt->execute() && $stmt->affected_rows > 0) {
+                if ($insKelas->execute() && $insKelas->affected_rows > 0) {
                     echo "<script>
                             alert('Data berhasil ditambahkan!');
                             window.location.href = '/BK/users/user-admin/kelas/index.php';
@@ -137,6 +137,14 @@
                     <div class="card">
                         <div class="card-body">
                             <form action="" method="post" enctype="multipart/form-data">
+                                <!-- Menampilkan pesan error jika ada -->
+                                <?php if (isset($_SESSION['error'])): ?>
+                                    <div class="alert alert-warning alert-dismissible fade show">
+                                        <strong>WARNING!</strong> <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                <?php endif; ?>
+
                                 <div class="mb-3">
                                     <label for="class_name" class="form-label">Nama Kelas</label>
                                     <input type="text" class="form-control" id="class_name" name="class_name" placeholder="Masukkan Kelas" required>
@@ -153,11 +161,6 @@
                                         ?>
                                     </select>
                                 </div>
-                                
-                                <?php if (isset($_SESSION['error'])): ?>
-                                    <p style="color:red; font-size: 12px;"><?php echo $_SESSION['error']; unset($_SESSION['error']); ?></p>
-                                <?php endif; ?>
-
                                 <button class="btn btn-primary my-3" type="submit" name="submit" style="color: white;">Save</button>
                             </form>
                         </div>

@@ -21,99 +21,58 @@
     
     include '../../../function/connectDB.php';
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $nis = intval(trim($_POST['nis']));
-        $name = htmlspecialchars(trim($_POST['name']));
-        $jk = $_POST['jk'];
-        $tmp_lahir = trim($_POST['tmp_lahir']);
-        $tgl_lahir = trim($_POST['tgl_lahir']);
-        $phone = trim($_POST['phone']);
-        $kelas_id = intval($_POST['kelas_id']);
-        $pass = password_hash($_POST['pass'], PASSWORD_DEFAULT);
+    $id = $_GET['id'];
+    $sql = "SELECT siswa.id AS siswa_id, siswa.user_id, siswa.nis, siswa.name, siswa.jk, siswa.tmp_lahir, siswa.tgl_lahir, siswa.kelas_id, siswa.phone, users.id AS user_id, kelas.id AS kelas_id, kelas.class_name
+    FROM siswa 
+    JOIN users on siswa.user_id = users.id 
+    JOIN kelas on siswa.kelas_id = kelas.id
+    WHERE siswa.id = ?";
     
-        // Cek apakah NIS sudah ada di database
-        $query = "SELECT COUNT(*) FROM siswa WHERE nis = ?";
-        $checkNIS = $conn->prepare($query);
-        $checkNIS->bind_param("i", $nis);
-        $checkNIS->execute();
-        $checkNIS->bind_result($count);
-        $checkNIS->fetch();
-        $checkNIS->close();
+    $datas = $conn->prepare($sql);
+    $datas->bind_param("i",$id);
+    $datas->execute();
+    $resultSiswa = $datas->get_result();
 
-        // Cek apakah NIS sudah digunakan sebagai username di tabel users
-        $query = "SELECT COUNT(*) FROM users WHERE username = ?";
-        $checkUSN = $conn->prepare($query);
-        $checkUSN->bind_param("s", $nis);
-        $checkUSN->execute();
-        $checkUSN->bind_result($countUsers);
-        $checkUSN->fetch();
-        $checkUSN->close();
+    if ($data = $resultSiswa->fetch_assoc()) {
+        $nis = $data['nis'];
+        $name = $data['name'];
+        $tmp_lahir = $data['tmp_lahir'];
+        $tgl_lahir = $data['tgl_lahir'];
+        $jk = $data['jk'];
+        $kelas_id = $data['kelas_id'];
+        $class_name = $data['class_name'];
+        $phone = $data['phone'];
+    }
 
-        if ($count > 0) {
-            $_SESSION['error'] = "NIS sudah terdaftar!";
-            header("Location: " . $_SERVER['PHP_SELF']);
+    if(isset($_POST['submit'])){
+        $name = $_POST['name'];
+        $tmp_lahir = $_POST['tmp_lahir'];
+        $tgl_lahir = $_POST['tgl_lahir'];
+        $jk = $_POST['jk'];
+        $kelas_id = $_POST['kelas_id'];
+        $phone = $_POST['phone'];
+        
+        $sql = "UPDATE siswa SET name=?, jk=?, tgl_lahir=?, tmp_lahir=?, kelas_id=?, phone=?  WHERE id=?";
+        $updStmt = $conn->prepare($sql);
+        $updStmt->bind_param("ssssisi", $name, $jk, $tgl_lahir, $tmp_lahir, $kelas_id, $phone, $id);
+        $updStmt->execute();
+
+        if ($updStmt->affected_rows > 0) {
+            // Hapus pesan error jika ada
+            unset($_SESSION['error']);
+            echo "<script>
+                    alert('Data berhasil diupdate!');
+                    window.location.href = '/BK/users/user-admin/siswa/index.php';
+                  </script>";
             exit;
         } else {
-            if (empty($nis) || empty($name) || empty($tmp_lahir) || empty($tgl_lahir) || empty($phone)){
-                $_SESSION['error'] = "Semua field wajib diisi!";
-                header("Location: " . $_SERVER['PHP_SELF']);
-                exit;
-            } elseif (empty($jk) || $jk == 0) {
-                $_SESSION['error'] = "Harap pilih jenis kelamin!";
-                header("Location: " . $_SERVER['PHP_SELF']);
-                exit;
-            } elseif (empty($kelas_id) || $kelas_id == 0) {
-                $_SESSION['error'] = "Harap pilih kelas!";
-                header("Location: " . $_SERVER['PHP_SELF']);
-                exit;
-            } elseif (empty($tgl_lahir)) {
-                $_SESSION['error'] = "Tanggal Lahir harus diisi!";
-                header("Location: " . $_SERVER['PHP_SELF']);
-                exit;
-            } else {
-                // Tambahkan data ke tabel users
-                $sql = "INSERT INTO users (id, username, password, role) VALUES (null, ?, ?, 'siswa')";
-                $datas = $conn->prepare($sql);
-                $datas->bind_param("ss", $nis, $pass);
-                $datas->execute();
-            
-                if ($datas->affected_rows > 0) {
-                    $userId = $conn->insert_id;
-            
-                    // Pastikan userId valid
-                    if (!$userId) {
-                        $_SESSION['error'] = "Gagal membuat akun pengguna!";
-                        header("Location: " . $_SERVER['PHP_SELF']);
-                        exit;
-                    }
-            
-                    // Tambahkan data ke tabel siswa
-                    $sql = "INSERT INTO siswa (id, user_id, nis, name, jk, tmp_lahir, tgl_lahir, phone, kelas_id) 
-                            VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?)";
-                    $datas = $conn->prepare($sql);
-                    $datas->bind_param("iissssss", $userId, $nis, $name, $jk, $tmp_lahir, $tgl_lahir, $phone, $kelas_id);
-            
-                    if ($datas->execute() && $datas->affected_rows > 0) {
-                        echo "<script>
-                                alert('Data berhasil ditambahkan!');
-                                window.location.href = '/BK/users/user-admin/siswa/index.php';
-                            </script>";
-                        exit;
-                    } else {
-                        $_SESSION['error'] = "Gagal menyimpan data siswa!";
-                        header("Location: " . $_SERVER['PHP_SELF']);
-                        exit;
-                    }
-                } else {
-                    $_SESSION['error'] = "Gagal menyimpan data pengguna!";
-                    header("Location: " . $_SERVER['PHP_SELF']);
-                    exit;
-                }
-            }
-        }        
+            echo "<script>
+                    alert('Gagal Mengupdate Data!');
+                    window.location.href = '/BK/users/user-admin/siswa/index.php';
+                  </script>";
+            exit;
+        }
     }
-    
-
 
 
     ?>
@@ -182,34 +141,27 @@
 
                     <div class="card">
                         <div class="card-body">
-                            <form action="" method="post" enctype="multipart/form-data">
-                                <!-- Menampilkan pesan error jika ada -->
-                                <?php if (isset($_SESSION['error'])): ?>
-                                    <div class="alert alert-warning alert-dismissible fade show">
-                                        <strong>WARNING!</strong> <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
-                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                    </div>
-                                <?php endif; ?>
+                            <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'])."?id=".$id ?>" method="post" enctype="multipart/form-data">
+                                <input type="hidden" name="id" value="<?= $data['siswa_id'];?>">
 
                                 <div class="mb-3">
                                     <label for="nis" class="form-label">NIS</label>
-                                    <input type="text" class="form-control" id="nis" name="nis" placeholder="Masukkan NIS" required>
+                                    <input type="text" class="form-control" id="nis" name="nis" placeholder="Masukkan NIS" required value="<?php echo $nis ?>" disabled>
                                 </div>
                                 <div class="mb-3">
                                     <label for="name" class="form-label">Nama</label>
-                                    <input type="text" class="form-control" id="name" name="name" placeholder="Masukkan Nama" required>
+                                    <input type="text" class="form-control" id="name" name="name" placeholder="Masukkan Nama" required value="<?php echo $name ?>">
                                 </div>
                                 <div class="mb-3">
                                     <label for="jk" class="form-label">Jenis Kelamin</label>
                                     <select name="jk" id="jk" class="form-control" required>
-                                        <option value="">--Pilih Jenis Kelamin--</option>
-                                        <option value="Laki-Laki">Laki-Laki</option>
-                                        <option value="Perempuan">Perempuan</option>
+                                        <option value="Laki-Laki" <?= $jk == 'Laki-Laki' ? 'selected' : null ?>>Laki-Laki</option>
+                                        <option value="Perempuan" <?= $jk == 'Perempuan' ? 'selected' : null ?>>Perempuan</option>
                                     </select>
                                 </div>
                                 <div class="mb-3">
                                     <label for="tmp_lahir" class="form-label">Tempat Lahir</label>
-                                    <input type="text" class="form-control" id="tmp_lahir" name="tmp_lahir" placeholder="Masukkan Tempat Lahir" required>
+                                    <input type="text" class="form-control" id="tmp_lahir" name="tmp_lahir" placeholder="Masukkan Tempat Lahir" required value="<?php echo $tmp_lahir ?>">
                                 </div>
                                 <div class="mb-3">
                                     <label for="tgl_lahir" class="form-label">Tanggal Lahir</label>
@@ -219,28 +171,25 @@
                                             id="tgl_lahir" 
                                             name="tgl_lahir" 
                                             required
+                                            value="<?php echo $tgl_lahir ?>"
                                             min="1900-01-01" 
                                             max="2024-12-31">
                                 </div>
                                 <div class="mb-3">
                                     <label for="phone" class="form-label">No. Telepon</label>
-                                    <input type="text" class="form-control" id="phone" name="phone" placeholder="08xxxxxxxxxx" required>
+                                    <input type="text" class="form-control" id="phone" name="phone" placeholder="08xxxxxxxxxx" required value="<?php echo $phone ?>">
                                 </div>
                                 <div class="mb-3">
                                     <label for="kelas_id" class="form-label">Kelas</label>
-                                    <select class="form-select" aria-label="Default select example" name="kelas_id" required>
-                                        <option value="0">--Pilih Kelas--</option>
-                                        <?php
-                                            $query = mysqli_query($conn, "SELECT * FROM kelas") or die (mysqli_error($conn));
-                                            while($data = mysqli_fetch_array($query)){
-                                                echo "<option value=$data[id]>$data[class_name]</option>";
-                                            }
-                                        ?>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="pass" class="form-label">Password</label>
-                                    <input type="text" class="form-control" id="pass" name="pass" placeholder="**********" required>
+                                        <select class="form-select" aria-label="Default select example" name="kelas_id">
+                                            <?php
+                                                echo "<option value=$kelas_id>$class_name</option>";
+                                                $query = mysqli_query($conn, "SELECT * FROM kelas") or die (mysqli_error($conn));
+                                                while($data = mysqli_fetch_array($query)){
+                                                    echo "<option value=$data[id]> $data[class_name]</option>";
+                                                }
+                                            ?>
+                                        </select>     
                                 </div>
                                 <button class="btn btn-primary my-3" type="submit" name="submit" style="color: white;">Save</button>
                             </form>

@@ -32,7 +32,7 @@
         exit;
     }
     include '../../../function/connectDB.php';
-    $sql = "SELECT siswa.id AS siswa_id, siswa.user_id, siswa.nis, siswa.name, siswa.jk, siswa.tmp_lahir, siswa.tgl_lahir, siswa.phone, siswa.kelas_id, kelas.id AS kelas_id, kelas.class_name, kelas.guru_id, guru.id AS guru_id, guru.name, users.id AS user_id, users.username, users.password
+    $sql = "SELECT siswa.id AS siswa_id, siswa.user_id, siswa.nis, siswa.name AS nama_siswa, siswa.jk, siswa.tmp_lahir, siswa.tgl_lahir, siswa.phone, siswa.kelas_id, kelas.id AS kelas_id, kelas.class_name, kelas.guru_id, guru.id AS guru_id, guru.name AS nama_guru, users.id AS user_id, users.username, users.password
     FROM siswa JOIN kelas ON siswa.kelas_id = kelas.id
     JOIN guru ON kelas.guru_id = guru.id
     JOIN users ON siswa.user_id = users.id
@@ -116,9 +116,10 @@
                                             <th scope="col">NIS</th>
                                             <th scope="col">Nama</th>
                                             <th scope="col">L/P</th>
-                                            <th scope="col">Tepat, Tanggal Lahir</th>
+                                            <th scope="col">Tempat, Tanggal Lahir</th>
                                             <th scope="col">No Telepon</th>
                                             <th scope="col">Kelas</th>
+                                            <th scope="col">Guru Pengampu</th>
                                             <th scope="col">Aksi</th>
                                         </tr>
                                     </thead>
@@ -130,11 +131,12 @@
                                                     <tr>
                                                         <td>'.$rowNumber.'</td>
                                                         <td>'.$row['nis'].'</td>
-                                                        <td>'.$row['name'].'</td>
+                                                        <td>'.$row['nama_siswa'].'</td>
                                                         <td>'.$row['jk'].'</td>
                                                         <td>'.$row['tmp_lahir'].', '.$row['tgl_lahir'].'</td>
                                                         <td>'.$row['phone'].'</td>
-                                                        <td>'.$row['name_class'].'</td>
+                                                        <td>'.$row['class_name'].'</td>
+                                                        <td>'.$row['nama_guru'].'</td>
 
                                                         <td>
                                                             <a class="btn btn-sm btn-warning buttons" href="edit.php?id='.$row['siswa_id'].'"><i class="lni lni-pencil-1"></i></a>
