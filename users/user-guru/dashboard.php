@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link href="https://cdn.lineicons.com/5.0/lineicons.css" rel="stylesheet" />
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="../../assets/css/style_user.css">
     <title>Dashboard | Guru</title>
 </head>
@@ -29,26 +30,32 @@
                     <i class="lni lni-dashboard-square-1"></i>
                 </button>
                 <div class="sidebar-logo">
-                    <a href="#">SPENTHREE</a>
+                    <a href="dashboard.php">SPENTHREE</a>
                 </div>
             </div>
             <ul class="sidebar-nav">
                 <li class="sidebar-item active">
                     <a href="dashboard.php" class="sidebar-link">
-                        <i class="lni lni-home-2"></i>
+                        <i class='bx bx-home' ></i>
                         <span>Dashboard</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="guru/index.php" class="sidebar-link">
-                        <i class="lni lni-user-4"></i>
-                        <span>Guru</span>
+                    <a href="profil/index.php" class="sidebar-link">
+                        <i class='bx bx-user' ></i>
+                        <span>Profil</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="siswa/index.php" class="sidebar-link">
-                        <i class="lni lni-user-multiple-4"></i>
-                        <span>Siswa</span>
+                    <a href="informasi/index.php" class="sidebar-link">
+                        <i class='bx bx-news'></i>
+                        <span>Informasi</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="kunjungan/index.php" class="sidebar-link">
+                        <i class='bx bx-list-ul' ></i>
+                        <span>Kunjungan</span>
                     </a>
                 </li>
             </ul>
