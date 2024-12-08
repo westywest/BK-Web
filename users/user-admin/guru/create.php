@@ -22,7 +22,7 @@
     include '../../../function/connectDB.php';
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $nip = intval(trim($_POST['nip']));
+        $nip = (trim($_POST['nip']));
         $name = htmlspecialchars(trim($_POST['name']));
         $phone = trim($_POST['phone']);
         $username = htmlspecialchars(trim($_POST['username']));
@@ -77,12 +77,12 @@
     ?>
     <div class="wrapper">
         <aside id="sidebar">
-            <div class="d-flex">
+            <div class="d-flex sidebar-header">
                 <button class="toggle-btn" type="button">
                     <i class="lni lni-dashboard-square-1"></i>
                 </button>
                 <div class="sidebar-logo">
-                    <a href="#">SPENTHREE</a>
+                    <a href="../dashboard.php">BK SPENTHREE</a>
                 </div>
             </div>
             <ul class="sidebar-nav">

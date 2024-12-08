@@ -36,7 +36,7 @@
 
     $sql = "SELECT kelas.id AS kelas_id, kelas.class_name, kelas.guru_id, guru.id as guru_id, guru.nip, guru.name FROM kelas 
     JOIN guru on kelas.guru_id = guru.id
-    ORDER BY kelas_id DESC";
+    ORDER BY kelas_id ASC";
 
     $datas = $conn->prepare($sql);
     $datas->execute();
@@ -46,12 +46,12 @@
     ?>
     <div class="wrapper">
         <aside id="sidebar">
-            <div class="d-flex">
+            <div class="d-flex sidebar-header">
                 <button class="toggle-btn" type="button">
                     <i class="lni lni-dashboard-square-1"></i>
                 </button>
                 <div class="sidebar-logo">
-                    <a href="#">SPENTHREE</a>
+                    <a href="../dashboard.php">BK SPENTHREE</a>
                 </div>
             </div>
             <ul class="sidebar-nav">

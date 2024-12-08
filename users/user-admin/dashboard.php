@@ -1,12 +1,25 @@
-<?php
+<?php 
 session_start();
 if (!isset($_SESSION['status']) || $_SESSION['role'] !== "admin") {
     // Redirect ke halaman login jika bukan admin
-    header("Location:/BK/users/index.php");
+    header("Location: /BK/users/index.php");
     exit;
 }
-?>
+include '../../function/connectDB.php';
 
+$sql = "SELECT role, COUNT(*) AS total_role FROM users GROUP BY role";
+$stmt = $conn->prepare($sql);
+$stmt->execute();
+$result = $stmt->get_result();
+
+$data = [];
+while ($row = $result->fetch_assoc()) {
+    $data[] = [$row['role'], (int)$row['total_role']];
+}
+
+$stmt->close();
+
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -18,17 +31,42 @@ if (!isset($_SESSION['status']) || $_SESSION['role'] !== "admin") {
     <link href="https://cdn.lineicons.com/5.0/lineicons.css" rel="stylesheet" />
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="../../assets/css/style_user.css">
-    <title>Dashboard | Admin</title>
+    <title>Dashboard | Administrator</title>
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load("current", {packages:["corechart"]});
+      google.charts.setOnLoadCallback(drawChart);
+      function drawChart() {// Data dari PHP
+        var data = google.visualization.arrayToDataTable([
+            ['Role', 'Total'], // Header
+            <?php
+            foreach ($data as $d) {
+                echo "['" . $d[0] . "', " . $d[1] . "],";
+            }
+            ?>
+        ]);
+
+        var options = {
+            title: 'Distribusi Role Pengguna',
+            pieHole: 0.4,
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
+        chart.draw(data, options);
+      }
+    </script>
+
 </head>
 <body>
     <div class="wrapper">
         <aside id="sidebar">
-            <div class="d-flex">
+            <div class="d-flex sidebar-header">
                 <button class="toggle-btn" type="button">
                     <i class="lni lni-dashboard-square-1"></i>
                 </button>
                 <div class="sidebar-logo">
-                    <a href="#">SPENTHREE</a>
+                    <a href="dashboard.php">BK SPENTHREE</a>
                 </div>
             </div>
             <ul class="sidebar-nav">
@@ -81,8 +119,10 @@ if (!isset($_SESSION['status']) || $_SESSION['role'] !== "admin") {
                             <li class="breadcrumb-item active" aria-current="page">Overview</li>
                         </ol>
                     </nav>
-                    <h1 class="h2">Selamat Datang, <?php echo($_SESSION['username']) ?></h1>
+                    <h1 class="h2">Selamat Datang, <small><?php echo($_SESSION['username']) ?></small>! </h1>
                     <p>Ini adalah halaman awal setelah anda berhasil login.</p>
+
+                    <div id="donutchart" style="width: 900px; height: 500px;"></div>
 
                     <footer class="pt-5 d-flex justify-content-between">
                         <span>Copyright © 2024 <a href="#">BKSPENTHREE</a></span>

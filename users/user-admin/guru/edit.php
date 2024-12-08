@@ -65,12 +65,12 @@
     ?>
     <div class="wrapper">
         <aside id="sidebar">
-            <div class="d-flex">
+            <div class="d-flex sidebar-header">
                 <button class="toggle-btn" type="button">
                     <i class="lni lni-dashboard-square-1"></i>
                 </button>
                 <div class="sidebar-logo">
-                    <a href="#">SPENTHREE</a>
+                    <a href="../dashboard.php">BK SPENTHREE</a>
                 </div>
             </div>
             <ul class="sidebar-nav">

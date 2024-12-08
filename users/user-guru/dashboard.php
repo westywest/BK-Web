@@ -1,16 +1,3 @@
-<?php
-session_start();
-if (!isset($_SESSION['status']) || $_SESSION['role'] !== "guru") {
-    // Redirect ke halaman login jika bukan guru
-    header("Location:/BK/users/index.php");
-    exit;
-
-    include '../../function/connectDB.php';
-
-}
-?>
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,9 +10,21 @@ if (!isset($_SESSION['status']) || $_SESSION['role'] !== "guru") {
     <title>Dashboard | Guru</title>
 </head>
 <body>
+    <?php
+    session_start();
+    if (!isset($_SESSION['status']) || $_SESSION['role'] !== "guru") {
+        // Redirect ke halaman login jika bukan guru
+        header("Location:/BK/users/index.php");
+        exit;
+
+        include '../../function/connectDB.php';
+
+
+    }
+    ?>
     <div class="wrapper">
         <aside id="sidebar">
-            <div class="d-flex">
+            <div class="d-flex sidebar-header">
                 <button class="toggle-btn" type="button">
                     <i class="lni lni-dashboard-square-1"></i>
                 </button>
@@ -77,7 +76,7 @@ if (!isset($_SESSION['status']) || $_SESSION['role'] !== "guru") {
                             <li class="breadcrumb-item active" aria-current="page">Overview</li>
                         </ol>
                     </nav>
-                    <h1 class="h2">Selamat Datang, <?php echo($_SESSION['username']) ?></h1>
+                    <h1 class="h2">Selamat Datang <?php echo($_SESSION['name'])?>!</h1>
                     <p>Ini adalah halaman awal setelah anda berhasil login.</p>
 
                     <footer class="pt-5 d-flex justify-content-between">
