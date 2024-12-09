@@ -32,8 +32,8 @@
         $pass = password_hash($_POST['pass'], PASSWORD_DEFAULT);
     
         // Cek apakah NIS sudah ada di database
-        $query = "SELECT COUNT(*) FROM siswa WHERE nis = ?";
-        $checkNIS = $conn->prepare($query);
+        $sql = "SELECT COUNT(*) FROM siswa WHERE nis = ?";
+        $checkNIS = $conn->prepare($sql);
         $checkNIS->bind_param("i", $nis);
         $checkNIS->execute();
         $checkNIS->bind_result($count);
@@ -41,8 +41,8 @@
         $checkNIS->close();
 
         // Cek apakah NIS sudah digunakan sebagai username di tabel users
-        $query = "SELECT COUNT(*) FROM users WHERE username = ?";
-        $checkUSN = $conn->prepare($query);
+        $sql = "SELECT COUNT(*) FROM users WHERE username = ?";
+        $checkUSN = $conn->prepare($sql);
         $checkUSN->bind_param("s", $nis);
         $checkUSN->execute();
         $checkUSN->bind_result($countUsers);
@@ -112,9 +112,6 @@
             }
         }        
     }
-    
-
-
 
     ?>
     <div class="wrapper">
@@ -240,7 +237,10 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="pass" class="form-label">Password</label>
-                                    <input type="text" class="form-control" id="pass" name="pass" placeholder="**********" required>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class='bx bxs-lock-alt'></i></span>
+                                        <input type="password" class="form-control" name="pass" id="pass" required placeholder="**********">
+                                    </div>
                                 </div>
                                 <button class="btn btn-primary my-3" type="submit" name="submit" style="color: white;">Save</button>
                             </form>

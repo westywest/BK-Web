@@ -167,7 +167,10 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="pass" class="form-label">Password</label>
-                                    <input type="text" class="form-control" id="pass" name="pass" placeholder="**********" required>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class='bx bxs-lock-alt'></i></span>
+                                        <input type="password" class="form-control" name="pass" id="pass" required placeholder="**********">
+                                    </div>
                                 </div>
 
                                 <button class="btn btn-primary my-3" type="submit" name="submit" style="color: white;">Save</button>

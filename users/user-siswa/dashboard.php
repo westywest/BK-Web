@@ -1,13 +1,3 @@
-<?php
-session_start();
-if (!isset($_SESSION['status']) || $_SESSION['role'] !== "siswa") {
-    // Redirect ke halaman login jika bukan siswa
-    header("Location:/BK/users/index.php");
-    exit;
-}
-?>
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,40 +6,58 @@ if (!isset($_SESSION['status']) || $_SESSION['role'] !== "siswa") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link href="https://cdn.lineicons.com/5.0/lineicons.css" rel="stylesheet" />
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="../../assets/css/style_user.css">
     <title>Dashboard | Siswa</title>
 </head>
 <body>
+    <?php
+    session_start();
+    if (!isset($_SESSION['status']) || $_SESSION['role'] !== "siswa") {
+        // Redirect ke halaman login jika bukan siswa
+        header("Location:/BK/users/index.php");
+        exit;
+    }
+    
+    include '../../function/connectDB.php';
+    ?>
     <div class="wrapper">
         <aside id="sidebar">
-            <div class="d-flex">
+            <div class="d-flex sidebar-header">
                 <button class="toggle-btn" type="button">
                     <i class="lni lni-dashboard-square-1"></i>
                 </button>
                 <div class="sidebar-logo">
-                    <a href="#">SPENTHREE</a>
+                    <a href="dashboard.php">SPENTHREE</a>
                 </div>
             </div>
             <ul class="sidebar-nav">
                 <li class="sidebar-item active">
                     <a href="dashboard.php" class="sidebar-link">
-                        <i class="lni lni-home-2"></i>
+                        <i class='bx bx-home' ></i>
                         <span>Dashboard</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="guru/index.php" class="sidebar-link">
-                        <i class="lni lni-user-4"></i>
-                        <span>Guru</span>
+                    <a href="profil/index.php" class="sidebar-link">
+                        <i class='bx bx-user' ></i>
+                        <span>Profil</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="siswa/index.php" class="sidebar-link">
-                        <i class="lni lni-user-multiple-4"></i>
-                        <span>Siswa</span>
+                    <a href="kunjungan/index.php" class="sidebar-link">
+                        <i class='bx bx-list-plus'></i>
+                        <span>Kunjungan</span>
                     </a>
                 </li>
             </ul>
+            <div class="user-profile-footer p-2 d-flex align-items-center">
+                <img src="../../assets/images/profile.jpg" alt="User Avatar" class="rounded-circle me-2" style="width: 40px; height: 40px;">
+                <div class="user-info">
+                    <h6 class="text-white mb-0"><?php echo ($_SESSION['name']) ?></h6>
+                    <small><?php echo($_SESSION['role']) ?></small>
+                </div>
+            </div>
             <div class="sidebar-footer">
                 <a href="../../function/logout.php" class="sidebar-link">
                     <i class="lni lni-exit"></i>
@@ -67,7 +75,7 @@ if (!isset($_SESSION['status']) || $_SESSION['role'] !== "siswa") {
                             <li class="breadcrumb-item active" aria-current="page">Overview</li>
                         </ol>
                     </nav>
-                    <h1 class="h2">Selamat Datang, <?php echo($_SESSION['username']) ?></h1>
+                    <h1 class="h2">Selamat Datang <?php echo($_SESSION['name'])?>!</h1>
                     <p>Ini adalah halaman awal setelah anda berhasil login.</p>
 
                     <footer class="pt-5 d-flex justify-content-between">

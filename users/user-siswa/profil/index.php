@@ -8,28 +8,28 @@
     <link href="https://cdn.lineicons.com/5.0/lineicons.css" rel="stylesheet" />
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="../../../assets/css/style_user.css">
-    <title>Dashboard | Guru</title>
+    <title>Profil | Siswa</title>
 </head>
 <body>
     <?php
     session_start();
 
-    // Cek apakah user sudah login dan memiliki role 'guru'
-    if (!isset($_SESSION['status']) || $_SESSION['role'] !== "guru") {
-        // Redirect ke halaman login jika bukan guru
+    // Cek apakah user sudah login dan memiliki role 'siswa'
+    if (!isset($_SESSION['status']) || $_SESSION['role'] !== "siswa") {
+        
         header("Location:/BK/users/index.php");
         exit;
     }
     
     include '../../../function/connectDB.php';
     
-    // Ambil username dari session
     $username = $_SESSION['username'];
-    
     // Query untuk mengambil data guru berdasarkan username yang login
-    $sql = "SELECT guru.id AS guru_id, guru.nip, guru.name, guru.phone, users.username, users.password
-            FROM guru
-            JOIN users ON guru.user_id = users.id
+    $sql = "SELECT siswa.id AS siswa_id, siswa.nis, siswa.name, siswa.jk, siswa.tmp_lahir, siswa.tgl_lahir, siswa.phone, siswa.kelas_id, users.username, users.password, kelas.id AS kelas_id, kelas.class_name, guru.id AS guru_id, guru.nip, guru.name AS guru_name
+            FROM siswa
+            JOIN users ON siswa.user_id = users.id
+            JOIN kelas ON siswa.kelas_id = kelas.id
+            JOIN guru ON kelas.guru_id = guru.id
             WHERE users.username = ?";
     
     $stmt = $conn->prepare($sql);
@@ -38,19 +38,18 @@
     $result = $stmt->get_result();
     
     if ($result->num_rows > 0) {
-        $data_guru = $result->fetch_assoc();
-        $_SESSION["guru_id"] = $data_guru["guru_id"];
-        $_SESSION["nip"] = $data_guru["nip"];
-        $_SESSION["name"] = $data_guru["name"];
-        $_SESSION["phone"] = $data_guru["phone"];
-        $_SESSION["username"] = $data_guru["username"];
-        $_SESSION["password"] = $data_guru["password"];
+        $user = $result->fetch_assoc();
         
-    } else {
-        // Menangani jika data guru tidak ditemukan
-        $_SESSION['error'] = "Data guru tidak ditemukan.";
-        header('Location: /BK/users/index.php');
-        exit;
+        $nis = $user['nis'];
+        $jk = $user['jk'];
+        $tmp_lahir = $user['tmp_lahir'];
+        $tgl_lahir = date("d F Y", strtotime($user["tgl_lahir"]));
+        $phone = $user['phone'];
+        $guru_name = $user['guru_name'];
+        $nip = $user['nip'];
+        $class_name = $user['class_name'];
+        $hashed_password = $user['password'];
+        
     }
 
     //UBAH PASSWORD
@@ -59,17 +58,9 @@
         $new_password = $_POST['new_password'];
         $confirm_password = $_POST['confirm_password'];
     
-        // Validasi password baru dan konfirmasi password
-        if ($new_password !== $confirm_password) {
-            echo "<script>
-                    alert('Konfirmasi password tidak sesuai!');
-                    window.location.href = '/BK/users/user-guru/profil/index.php';
-                  </script>";
-            exit;
-        }
-    
+        
         // Validasi password lama
-        if (password_verify($current_password, $_SESSION["password"])) {
+        if (password_verify($current_password, $hashed_password)) {
             // Enkripsi password baru
             $hashed_new_password = password_hash($new_password, PASSWORD_DEFAULT);
     
@@ -77,16 +68,31 @@
             $update_sql = $conn->prepare("UPDATE users SET password = ? WHERE username = ?");
             $update_sql->bind_param("ss", $hashed_new_password, $username);
     
+            
+            if ($new_password !== $confirm_password) {
+                echo "<script>
+                        alert('Konfirmasi password tidak sesuai!');
+                        window.location.href = '/BK/users/user-siswa/profil/index.php';
+                    </script>";
+                exit;
+            }
+            if (strlen($new_password) < 8) {
+                echo "<script>
+                        alert('Password harus memiliki minimal 8 karakter!');
+                        window.location.href = '/BK/users/user-siswa/profil/index.php';
+                      </script>";
+                exit;
+            }
             if ($update_sql->execute()) {
                 echo "<script>
                         alert('Password berhasil diupdate!');
-                        window.location.href = '/BK/users/user-guru/profil/index.php';
+                        window.location.href = '/BK/users/user-siswa/profil/index.php';
                       </script>";
                 exit;
             } else {
                 echo "<script>
                         alert('Terjadi kesalahan saat memperbarui password!');
-                        window.location.href = '/BK/users/user-guru/profil/index.php';
+                        window.location.href = '/BK/users/user-siswa/profil/index.php';
                       </script>";
                 exit;
             }
@@ -94,10 +100,11 @@
             // Password lama tidak sesuai
             echo "<script>
                     alert('Password lama tidak sesuai!');
-                    window.location.href = '/BK/users/user-guru/profil/index.php';
+                    window.location.href = '/BK/users/user-siswa/profil/index.php';
                   </script>";
             exit;
         }
+
     
     }
     ?>
@@ -125,14 +132,8 @@
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="informasi/index.php" class="sidebar-link">
-                        <i class='bx bx-news'></i>
-                        <span>Informasi</span>
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a href="kunjungan/index.php" class="sidebar-link">
-                        <i class='bx bx-list-ul' ></i>
+                    <a href="../kunjungan/index.php" class="sidebar-link">
+                        <i class='bx bx-list-plus'></i>
                         <span>Kunjungan</span>
                     </a>
                 </li>
@@ -168,20 +169,32 @@
                         <div class="card-body">
                             <table class="table">
                                 <tr>
-                                    <td class="data-label"><b>NIP</b></td>
-                                    <td><?php echo htmlspecialchars($_SESSION['nip']); ?></td>
+                                    <td class="data-label"><b>NIS</b></td>
+                                    <td><?php echo htmlspecialchars($nis); ?></td>
                                 </tr>
                                 <tr>
                                     <td class="data-label"><b>Nama</b></td>
                                     <td><?php echo htmlspecialchars($_SESSION['name']); ?></td>
                                 </tr>
                                 <tr>
-                                    <td class="data-label"><b>Username</b></td>
-                                    <td><?php echo htmlspecialchars($_SESSION['username']); ?></td>
+                                    <td class="data-label"><b>Jenis Kelamin</b></td>
+                                    <td><?php echo htmlspecialchars($jk); ?></td>
+                                </tr>
+                                <tr>
+                                    <td class="data-label"><b>Tempat, Tanggal Lahir</b></td>
+                                    <td><?php echo htmlspecialchars($tmp_lahir);?>, <?php echo htmlspecialchars($tgl_lahir); ?></td>
                                 </tr>
                                 <tr>
                                     <td class="data-label"><b>No. Telepon</b></td>
-                                    <td><?php echo htmlspecialchars($_SESSION['phone']); ?></td>
+                                    <td><?php echo htmlspecialchars($phone); ?></td>
+                                </tr>
+                                <tr>
+                                    <td class="data-label"><b>Kelas</b></td>
+                                    <td><?php echo htmlspecialchars($class_name);?></td>
+                                </tr>
+                                <tr>
+                                    <td class="data-label"><b>Guru Pengampu</b></td>
+                                    <td><?php echo htmlspecialchars($guru_name);?> (NIP. <?php echo htmlspecialchars($nip); ?>)</td>
                                 </tr>
                             </table>
                         </div>

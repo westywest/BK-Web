@@ -46,9 +46,12 @@
                     $data = $result->fetch_assoc();
                     if (password_verify($pass, $data['password'])) {
                         $_SESSION['role'] = $data['role'];
+                        $_SESSION['user_id'] = $data['id']; // Menyimpan user_id
                         $_SESSION['username'] = $data['username'];
                         $_SESSION['status'] = "login";
-            
+                        
+                        
+                        
                         if ($data['role'] === "guru") {
                             $queryGuru = $conn->prepare("SELECT name FROM guru WHERE user_id = ?");
                             $queryGuru->bind_param("i", $data['id']);
@@ -59,7 +62,16 @@
                                 $guru = $resultGuru->fetch_assoc();
                                 $_SESSION['name'] = $guru['name'];
                             }
+                        } elseif ($data['role'] === "siswa") {
+                            $querySiswa = $conn->prepare("SELECT name FROM siswa WHERE user_id = ?");
+                            $querySiswa->bind_param("i", $data['id']);
+                            $querySiswa->execute();
+                            $resultSiswa = $querySiswa->get_result();
                             
+                            if($resultSiswa->num_rows > 0) {
+                                $siswa = $resultSiswa->fetch_assoc();
+                                $_SESSION['name'] = $siswa['name'];
+                            }
                         }
 
                         // Redirect sesuai role
