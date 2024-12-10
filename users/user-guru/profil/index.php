@@ -8,7 +8,7 @@
     <link href="https://cdn.lineicons.com/5.0/lineicons.css" rel="stylesheet" />
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="../../../assets/css/style_user.css">
-    <title>Dashboard | Guru</title>
+    <title>Profil | Guru</title>
 </head>
 <body>
     <?php
@@ -125,15 +125,21 @@
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="informasi/index.php" class="sidebar-link">
+                    <a href="../informasi/index.php" class="sidebar-link">
                         <i class='bx bx-news'></i>
                         <span>Informasi</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="kunjungan/index.php" class="sidebar-link">
+                    <a href="../kunjungan/index.php" class="sidebar-link">
                         <i class='bx bx-list-ul' ></i>
                         <span>Kunjungan</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="../kotak_konseling/index.php" class="sidebar-link">
+                        <i class='bx bxs-inbox'></i>
+                        <span>Kotak Konseling</span>
                     </a>
                 </li>
             </ul>

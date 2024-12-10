@@ -9,20 +9,7 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" href="../../../assets/css/style_user.css">
-    <title>Profil | Guru</title>
-    <style>
-        .buttons{
-            width: 40px;                
-            font-size: 18px;              
-        }.btn{
-            display: inline-flex;       
-            align-items: center;      
-            justify-content: center;       
-            height: 40px;                  
-            padding: 0;                    
-            border-radius: 5px;            
-        }
-    </style>
+    <title>Kotak Konseling | Guru</title>
 </head>
 <body>
     <?php
@@ -37,31 +24,45 @@
     
     include '../../../function/connectDB.php';
     
-    // Ambil username dari session
     $username = $_SESSION['username'];
-    
-    // Query untuk mengambil data guru berdasarkan username yang login
-    $sql = "SELECT 
-            kunjungan_siswa.id AS kunjungan_id, 
-            kunjungan_siswa.user_id AS kunjungan_user_id, 
-            kunjungan_siswa.guru_id, 
-            kunjungan_siswa.keperluan, 
-            kunjungan_siswa.date, 
-            users.id AS user_id, 
-            guru.id AS guru_id, 
-            guru.name AS guru_name, 
-            siswa.id AS siswa_id, 
-            siswa.name AS siswa_name, 
-            siswa.user_id AS siswa_user_id
-        FROM kunjungan_siswa 
-        JOIN users ON kunjungan_siswa.user_id = users.id
-        JOIN guru ON kunjungan_siswa.guru_id = guru.id
-        JOIN siswa ON users.id = siswa.user_id"; // Menghubungkan users.id ke siswa.user_id
+    $user_id = $_SESSION['user_id'];
+    $guru_id = $_SESSION['guru_id'];
 
+    $konseling_id = $_GET['id'];
+    $sql = "SELECT id, date, message, reply, status FROM konseling WHERE id = ? ORDER BY id DESC";
     $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $konseling_id);
     $stmt->execute();
     $result = $stmt->get_result();
-    
+    $data = $result->fetch_assoc();
+
+    if (isset($_POST['submit'])) {
+        $reply = $_POST['reply'];
+
+        if (empty($reply)) {
+            $_SESSION['error'] = "Balasan tidak boleh kosong!";
+            header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $konseling_id);
+            exit;
+        }
+
+        $sql = "UPDATE konseling SET reply = ?, status = 'closed' WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("si", $reply, $konseling_id);
+
+        if ($stmt->execute()) {
+            echo "<script>
+                    alert('Balasan berhasil dikirim, konseling ditutup!');
+                    window.location.href = '/BK/users/user-guru/kotak_konseling/index.php';
+                  </script>";
+                    exit;
+        } else {
+            $_SESSION['error'] = "Gagal mengirim balasan!";
+            header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $konseling_id);
+            exit;
+        }
+    }
+
+
     ?>
     <div class="wrapper">
         <aside id="sidebar">
@@ -75,7 +76,7 @@
             </div>
             <ul class="sidebar-nav">
                 <li class="sidebar-item">
-                    <a href="../dashboard.php" class="sidebar-link">
+                    <a href="../../dashboard.php" class="sidebar-link">
                         <i class='bx bx-home' ></i>
                         <span>Dashboard</span>
                     </a>
@@ -92,14 +93,14 @@
                         <span>Informasi</span>
                     </a>
                 </li>
-                <li class="sidebar-item active">
-                    <a href="index.php" class="sidebar-link">
+                <li class="sidebar-item">
+                    <a href="../kunjungan/index.php" class="sidebar-link">
                         <i class='bx bx-list-ul' ></i>
                         <span>Kunjungan</span>
                     </a>
                 </li>
-                <li class="sidebar-item">
-                    <a href="../kotak_konseling/index.php" class="sidebar-link">
+                <li class="sidebar-item active">
+                    <a href="index.php" class="sidebar-link">
                         <i class='bx bxs-inbox'></i>
                         <span>Kotak Konseling</span>
                     </a>
@@ -125,42 +126,43 @@
                 <div class="container-fluid">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="#">Kunjungan</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Log Kunjungan</li>
+                            <li class="breadcrumb-item"><a href="/BK/users/user-guru/kotak_konseling/index.php">Data Kotak Konseling</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Reply Balasan</li>
                         </ol>
                     </nav>
-                    <h1 class="h2">Log Kunjungan</h1>
-                    <p>Log Kunjungan Siswa</p>
+                    <h1 class="h2">Reply Balasan</h1>
+                    <p>Note : Jika sudah dibalas auto closed</p>
 
                     <div class="card">
                         <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table" id="table">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">#</th>
-                                            <th scope="col">Waktu Kunjungan</th>
-                                            <th scope="col">Guru</th>
-                                            <th scope="col">Keperluan</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php
-                                            $rowNumber = 1;  
-                                            while ($row = $result->fetch_assoc()) {
-                                                echo '
-                                                    <tr>
-                                                        <td>'.$rowNumber.'</td>
-                                                        <td>'.date("d F Y H:i:s", strtotime($row["date"])).'</td>
-                                                        <td>'.$row['guru_name'].'</td>
-                                                        <td>'.$row['keperluan'].'</td>
-                                                    </tr>
-                                                '; $rowNumber++;
-                                            }
-                                        ?>
-                                    </tbody>
-                                </table>
-                            </div>
+                            <form action="" method="post" enctype="multipart/form-data">
+                                <!-- Menampilkan pesan error jika ada -->
+                                <?php if (isset($_SESSION['error'])): ?>
+                                    <div class="alert alert-warning alert-dismissible fade show">
+                                        <strong>WARNING!</strong> <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                <?php endif; ?>
+
+                                <div class="mb-3">
+                                    <label for="message" class="form-label">Pesan</label><br>
+                                    <!-- Mengganti textarea dengan div untuk pesan -->
+                                    <div class="message-box" style="border: 1px solid #ccc; padding: 10px; background-color: #f9f9f9; border-radius: 5px; min-height: 100px;">
+                                        <?php echo htmlspecialchars($data['message']); ?>
+                                    </div>
+                                </div>
+                                <!-- Formulir untuk balasan -->
+                                <div class="mb-3">
+                                    <label for="reply" class="form-label">Kirim Balasan</label>
+                                    <!-- Jika sudah ada balasan, tambahkan readonly pada textarea -->
+                                    <textarea name="reply" id="reply" class="form-control" rows="4" placeholder="Tulis balasan disini..." <?php echo isset($data['reply']) && !empty($data['reply']) ? 'readonly' : ''; ?>><?php echo isset($data['reply']) ? htmlspecialchars($data['reply']) : ''; ?></textarea>
+                                </div>
+
+                                <!-- Jika reply sudah ada, sembunyikan tombol kirim -->
+                                <?php if (empty($data['reply'])): ?>
+                                    <button class="btn btn-primary my-3" type="submit" name="submit" style="color: white;">Kirim</button>
+                                <?php endif; ?>
+                            </form>
                         </div>
                     </div>
                     <footer class="pt-5 d-flex justify-content-between">

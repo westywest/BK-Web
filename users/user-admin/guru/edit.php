@@ -132,19 +132,19 @@
                                 <input type="hidden" name="id" value="<?= $data['guru_id'];?>">
                                 <div class="mb-3">
                                     <label for="nip" class="form-label">NIP</label>
-                                    <input type="text" class="form-control" id="nip" name="nip" placeholder="nip" required value="<?php echo $nip ?>">
+                                    <input type="text" class="form-control" id="nip" name="nip" placeholder="nip" required value="<?php echo htmlspecialchars($nip) ?>">
                                 </div>
                                 <div class="mb-3">
                                     <label for="username" class="form-label">Username</label>
-                                    <input type="text" class="form-control" id="username" name="username" placeholder="username" disabled value="<?php echo $username ?>">
+                                    <input type="text" class="form-control" id="username" name="username" placeholder="username" disabled value="<?php echo htmlspecialchars($username) ?>">
                                 </div>
                                 <div class="mb-3">
                                     <label for="name" class="form-label">Nama</label>
-                                    <input type="text" class="form-control" id="name" name="name" placeholder="name" required value="<?php echo $name ?>">
+                                    <input type="text" class="form-control" id="name" name="name" placeholder="name" required value="<?php echo htmlspecialchars($name) ?>">
                                 </div>
                                 <div class="mb-3">
                                     <label for="phone" class="form-label">No. Telepon</label>
-                                    <input type="text" class="form-control" id="phone" name="phone" placeholder="phone" required value="<?php echo $phone ?>">
+                                    <input type="text" class="form-control" id="phone" name="phone" placeholder="phone" required value="<?php echo htmlspecialchars($phone) ?>">
                                 </div>
                                 
                                 <p style="color:red; font-size: 12px;"><?php if(isset($_SESSION['error'])){ echo($_SESSION['error']);} ?></p>

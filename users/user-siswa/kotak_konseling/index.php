@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link href="https://cdn.lineicons.com/5.0/lineicons.css" rel="stylesheet" />
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" href="../../../assets/css/style_user.css">
     <title>Kotak Konseling | Siswa</title>
     <style>
@@ -37,11 +38,12 @@
     include '../../../function/connectDB.php';
     $user_id = $_SESSION['user_id'];
     
-    $sql = "SELECT konseling.id AS konseling_id, konseling.date, konseling.message, konseling.guru_id, konseling.status, guru.id AS guru_id, guru.name AS guru_name, users.id AS user_id, anon_mapping.id AS anon_id, anon_mapping.konseling_id, anon_mapping.user_id FROM konseling
+    $sql = "SELECT konseling.id, konseling.date, konseling.message, konseling.guru_id, konseling.status, guru.id AS guru_id, guru.name AS guru_name, users.id AS user_id, anon_mapping.id AS anon_id, anon_mapping.konseling_id, anon_mapping.user_id FROM konseling
     JOIN guru ON konseling.guru_id = guru.id
     JOIN anon_mapping ON konseling.id = anon_mapping.konseling_id
     JOIN users ON anon_mapping.user_id = users.id
-    WHERE users.id = ?";
+    WHERE users.id = ?
+    ORDER BY id DESC";
 
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $user_id);
@@ -140,10 +142,10 @@
                                                             </span>
                                                         </td>
                                                         <td>
-                                                            <a class="btn btn-sm btn-primary buttons" href="show.php?id='.$row['user_id'].'"><i class="bx bx-show" ></i></a>
+                                                            <a class="btn btn-sm btn-primary buttons" href="show.php?konseling_id='.$row['konseling_id'].'"><i class="bx bx-show" ></i></a>
                                                         </td>
                                                     </tr>
-                                                ';
+                                                ';$rowNumber++;
                                             }
                                         ?>
                                     </tbody>
@@ -166,5 +168,13 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../../assets/script/script_admin.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap5.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#table').DataTable();
+        });
+    </script>
     </body>
 </html>

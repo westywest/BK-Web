@@ -146,11 +146,11 @@
 
                                 <div class="mb-3">
                                     <label for="nis" class="form-label">NIS</label>
-                                    <input type="text" class="form-control" id="nis" name="nis" placeholder="Masukkan NIS" required value="<?php echo $nis ?>" disabled>
+                                    <input type="text" class="form-control" id="nis" name="nis" placeholder="Masukkan NIS" required value="<?php echo htmlspecialchars($nis) ?>" disabled>
                                 </div>
                                 <div class="mb-3">
                                     <label for="name" class="form-label">Nama</label>
-                                    <input type="text" class="form-control" id="name" name="name" placeholder="Masukkan Nama" required value="<?php echo $name ?>">
+                                    <input type="text" class="form-control" id="name" name="name" placeholder="Masukkan Nama" required value="<?php echo htmlspecialchars($name) ?>">
                                 </div>
                                 <div class="mb-3">
                                     <label for="jk" class="form-label">Jenis Kelamin</label>
@@ -161,7 +161,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="tmp_lahir" class="form-label">Tempat Lahir</label>
-                                    <input type="text" class="form-control" id="tmp_lahir" name="tmp_lahir" placeholder="Masukkan Tempat Lahir" required value="<?php echo $tmp_lahir ?>">
+                                    <input type="text" class="form-control" id="tmp_lahir" name="tmp_lahir" placeholder="Masukkan Tempat Lahir" required value="<?php echo htmlspecialchars($tmp_lahir) ?>">
                                 </div>
                                 <div class="mb-3">
                                     <label for="tgl_lahir" class="form-label">Tanggal Lahir</label>
@@ -171,13 +171,13 @@
                                             id="tgl_lahir" 
                                             name="tgl_lahir" 
                                             required
-                                            value="<?php echo $tgl_lahir ?>"
+                                            value="<?php echo htmlspecialchars($tgl_lahir) ?>"
                                             min="1900-01-01" 
                                             max="2024-12-31">
                                 </div>
                                 <div class="mb-3">
                                     <label for="phone" class="form-label">No. Telepon</label>
-                                    <input type="text" class="form-control" id="phone" name="phone" placeholder="08xxxxxxxxxx" required value="<?php echo $phone ?>">
+                                    <input type="text" class="form-control" id="phone" name="phone" placeholder="08xxxxxxxxxx" required value="<?php echo htmlspecialchars($phone) ?>">
                                 </div>
                                 <div class="mb-3">
                                     <label for="kelas_id" class="form-label">Kelas</label>

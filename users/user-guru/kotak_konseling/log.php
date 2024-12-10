@@ -9,20 +9,7 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" href="../../../assets/css/style_user.css">
-    <title>Profil | Guru</title>
-    <style>
-        .buttons{
-            width: 40px;                
-            font-size: 18px;              
-        }.btn{
-            display: inline-flex;       
-            align-items: center;      
-            justify-content: center;       
-            height: 40px;                  
-            padding: 0;                    
-            border-radius: 5px;            
-        }
-    </style>
+    <title>Dashboard | Guru</title>
 </head>
 <body>
     <?php
@@ -37,31 +24,16 @@
     
     include '../../../function/connectDB.php';
     
-    // Ambil username dari session
     $username = $_SESSION['username'];
     
-    // Query untuk mengambil data guru berdasarkan username yang login
-    $sql = "SELECT 
-            kunjungan_siswa.id AS kunjungan_id, 
-            kunjungan_siswa.user_id AS kunjungan_user_id, 
-            kunjungan_siswa.guru_id, 
-            kunjungan_siswa.keperluan, 
-            kunjungan_siswa.date, 
-            users.id AS user_id, 
-            guru.id AS guru_id, 
-            guru.name AS guru_name, 
-            siswa.id AS siswa_id, 
-            siswa.name AS siswa_name, 
-            siswa.user_id AS siswa_user_id
-        FROM kunjungan_siswa 
-        JOIN users ON kunjungan_siswa.user_id = users.id
-        JOIN guru ON kunjungan_siswa.guru_id = guru.id
-        JOIN siswa ON users.id = siswa.user_id"; // Menghubungkan users.id ke siswa.user_id
-
+    $user_id = $_SESSION['user_id'];
+    $guru_id = $_SESSION['guru_id'];
+    $sql = "SELECT id, date, message, reply, status FROM konseling WHERE guru_id = ? AND status = 'closed' ORDER BY id DESC";
     $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $guru_id);
     $stmt->execute();
     $result = $stmt->get_result();
-    
+
     ?>
     <div class="wrapper">
         <aside id="sidebar">
@@ -75,7 +47,7 @@
             </div>
             <ul class="sidebar-nav">
                 <li class="sidebar-item">
-                    <a href="../dashboard.php" class="sidebar-link">
+                    <a href="../../dashboard.php" class="sidebar-link">
                         <i class='bx bx-home' ></i>
                         <span>Dashboard</span>
                     </a>
@@ -92,14 +64,14 @@
                         <span>Informasi</span>
                     </a>
                 </li>
-                <li class="sidebar-item active">
-                    <a href="index.php" class="sidebar-link">
+                <li class="sidebar-item">
+                    <a href="../kunjungan/index.php" class="sidebar-link">
                         <i class='bx bx-list-ul' ></i>
                         <span>Kunjungan</span>
                     </a>
                 </li>
-                <li class="sidebar-item">
-                    <a href="../kotak_konseling/index.php" class="sidebar-link">
+                <li class="sidebar-item active">
+                    <a href="index.php" class="sidebar-link">
                         <i class='bx bxs-inbox'></i>
                         <span>Kotak Konseling</span>
                     </a>
@@ -125,12 +97,12 @@
                 <div class="container-fluid">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="#">Kunjungan</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Log Kunjungan</li>
+                            <li class="breadcrumb-item"><a href="/BK/users/user-guru/kotak_konseling/index.php">Data Kotak Konseling</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Log Kotak Konseling</li>
                         </ol>
                     </nav>
-                    <h1 class="h2">Log Kunjungan</h1>
-                    <p>Log Kunjungan Siswa</p>
+                    <h1 class="h2">Log Kotak Konseling</h1>
+                    <p>Kotak konseling yang berstatus <b>closed</b> akan berada disini.</p>
 
                     <div class="card">
                         <div class="card-body">
@@ -139,23 +111,32 @@
                                     <thead>
                                         <tr>
                                             <th scope="col">#</th>
-                                            <th scope="col">Waktu Kunjungan</th>
-                                            <th scope="col">Guru</th>
-                                            <th scope="col">Keperluan</th>
+                                            <th scope="col">Waktu</th>
+                                            <th scope="col">Message</th>
+                                            <th scope="col">Status</th>
+                                            <th scope="col">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php
-                                            $rowNumber = 1;  
+                                        $rowNumber = 1;
                                             while ($row = $result->fetch_assoc()) {
                                                 echo '
                                                     <tr>
                                                         <td>'.$rowNumber.'</td>
                                                         <td>'.date("d F Y H:i:s", strtotime($row["date"])).'</td>
-                                                        <td>'.$row['guru_name'].'</td>
-                                                        <td>'.$row['keperluan'].'</td>
+                                                        <td>'.$row["message"].'</td>
+                                                        <td>
+                                                            <span class="badge bg-secondary">'.ucfirst($row['status']).'</span>
+                                                        </td>
+                                                        <td>
+                                                            <a class="btn btn-sm btn-info" href="reply.php?id='.$row['id'].'">
+                                                                <i class="bx bx-show"></i>
+                                                            </a>
+                                                        </td>
                                                     </tr>
-                                                '; $rowNumber++;
+                                                ';
+                                                $rowNumber++;
                                             }
                                         ?>
                                     </tbody>

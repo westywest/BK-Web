@@ -134,7 +134,7 @@
                                 <input type="hidden" name="id" value="<?= $data['kelas_id'];?>">
                                 <div class="mb-3">
                                     <label for="class_name" class="form-label">Nama Kelas</label>
-                                    <input type="text" class="form-control" id="class_name" name="class_name" placeholder="class_name" required value="<?php echo $class_name ?>">
+                                    <input type="text" class="form-control" id="class_name" name="class_name" placeholder="class_name" required value="<?php echo htmlspecialchars($class_name) ?>">
                                 </div>
                                 <div class="mb-3">
                                     <label for="guru_id" class="form-label">Guru Pengampu</label>

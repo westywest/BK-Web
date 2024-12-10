@@ -50,10 +50,10 @@
                         $_SESSION['username'] = $data['username'];
                         $_SESSION['status'] = "login";
                         
-                        
+                    
                         
                         if ($data['role'] === "guru") {
-                            $queryGuru = $conn->prepare("SELECT name FROM guru WHERE user_id = ?");
+                            $queryGuru = $conn->prepare("SELECT * FROM guru WHERE user_id = ?");
                             $queryGuru->bind_param("i", $data['id']);
                             $queryGuru->execute();
                             $resultGuru = $queryGuru->get_result();
@@ -64,7 +64,7 @@
                                 $_SESSION['name'] = $guru['name'];
                             }
                         } elseif ($data['role'] === "siswa") {
-                            $querySiswa = $conn->prepare("SELECT name FROM siswa WHERE user_id = ?");
+                            $querySiswa = $conn->prepare("SELECT * FROM siswa WHERE user_id = ?");
                             $querySiswa->bind_param("i", $data['id']);
                             $querySiswa->execute();
                             $resultSiswa = $querySiswa->get_result();
@@ -80,7 +80,7 @@
                             header('location:/BK/users/user-admin/dashboard.php');
                             exit;
                         } elseif ($data['role'] === "guru") {
-                            header('location:/BK/users/user-guru/dashboard.php');
+                            header("location:/BK/users/user-guru/dashboard.php");
                             exit;
                         } elseif ($data['role'] === "siswa") {
                             header('location:/BK/users/user-siswa/dashboard.php');

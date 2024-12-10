@@ -26,16 +26,21 @@
     include '../../../function/connectDB.php';
     
     $user_id = $_SESSION['user_id'];
-    $guru_id = $_SESSION['guru_id'];
-    $sql = "SELECT id, message, reply, status FROM konseling WHERE guru_id = ? AND status = 'open'";
+    $konseling_id = $_GET['konseling_id'];
+    $sql = "SELECT konseling.id AS konseling_id, konseling.date, konseling.message, konseling.reply, konseling.guru_id, konseling.status, guru.id AS guru_id, guru.name AS guru_name, users.id AS user_id, anon_mapping.id AS anon_id, anon_mapping.konseling_id, anon_mapping.user_id FROM konseling
+    JOIN guru ON konseling.guru_id = guru.id
+    JOIN anon_mapping ON konseling.id = anon_mapping.konseling_id
+    JOIN users ON anon_mapping.user_id = users.id
+    WHERE konseling_id = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $guru_id);
+    $stmt->bind_param("i", $konseling_id);
     $stmt->execute();
     $result = $stmt->get_result();
 
     if ($data = $result->fetch_assoc()) {
-        $konseling_id = $data['id'];
         $message = $data['message'];
+        $reply = $data['reply'];
+        $guru_name = $data['guru_name'];
     }
     ?>
     <div class="wrapper">
@@ -98,27 +103,21 @@
                         </ol>
                     </nav>
                     <h1 class="h2">Detail Konseling</h1>
-                    <p>Mohon ditunggu respon dari guru!</p>
+                    <p>Harap</p>
 
                     <div class="card">
                         <div class="card-body">
-                            <form action="" method="post" enctype="multipart/form-data">
-                                <!-- Menampilkan pesan error jika ada -->
-                                <?php if (isset($_SESSION['error'])): ?>
-                                    <div class="alert alert-warning alert-dismissible fade show">
-                                        <strong>WARNING!</strong> <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
-                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                    </div>
-                                <?php endif; ?>
-
-                                <div class="mb-3">
-                                    <label for="message" class="form-label">Pesan</label>
-                                    <textarea name="message" id="message" rows="5"><?php echo $message ?></textarea>
+                            <div class="mb-3">
+                                <label for="message" class="form-label">Pesan</label><br>
+                                <div class="message-box" style="border: 1px solid #ccc; padding: 10px; background-color: #f9f9f9; border-radius: 5px; min-height: 100px;">
+                                    <?php echo htmlspecialchars($message); ?>                                </div>
                                 </div>
-                                
-
-                                <button class="btn btn-primary my-3" type="submit" name="submit" style="color: white;">Kirim</button>
-                            </form>
+                            <div class="mb-3">
+                                <label for="reply" class="form-label">Balasan (Guru : <?php echo htmlspecialchars($guru_name); ?>)</label><br>
+                                <div class="message-box" style="border: 1px solid #ccc; padding: 10px; background-color: #e0f7fa; border-radius: 5px; min-height: 100px;">
+                                    <?php echo isset($reply) && !empty($reply) ? htmlspecialchars($reply) : 'Belum ada balasan.'; ?>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <footer class="pt-5 d-flex justify-content-between">
