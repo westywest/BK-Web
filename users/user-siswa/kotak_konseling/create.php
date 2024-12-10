@@ -8,7 +8,7 @@
     <link href="https://cdn.lineicons.com/5.0/lineicons.css" rel="stylesheet" />
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="../../../assets/css/style_user.css">
-    <title>Kunjungan | Siswa</title>
+    <title>Kotak Konseling | Siswa</title>
 </head>
 <body>
     <?php 
@@ -21,41 +21,53 @@
         exit;
     }
 
+
     
     include '../../../function/connectDB.php';
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $username = $_SESSION['username'];
-        $guru_id = intval($_POST['guru_id']);
-        $keperluan = $_POST['keperluan'];
-        
+    
+    
+    if($_SERVER['REQUEST_METHOD'] === 'POST'){
         $user_id = $_SESSION['user_id'];
+        $guru_id = intval($_POST['guru_id']);
+        $message = $_POST['message'];
 
         if (empty($guru_id) || $guru_id == 0) {
             $_SESSION['error'] = "Harap pilih guru!";
             header("Location: " . $_SERVER['PHP_SELF']);
             exit;
-        } elseif (empty($keperluan)) {
-            $_SESSION['error'] = "Harap isi keperluan kamu!";
+        } elseif (empty($message)) {
+            $_SESSION['error'] = "Harap isi pesan kamu!";
             header("Location: " . $_SERVER['PHP_SELF']);
             exit;
-        } else {
-            $sql = "INSERT INTO kunjungan_siswa (id, user_id, guru_id, keperluan) VALUES (null, ?, ?, ?)";
-            $addKunjungan = $conn->prepare($sql);
-            $addKunjungan->bind_param("iis", $user_id, $guru_id, $keperluan);
+        } else  {
+            $sql = "INSERT INTO konseling (id, message, guru_id, status) VALUES (null, ?, ?, 'open')";
+            $addKotak = $conn->prepare($sql);
+            $addKotak->bind_param("si", $message, $guru_id);
+            $addKotak->execute();
 
-            if ($addKunjungan->execute() && $addKunjungan->affected_rows > 0) {
-                echo "<script>
-                        alert('Kunjungan berhasil dibuat!');
-                        window.location.href = '/BK/users/user-siswa/kunjungan/index.php';
-                      </script>";
-                exit;
+            if ($addKotak->affected_rows > 0) {
+                $konseling_id = $conn->insert_id;
+
+                $sql = "INSERT INTO anon_mapping (id, konseling_id, user_id) VALUES (null, ?, ?)";
+                $addKotak = $conn->prepare($sql);
+                $addKotak->bind_param("ii", $konseling_id, $user_id);
+                
+                if ($addKotak->execute() && $addKotak->affected_rows > 0) {
+                    echo "<script>
+                            alert('Kotak konseling berhasil dibuat!');
+                            window.location.href = '/BK/users/user-siswa/kotak_konseling/index.php';
+                          </script>";
+                    exit;
+                    
+                } else {
+                    $_SESSION['error'] = "Gagal membuat kotak konseling!";
+                }
             } else {
-                $_SESSION['error'] = "Gagal membuat kunjungan!";
-                header("Location: " . $_SERVER['PHP_SELF']);
-                exit;
+                $_SESSION['error'] = "Gagal membuat kotak konseling!";
             }
         }
     }
+
     ?>
     <div class="wrapper">
         <aside id="sidebar">
@@ -80,14 +92,14 @@
                         <span>Profil</span>
                     </a>
                 </li>
-                <li class="sidebar-item active">
-                    <a href="index.php" class="sidebar-link">
+                <li class="sidebar-item">
+                    <a href="../kunjungan/index.php" class="sidebar-link">
                         <i class='bx bx-list-plus'></i>
                         <span>Kunjungan</span>
                     </a>
                 </li>
-                <li class="sidebar-item">
-                    <a href="../kotak_konseling/index.php" class="sidebar-link">
+                <li class="sidebar-item active">
+                    <a href="index.php" class="sidebar-link">
                         <i class='bx bxs-inbox'></i>
                         <span>Kotak Konseling</span>
                     </a>
@@ -112,12 +124,12 @@
                 <div class="container-fluid">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="index.php">Log Kunjungan</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Kunjungan Baru</li>
+                            <li class="breadcrumb-item"><a href="index.php">Log Kotak Konseling</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Kotak Konseling Baru</li>
                         </ol>
                     </nav>
-                    <h1 class="h2">Kunjungan Baru</h1>
-                    <p>Isi form berikut ketika kamu mengunjungi BK, dengan guru yang kamu temui dan keperluannya.</p>
+                    <h1 class="h2">Kotak Konseling Baru</h1>
+                    <p>Sampaikan masalahmu pada form ini dan pilih guru yang ingin kamu sampaikan!</p>
 
                     <div class="card">
                         <div class="card-body">
@@ -131,7 +143,7 @@
                                 <?php endif; ?>
 
                                 <div class="mb-3">
-                                    <label for="guru_id" class="form-label">Guru yang ditemui</label>
+                                    <label for="guru_id" class="form-label">Guru</label>
                                     <select class="form-select" aria-label="Default select example" name="guru_id" required>
                                         <option value="0">--Pilih Guru BK--</option>
                                         <?php
@@ -143,9 +155,10 @@
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="keperluan" class="form-label">Keperluan</label>
-                                    <input type="text" class="form-control" name="keperluan" id="keperluan" required placeholder="Isi keperluan kamu disini">
+                                    <label for="message" class="form-label">Pesan</label>
+                                    <input type="text" class="form-control" name="message" id="message" required placeholder="Isi pesan kamu disini">
                                 </div>
+
                                 <button class="btn btn-primary my-3" type="submit" name="submit" style="color: white;">Kirim</button>
                             </form>
                         </div>

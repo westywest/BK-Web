@@ -140,7 +140,7 @@
                                                             <a class="btn btn-sm btn-primary buttons" href="../../cetak_detailNews.php?id=' . $row['guru_id'] . '"><i class="lni lni-printer"></i></a>
                                                         </td>
                                                     </tr>
-                                                ';
+                                                '; $rowNumber++;
                                             }
                                         ?>
                                     </tbody>

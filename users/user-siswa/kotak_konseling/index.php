@@ -8,7 +8,7 @@
     <link href="https://cdn.lineicons.com/5.0/lineicons.css" rel="stylesheet" />
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="../../../assets/css/style_user.css">
-    <title>Kelola Siswa</title>
+    <title>Kotak Konseling | Siswa</title>
     <style>
         .buttons{
             width: 40px;                
@@ -26,20 +26,28 @@
 <body>
     <?php 
     session_start();
-    if (!isset($_SESSION['status']) || $_SESSION['role'] !== "admin") {
-        // Redirect ke halaman login jika bukan admin
-        header("Location: /BK/users/index.php");
+
+    // Cek apakah user sudah login dan memiliki role 'siswa'
+    if (!isset($_SESSION['status']) || $_SESSION['role'] !== "siswa") {
+        
+        header("Location:/BK/users/index.php");
         exit;
     }
+    
     include '../../../function/connectDB.php';
-    $sql = "SELECT siswa.id AS siswa_id, siswa.user_id, siswa.nis, siswa.name AS nama_siswa, siswa.jk, siswa.tmp_lahir, siswa.tgl_lahir, siswa.phone, siswa.kelas_id, kelas.id AS kelas_id, kelas.class_name, kelas.guru_id, guru.id AS guru_id, guru.name AS nama_guru, users.id AS user_id, users.username, users.password
-    FROM siswa JOIN kelas ON siswa.kelas_id = kelas.id
-    JOIN guru ON kelas.guru_id = guru.id
-    JOIN users ON siswa.user_id = users.id
-    ORDER BY siswa_id DESC";
-    $datas = $conn->prepare($sql);
-    $datas->execute();
-    $resulSiswa = $datas->get_result();
+    $user_id = $_SESSION['user_id'];
+    
+    $sql = "SELECT konseling.id AS konseling_id, konseling.date, konseling.message, konseling.guru_id, konseling.status, guru.id AS guru_id, guru.name AS guru_name, users.id AS user_id, anon_mapping.id AS anon_id, anon_mapping.konseling_id, anon_mapping.user_id FROM konseling
+    JOIN guru ON konseling.guru_id = guru.id
+    JOIN anon_mapping ON konseling.id = anon_mapping.konseling_id
+    JOIN users ON anon_mapping.user_id = users.id
+    WHERE users.id = ?";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
     ?>
     <div class="wrapper">
         <aside id="sidebar">
@@ -48,40 +56,40 @@
                     <i class="lni lni-dashboard-square-1"></i>
                 </button>
                 <div class="sidebar-logo">
-                    <a href="../dashboard.php">BK SPENTHREE</a>
+                    <a href="../dashboard.php">SPENTHREE</a>
                 </div>
             </div>
             <ul class="sidebar-nav">
                 <li class="sidebar-item">
                     <a href="../dashboard.php" class="sidebar-link">
-                        <i class="lni lni-home-2"></i>
+                        <i class='bx bx-home' ></i>
                         <span>Dashboard</span>
                     </a>
                 </li>
+                <li class="sidebar-item ">
+                    <a href="../profil/index.php" class="sidebar-link">
+                        <i class='bx bx-user' ></i>
+                        <span>Profil</span>
+                    </a>
+                </li>
                 <li class="sidebar-item">
-                    <a href="../guru/index.php" class="sidebar-link">
-                        <i class="lni lni-user-4"></i>
-                        <span>Guru</span>
+                    <a href="../kunjungan/index.php" class="sidebar-link">
+                        <i class='bx bx-list-plus'></i>
+                        <span>Kunjungan</span>
                     </a>
                 </li>
                 <li class="sidebar-item active">
-                    <a href="../siswa/index.php" class="sidebar-link">
-                        <i class="lni lni-user-multiple-4"></i>
-                        <span>Siswa</span>
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a href="../Kelas/index.php" class="sidebar-link">
-                        <i class='bx bx-spreadsheet' ></i>
-                        <span>Kelas</span>
+                    <a href="index.php" class="sidebar-link">
+                        <i class='bx bxs-inbox'></i>
+                        <span>Kotak Konseling</span>
                     </a>
                 </li>
             </ul>
             <div class="user-profile-footer p-2 d-flex align-items-center">
                 <img src="../../../assets/images/profile.jpg" alt="User Avatar" class="rounded-circle me-2" style="width: 40px; height: 40px;">
                 <div class="user-info">
-                    <h6 class="text-white mb-0">Maharani Dian Prawesty</h6>
-                    <small>Guru</small>
+                    <h6 class="text-white mb-0"><?php echo ($_SESSION['name']) ?></h6>
+                    <small><?php echo($_SESSION['role']) ?></small>
                 </div>
             </div>
             <div class="sidebar-footer">
@@ -91,60 +99,51 @@
                 </a>
             </div>
         </aside>
-
         <div class="main p-3">
             <main>
                 <div class="container-fluid">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="#">Siswa</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Daftar Siswa</li>
+                            <li class="breadcrumb-item"><a href="#">Kotak Konseling</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Log Kotak Konseling</li>
                         </ol>
                     </nav>
-                    <h1 class="h2">Daftar Siswa</h1>
-                    <p>Untuk menambah Siswa silahkan klik tombol<b> + Tambah Data</b> dibawah.</p>
+                    <h1 class="h2">Log Kotak Konseling</h1>
+                    <p>Jika kamu mempunyai masalah dan ingin menyampaikannya, silahkan klik tombol<b> + Kotak Konseling Baru</b> dibawah.</p>
 
                     <div class="card">
                         <div class="card-body">
-                            <a class="btn btn-primary mb-4" href="create.php" style="color: white; width: 135px;"><i class="lni lni-plus"></i> Tambah Data</a>
-                            <a href="../../cetak_author.php" class="btn btn-block btn-primary mb-4 buttons"><i class="lni lni-printer"></i></a>
+                            <a class="btn btn-primary mb-4" href="create.php" style="color: white; width: 190px;"><i class="lni lni-plus"></i> Kotak Konseling Baru</a>
                             <div class="table-responsive">
                                 <table class="table" id="table">
                                     <thead>
                                         <tr>
                                             <th scope="col">#</th>
-                                            <th scope="col">NIS</th>
-                                            <th scope="col">Nama</th>
-                                            <th scope="col">L/P</th>
-                                            <th scope="col">Tempat, Tanggal Lahir</th>
-                                            <th scope="col">No Telepon</th>
-                                            <th scope="col">Kelas</th>
-                                            <th scope="col">Guru Pengampu</th>
+                                            <th scope="col">Waktu</th>
+                                            <th scope="col">Guru</th>
+                                            <th scope="col">Status</th>
                                             <th scope="col">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php
                                             $rowNumber = 1;  
-                                            while ($row = $resulSiswa->fetch_assoc()) {
+                                            while ($row = $result->fetch_assoc()) {
                                                 echo '
                                                     <tr>
                                                         <td>'.$rowNumber.'</td>
-                                                        <td>'.$row['nis'].'</td>
-                                                        <td>'.$row['nama_siswa'].'</td>
-                                                        <td>'.$row['jk'].'</td>
-                                                        <td>'.$row['tmp_lahir'].', '.date("d F Y", strtotime($row["tgl_lahir"])).'</td>
-                                                        <td>'.$row['phone'].'</td>
-                                                        <td>'.$row['class_name'].'</td>
-                                                        <td>'.$row['nama_guru'].'</td>
-
+                                                        <td>'.date("d F Y H:i:s", strtotime($row["date"])).'</td>
+                                                        <td>'.$row['guru_name'].'</td>
                                                         <td>
-                                                            <a class="btn btn-sm btn-warning buttons" href="edit.php?id='.$row['siswa_id'].'"><i class="lni lni-pencil-1"></i></a>
-                                                            <a onclick="return confirm(`Apakah anda yakin?`)" class="btn btn-sm btn-danger buttons" href="delete.php?id='.$row['siswa_id'].'"><i class="lni lni-trash-3"></i></a>
-                                                            <a class="btn btn-sm btn-primary buttons" href="../../cetak_detailNews.php?id=' . $row['siswa_id'] . '"><i class="lni lni-printer"></i></a>
+                                                            <span class="badge ' . ($row['status'] === "open" ? "bg-success" : "bg-secondary") . '">
+                                                                ' . ucfirst($row['status']) . '
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <a class="btn btn-sm btn-primary buttons" href="show.php?id='.$row['user_id'].'"><i class="bx bx-show" ></i></a>
                                                         </td>
                                                     </tr>
-                                                '; $rowNumber++;
+                                                ';
                                             }
                                         ?>
                                     </tbody>

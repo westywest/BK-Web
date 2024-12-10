@@ -60,6 +60,7 @@
                             
                             if($resultGuru->num_rows > 0) {
                                 $guru = $resultGuru->fetch_assoc();
+                                $_SESSION['guru_id'] = $guru['id'];
                                 $_SESSION['name'] = $guru['name'];
                             }
                         } elseif ($data['role'] === "siswa") {
