@@ -104,6 +104,12 @@
                         <span>Kotak Konseling</span>
                     </a>
                 </li>
+                <li class="sidebar-item">
+                    <a href="../pelanggaran/index.php" class="sidebar-link">
+                        <i class='bx bx-error'></i>
+                        <span>Pelanggaran Siswa</span>
+                    </a>
+                </li>
             </ul>
             <div class="user-profile-footer p-2 d-flex align-items-center">
                 <img src="../../../assets/images/profile.jpg" alt="User Avatar" class="rounded-circle me-2" style="width: 40px; height: 40px;">
@@ -140,7 +146,8 @@
                                         <tr>
                                             <th scope="col">#</th>
                                             <th scope="col">Waktu Kunjungan</th>
-                                            <th scope="col">Guru</th>
+                                            <th scope="col">Nama Siswa</th>
+                                            <th scope="col">Guru yang ditemui</th>
                                             <th scope="col">Keperluan</th>
                                         </tr>
                                     </thead>
@@ -152,6 +159,7 @@
                                                     <tr>
                                                         <td>'.$rowNumber.'</td>
                                                         <td>'.date("d F Y H:i:s", strtotime($row["date"])).'</td>
+                                                        <td>'.$row['siswa_name'].'</td>
                                                         <td>'.$row['guru_name'].'</td>
                                                         <td>'.$row['keperluan'].'</td>
                                                     </tr>

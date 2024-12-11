@@ -9,7 +9,7 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" href="../../../assets/css/style_user.css">
-    <title>Kunjungan | Siswa</title>
+    <title>Pelanggaran Siswa | Guru</title>
     <style>
         .buttons{
             width: 40px;                
@@ -25,29 +25,18 @@
     </style>
 </head>
 <body>
-    <?php 
+    <?php
     session_start();
-
-    // Cek apakah user sudah login dan memiliki role 'siswa'
-    if (!isset($_SESSION['status']) || $_SESSION['role'] !== "siswa") {
-        
+    // Cek apakah user sudah login dan memiliki role 'guru'
+    if (!isset($_SESSION['status']) || $_SESSION['role'] !== "guru") {
+        // Redirect ke halaman login jika bukan guru
         header("Location:/BK/users/index.php");
         exit;
     }
     
-    include '../../../function/connectDB.php';
-    $user_id = $_SESSION['user_id'];
+    include '../../../function/connectDB.php'; 
+
     
-    $sql = "SELECT kunjungan_siswa.id AS kunjungan_id, kunjungan_siswa.user_id, kunjungan_siswa.guru_id, kunjungan_siswa.keperluan, kunjungan_siswa.date, users.id AS user_id, guru.id AS guru_id, guru.name AS guru_name
-    FROM kunjungan_siswa JOIN users ON kunjungan_siswa.user_id = users.id
-    JOIN guru ON kunjungan_siswa.guru_id = guru.id
-    WHERE users.id = ?";
-
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
     ?>
     <div class="wrapper">
         <aside id="sidebar">
@@ -66,15 +55,21 @@
                         <span>Dashboard</span>
                     </a>
                 </li>
-                <li class="sidebar-item ">
+                <li class="sidebar-item">
                     <a href="../profil/index.php" class="sidebar-link">
                         <i class='bx bx-user' ></i>
                         <span>Profil</span>
                     </a>
                 </li>
-                <li class="sidebar-item active">
-                    <a href="index.php" class="sidebar-link">
-                        <i class='bx bx-list-plus'></i>
+                <li class="sidebar-item">
+                    <a href="../informasi/index.php" class="sidebar-link">
+                        <i class='bx bx-news'></i>
+                        <span>Informasi</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="../kunjungan/index.php" class="sidebar-link">
+                        <i class='bx bx-list-ul' ></i>
                         <span>Kunjungan</span>
                     </a>
                 </li>
@@ -82,6 +77,12 @@
                     <a href="../kotak_konseling/index.php" class="sidebar-link">
                         <i class='bx bxs-inbox'></i>
                         <span>Kotak Konseling</span>
+                    </a>
+                </li>
+                <li class="sidebar-item active">
+                    <a href="index.php" class="sidebar-link">
+                        <i class='bx bx-error'></i>
+                        <span>Pelanggaran Siswa</span>
                     </a>
                 </li>
             </ul>
@@ -104,47 +105,39 @@
                 <div class="container-fluid">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="#">Kunjungan</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Log Kunjungan</li>
+                            <li class="breadcrumb-item"><a href="#">Pelanggaran Siswa</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Data Pelanggaran</li>
                         </ol>
                     </nav>
-                    <h1 class="h2">Log Kunjungan</h1>
-                    <p>Jika kamu melakukan kunjungan BK, silahkan klik tombol<b> + Kunjungan Baru</b> dibawah.</p>
+                    <h1 class="h2">Data Pelanggaran</h1>
+                    <p>Berisi data siswa yang melakukan pelanggaran, silahkan klik tombol<b> + Pelanggaran Baru</b>. Jika ingin menambahkan jenis pelanggaran baru, silahkan klik tombol<b> + Jenis Pelanggaran</b> dibawah.</p>
 
                     <div class="card">
                         <div class="card-body">
-                            <a class="btn btn-primary mb-4" href="create.php" style="color: white; width: 150px;"><i class="lni lni-plus"></i> Kunjungan Baru</a>
+                            <a class="btn btn-primary mb-4" href="create.php" style="color: white; width: 165px;"><i class="lni lni-plus"></i> Pelanggaran Baru</a>
+                            <a class="btn btn-primary mb-4" href="jenis_pelanggaran/index.php" style="color: white; width: 170px;"><i class="lni lni-plus"></i> Jenis Pelanggaran</a>
                             <div class="table-responsive">
                                 <table class="table" id="table">
                                     <thead>
                                         <tr>
                                             <th scope="col">#</th>
                                             <th scope="col">Tanggal/Waktu</th>
-                                            <th scope="col">Guru</th>
-                                            <th scope="col">Keperluan</th>
+                                            <th scope="col">Nama</th>
+                                            <th scope="col">Kelas</th>
+                                            <th scope="col">Jenis Pelanggaran</th>
+                                            <th scope="col">Keterangan</th>
+                                            <th scope="col">Aksi</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        <?php
-                                            $rowNumber = 1;  
-                                            while ($row = $result->fetch_assoc()) {
-                                                echo '
-                                                    <tr>
-                                                        <td>'.$rowNumber.'</td>
-                                                        <td>'.date("d F Y H:i:s", strtotime($row["date"])).'</td>
-                                                        <td>'.$row['guru_name'].'</td>
-                                                        <td>'.$row['keperluan'].'</td>
-                                                    </tr>
-                                                ';$rowNumber++;
-                                            }
-                                        ?>
-                                    </tbody>
-                                </table>
+                                        <tbody>
+
+                                        </tbody>
+                                    </table>
                             </div>
                         </div>
                     </div>
                     <footer class="pt-5 d-flex justify-content-between">
-                        <span>Copyright © 2024 <a href="#">BKSPENTHREE.</a></span>
+                        <span>Copyright © 2024 <a href="#">BKSPENTHREE</a></span>
                         <ul class="nav m-0">
                             <li class="nav-item">
                                 <a class="nav-link text-secondary"href="#">Hubungi Kami</a>
@@ -168,3 +161,4 @@
     </script>
     </body>
 </html>
+</body>

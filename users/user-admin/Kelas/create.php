@@ -127,12 +127,11 @@
                 <div class="container-fluid">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="index.php">Kelas</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Daftar Kelas</li>
+                            <li class="breadcrumb-item"><a href="index.php">Daftar Kelas</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Tambah Kelas</li>
                         </ol>
                     </nav>
-                    <h1 class="h2">Daftar Kelas</h1>
-                    <p>Untuk menambah Kelas silahkan klik tombol<b> + Tambah Data</b> dibawah.</p>
+                    <h1 class="h2">Tambah Kelas</h1>
 
                     <div class="card">
                         <div class="card-body">
