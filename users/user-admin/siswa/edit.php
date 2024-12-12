@@ -44,7 +44,7 @@
         $phone = $data['phone'];
     }
 
-    if(isset($_POST['submit'])){
+    if(isset($_POST['submit'])) {
         $name = $_POST['name'];
         $tmp_lahir = $_POST['tmp_lahir'];
         $tgl_lahir = $_POST['tgl_lahir'];
@@ -181,15 +181,15 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="kelas_id" class="form-label">Kelas</label>
-                                        <select class="form-select" aria-label="Default select example" name="kelas_id">
-                                            <?php
-                                                echo "<option value=$kelas_id>$class_name</option>";
-                                                $query = mysqli_query($conn, "SELECT * FROM kelas") or die (mysqli_error($conn));
-                                                while($data = mysqli_fetch_array($query)){
-                                                    echo "<option value=$data[id]> $data[class_name]</option>";
-                                                }
-                                            ?>
-                                        </select>     
+                                    <select class="form-select" aria-label="Default select example" name="kelas_id">
+                                        <?php
+                                            echo "<option value=$kelas_id>$class_name</option>";
+                                            $query = mysqli_query($conn, "SELECT * FROM kelas") or die (mysqli_error($conn));
+                                            while($data = mysqli_fetch_array($query)){
+                                                echo "<option value=$data[id]> $data[class_name]</option>";
+                                            }
+                                       ?>
+                                    </select>     
                                 </div>
                                 <button class="btn btn-primary my-3" type="submit" name="submit" style="color: white;">Save</button>
                             </form>

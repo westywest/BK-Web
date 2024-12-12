@@ -35,7 +35,26 @@
     }
     
     include '../../../function/connectDB.php'; 
+    $sql = "SELECT pelanggaran.id AS pelanggaran_id,
+            pelanggaran.siswa_id, 
+            pelanggaran.jenis_id, 
+            pelanggaran.date, 
+            pelanggaran.note, 
+            siswa.id AS siswa_id, 
+            siswa.name AS siswa_name, 
+            siswa.kelas_id,
+            kelas.id AS kelas_id,
+            kelas.class_name,
+            jenis_pelanggaran.id AS jenis_id, 
+            jenis_pelanggaran.jenis 
+        FROM pelanggaran
+        JOIN siswa ON pelanggaran.siswa_id = siswa.id
+        JOIN kelas ON siswa.kelas_id = kelas.id
+        JOIN jenis_pelanggaran ON pelanggaran.jenis_id = jenis_pelanggaran.id";
 
+    $pelanggaran = $conn->prepare($sql);
+    $pelanggaran->execute();
+    $result = $pelanggaran->get_result();
     
     ?>
     <div class="wrapper">
@@ -57,7 +76,7 @@
                 </li>
                 <li class="sidebar-item">
                     <a href="../profil/index.php" class="sidebar-link">
-                        <i class='bx bx-user' ></i>
+                        <i class='bx bxs-user-detail'></i>
                         <span>Profil</span>
                     </a>
                 </li>
@@ -130,7 +149,26 @@
                                         </tr>
                                     </thead>
                                         <tbody>
-
+                                        <?php
+                                            $rowNumber = 1;  
+                                            while ($row = $result->fetch_assoc()) {
+                                                echo '
+                                                    <tr>
+                                                        <td>'.$rowNumber.'</td>
+                                                        <td>'.date("d F Y", strtotime($row["date"])).'</td>
+                                                        <td>'.$row['siswa_name'].'</td>
+                                                        <td>'.$row['class_name'].'</td>
+                                                        <td>'.$row['jenis'].'</td>
+                                                        <td>'.$row['note'].'</td>
+                                                        <td>
+                                                            <a class="btn btn-sm btn-warning buttons" href="edit.php?id='.$row['pelanggaran_id'].'"><i class="lni lni-pencil-1"></i></a>
+                                                            <a onclick="return confirm(`Apakah anda yakin?`)" class="btn btn-sm btn-danger buttons" href="delete.php?id='.$row['pelanggaran_id'].'"><i class="lni lni-trash-3"></i></a>
+                                                            <a class="btn btn-sm btn-primary buttons" href="../../cetak_detailNews.php?id=' . $row['pelanggaran_id'] . '"><i class="lni lni-printer"></i></a>
+                                                        </td>
+                                                    </tr>
+                                                '; $rowNumber++;
+                                            }
+                                        ?>
                                         </tbody>
                                     </table>
                             </div>

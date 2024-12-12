@@ -13,12 +13,14 @@
                     alert('Data berhasil dihapus!');
                     window.location.href = '/BK/users/user-guru/pelanggaran/jenis_pelanggaran/index.php';
                   </script>";
+                  exit();
         } else {
             // Jika tidak ada baris yang dihapus (misalnya data tidak ditemukan)
             echo "<script>
                     alert('Gagal menghapus data! Data tidak ditemukan.');
                     window.location.href = '/BK/users/user-guru/pelanggaran/jenis_pelanggaran/index.php';
                   </script>";
+                  exit();
         }
     } catch (mysqli_sql_exception $e) {
         // Jika terjadi error karena constraint (misalnya foreign key)
@@ -26,6 +28,7 @@
                 alert('Gagal menghapus data! Data terkait dengan tabel lain.');
                 window.location.href = '/BK/users/user-guru/pelanggaran/jenis_pelanggaran/index.php';
               </script>";
+              exit();
     }
 
 ?>

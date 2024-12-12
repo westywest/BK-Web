@@ -22,6 +22,16 @@
     }
     
     include '../../../function/connectDB.php';
+    $selectedKelas = isset($_POST['kelas_id']) ? $_POST['kelas_id'] : null;
+
+    $siswaQuery = null;
+    if ($selectedKelas) {
+        $siswaQuery = mysqli_query($conn, "SELECT * FROM siswa WHERE kelas_id = '$selectedKelas' ORDER BY name ASC");
+        if (!$siswaQuery) {
+            die("Error: " . mysqli_error($conn)); // Debug jika ada error
+        }
+    }
+
     ?>
     <div class="wrapper">
         <aside id="sidebar">
@@ -42,7 +52,7 @@
                 </li>
                 <li class="sidebar-item">
                     <a href="../profil/index.php" class="sidebar-link">
-                        <i class='bx bx-user' ></i>
+                        <i class='bx bxs-user-detail'></i>
                         <span>Profil</span>
                     </a>
                 </li>
@@ -95,7 +105,7 @@
                         </ol>
                     </nav>
                     <h1 class="h2">Buat Pelanggaran</h1>
-                    <p>Membuat catatan pelanggaran bagi siswa yang melakukan pelanggaran.</p>
+                    <p>Membuat catatan pelanggaran bagi siswa yang melakukan pelanggaran. Silahkan pilih kelas terlebih dahulu sebelum memilih siswa.</p>
 
                     <div class="card">
                         <div class="card-body">
@@ -110,40 +120,52 @@
 
                                 <div class="mb-3">
                                     <label for="kelas_id" class="form-label">Kelas</label>
-                                    <select class="form-select" aria-label="Default select example" name="kelas_id" required>
-                                        <option value="0">--Pilih Kelas--</option>
+                                    <select name="kelas_id" id="kelas_id" class="form-select" onchange="this.form.submit()">
+                                        <option value="">-- Pilih Kelas --</option>
                                         <?php
-                                            $query = mysqli_query($conn, "SELECT * FROM kelas") or die (mysqli_error($conn));
-                                            while($data = mysqli_fetch_array($query)){
-                                                echo "<option value=$data[id]>$data[class_name]</option>";
-                                            }
+                                        $kelasQuery = mysqli_query($conn, "SELECT * FROM kelas");
+                                        while ($kelas = mysqli_fetch_assoc($kelasQuery)) {
+                                            echo "<option value='{$kelas['id']}'" . 
+                                                ($selectedKelas == $kelas['id'] ? ' selected' : '') . 
+                                                ">{$kelas['class_name']}</option>";
+                                        }
                                         ?>
                                     </select>
                                 </div>
-                                <div class="mb-3">
-                                    <label for="siswa_id" class="form-label">Siswa</label>
-                                    <select class="form-select" aria-label="Default select example" name="siswa_id" required>
-                                        <option value="">--Pilih Siswa--</option>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="jenis_id" class="form-label">Jenis Pelanggaran</label>
-                                    <select class="form-select" aria-label="Default select example" name="jenis_id" required>
-                                        <option value="0">--Pilih Jenis Pelanggaran--</option>
-                                        <?php
-                                            $query = mysqli_query($conn, "SELECT * FROM jenis_pelanggaran") or die (mysqli_error($conn));
-                                            while($data = mysqli_fetch_array($query)){
-                                                echo "<option value=$data[id]>$data[jenis]</option>";
-                                            }
-                                        ?>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="note" class="form-label">Keterangan</label>
-                                    <input type="text" class="form-control" id="note" name="note" placeholder="Masukkan Keterangan" required>
-                                </div>
-                                <button class="btn btn-primary my-3" type="submit" name="submit" style="color: white;">Save</button>
                             </form>
+                            <?php if ($siswaQuery && mysqli_num_rows($siswaQuery) > 0) { ?>
+                                <form action="submit_pelanggaran.php" method="post">
+                                    <div class="mb-3">
+                                        <label for="siswa_id" class="form-label">Nama Siswa</label>
+                                        <select name="siswa_id" id="siswa_id" class="form-select" required>
+                                            <option value="">-- Pilih Siswa --</option>
+                                            <?php while ($siswa = mysqli_fetch_assoc($siswaQuery)) { ?>
+                                                <option value="<?= $siswa['id'] ?>"><?= $siswa['name'] ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                <?php } else { ?>
+                                    <span style='color: red;'>Tidak ada siswa untuk kelas ini.</span>
+                                <?php } ?>
+                                    <div class="mb-3">
+                                        <label for="jenis_id" class="form-label">Jenis Pelanggaran</label>
+                                        <select name="jenis_id" id="jenis_id" class="form-select" required>
+                                            <option value="">-- Pilih Jenis Pelanggaran --</option>
+                                            <?php
+                                            $jenisQuery = mysqli_query($conn, "SELECT * FROM jenis_pelanggaran");
+                                            while ($jenis = mysqli_fetch_assoc($jenisQuery)) {
+                                                echo "<option value='{$jenis['id']}'>{$jenis['jenis']}</option>";
+                                            }
+                                            ?>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="note" class="form-label">Keterangan</label>
+                                        <textarea name="note" id="note" class="form-control" rows="3" required></textarea>
+                                    </div>
+                                    <button class="btn btn-primary" type="submit" name="submit" style="color: white;">Save</button>
+                                </form>
+                            
                         </div>
                     </div>
                     <footer class="pt-5 d-flex justify-content-between">
@@ -164,41 +186,5 @@
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap5.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            // Ketika kelas dipilih, load siswa sesuai kelas
-            $('#kelas_id').change(function() {
-                var kelas_id = $(this).val(); // Ambil kelas_id yang dipilih
-                
-                if (kelas_id != "") {
-                    // Kirim permintaan AJAX untuk mengambil siswa berdasarkan kelas_id
-                    $.ajax({
-                        url: 'get_siswa_by_kelas.php', // File PHP untuk mengambil siswa
-                        method: 'GET',
-                        data: { kelas_id: kelas_id },
-                        success: function(response) {
-                            console.log(response);  // Memastikan response yang diterima
-                            var siswaData = JSON.parse(response);
-                            var siswaSelect = $('#siswa_id');
-                            
-                            // Kosongkan dropdown siswa sebelumnya
-                            siswaSelect.empty();
-                            siswaSelect.append('<option value="">Pilih Siswa</option>');
-                            
-                            // Masukkan data siswa yang baru
-                            $.each(siswaData, function(index, siswa) {
-                                siswaSelect.append('<option value="' + siswa.id + '">' + siswa.name + '</option>');
-                            });
-                        }
-                    });
-                } else {
-                    // Jika kelas tidak dipilih, kosongkan dropdown siswa
-                    $('#siswa_id').empty();
-                    $('#siswa_id').append('<option value="">Pilih Siswa</option>');
-                }
-            });
-        });
-
-    </script>
     </body>
 </html>

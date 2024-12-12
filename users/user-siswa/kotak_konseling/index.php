@@ -50,6 +50,18 @@
     $stmt->execute();
     $result = $stmt->get_result();
 
+    //Memeriksa apakah ada kotak konseling dengan status 'open'
+    $sql_check_open = "SELECT COUNT(*) AS open_count FROM konseling 
+                        JOIN anon_mapping ON konseling.id = anon_mapping.konseling_id
+                        JOIN users ON anon_mapping.user_id = users.id
+                        WHERE users.id = ? AND status = 'open'";
+    $stmt_check_open = $conn->prepare($sql_check_open);
+    $stmt_check_open->bind_param("i", $user_id);
+    $stmt_check_open->execute();
+    $result_check_open = $stmt_check_open->get_result();
+    $row_check_open = $result_check_open->fetch_assoc();
+    $has_open = $row_check_open['open_count'] > 0;
+
     ?>
     <div class="wrapper">
         <aside id="sidebar">
@@ -70,7 +82,7 @@
                 </li>
                 <li class="sidebar-item ">
                     <a href="../profil/index.php" class="sidebar-link">
-                        <i class='bx bx-user' ></i>
+                        <i class='bx bxs-user-detail'></i>
                         <span>Profil</span>
                     </a>
                 </li>
@@ -115,7 +127,15 @@
 
                     <div class="card">
                         <div class="card-body">
-                            <a class="btn btn-primary mb-4" href="create.php" style="color: white; width: 190px;"><i class="lni lni-plus"></i> Kotak Konseling Baru</a>
+                        <?php if (!$has_open): ?>
+                            <a class="btn btn-primary mb-4" href="create.php" style="color: white; width: 190px;">
+                                <i class="lni lni-plus"></i> Kotak Konseling Baru
+                            </a>
+                        <?php else: ?>
+                            <div class="alert alert-warning alert-dismissible fade show">
+                                <strong>Perhatian!</strong> Anda masih memiliki kotak konseling yang berstatus "open". Harap selesaikan kotak konseling tersebut sebelum membuat yang baru.
+                            </div>
+                        <?php endif; ?>
                             <div class="table-responsive">
                                 <table class="table" id="table">
                                     <thead>

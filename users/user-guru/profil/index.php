@@ -120,7 +120,7 @@
                 </li>
                 <li class="sidebar-item active">
                     <a href="index.php" class="sidebar-link">
-                        <i class='bx bx-user' ></i>
+                        <i class='bx bxs-user-detail'></i>
                         <span>Profil</span>
                     </a>
                 </li>
