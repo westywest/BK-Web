@@ -92,6 +92,12 @@
                         <span>Informasi</span>
                     </a>
                 </li>
+                <li class="sidebar-item">
+                    <a href="../daftar_siswa/index.php" class="sidebar-link">
+                        <i class='bx bx-group' ></i>
+                        <span>Daftar Siswa</span>
+                    </a>
+                </li>
                 <li class="sidebar-item active">
                     <a href="index.php" class="sidebar-link">
                         <i class='bx bx-list-ul' ></i>

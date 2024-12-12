@@ -9,7 +9,7 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" href="../../../assets/css/style_user.css">
-    <title>Kunjungan | Siswa</title>
+    <title>Profil | Guru</title>
     <style>
         .buttons{
             width: 40px;                
@@ -28,28 +28,38 @@
     <?php 
     session_start();
 
-    // Cek apakah user sudah login dan memiliki role 'siswa'
-    if (!isset($_SESSION['status']) || $_SESSION['role'] !== "siswa") {
-        
+    // Cek apakah user sudah login dan memiliki role 'guru'
+    if (!isset($_SESSION['status']) || $_SESSION['role'] !== "guru") {
+        // Redirect ke halaman login jika bukan guru
         header("Location:/BK/users/index.php");
         exit;
     }
     
     include '../../../function/connectDB.php';
-    $user_id = $_SESSION['user_id'];
-    
-    $sql = "SELECT kunjungan_siswa.id AS kunjungan_id, kunjungan_siswa.user_id, kunjungan_siswa.guru_id, kunjungan_siswa.keperluan, kunjungan_siswa.date, users.id AS user_id, guru.id AS guru_id, guru.name AS guru_name
-    FROM kunjungan_siswa JOIN users ON kunjungan_siswa.user_id = users.id
-    JOIN guru ON kunjungan_siswa.guru_id = guru.id
-    WHERE users.id = ?";
+    $sql = "SELECT siswa.id AS siswa_id, siswa.user_id, siswa.nis, siswa.name AS nama_siswa, siswa.jk, siswa.tmp_lahir, siswa.tgl_lahir, siswa.phone, siswa.kelas_id, kelas.id AS kelas_id, kelas.class_name, kelas.guru_id, guru.id AS guru_id, guru.name AS nama_guru
+    FROM siswa JOIN kelas ON siswa.kelas_id = kelas.id
+    JOIN guru ON kelas.guru_id = guru.id
+    ORDER BY siswa_id DESC";
+    $datas = $conn->prepare($sql);
+    $datas->execute();
+    $resulSiswa = $datas->get_result();
 
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    // Mengelompokkan siswa berdasarkan kelas
+    $siswa_per_kelas = [];
+    while ($row = $resulSiswa->fetch_assoc()) {
+        $kelas = $row['class_name'];
+        if (!isset($siswa_per_kelas[$kelas])) {
+            $siswa_per_kelas[$kelas] = [];
+        }
+        $siswa_per_kelas[$kelas][] = $row;
+    }
+
+    // Filter kelas berdasarkan dropdown
+    $selectedClass = $_GET['kelas'] ?? 'all';
 
     ?>
-    <div class="wrapper">
+
+<div class="wrapper">
         <aside id="sidebar">
             <div class="d-flex sidebar-header">
                 <button class="toggle-btn" type="button">
@@ -66,15 +76,27 @@
                         <span>Dashboard</span>
                     </a>
                 </li>
-                <li class="sidebar-item ">
+                <li class="sidebar-item">
                     <a href="../profil/index.php" class="sidebar-link">
                         <i class='bx bxs-user-detail'></i>
                         <span>Profil</span>
                     </a>
                 </li>
+                <li class="sidebar-item">
+                    <a href="../informasi/index.php" class="sidebar-link">
+                        <i class='bx bx-news'></i>
+                        <span>Informasi</span>
+                    </a>
+                </li>
                 <li class="sidebar-item active">
                     <a href="index.php" class="sidebar-link">
-                        <i class='bx bx-list-plus'></i>
+                        <i class='bx bx-group' ></i>
+                        <span>Daftar Siswa</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="../kunjungan/index.php" class="sidebar-link">
+                        <i class='bx bx-list-ul' ></i>
                         <span>Kunjungan</span>
                     </a>
                 </li>
@@ -110,47 +132,76 @@
                 <div class="container-fluid">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="#">Kunjungan</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Log Kunjungan</li>
+                            <li class="breadcrumb-item"><a href="index.php">Siswa</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Daftar Siswa</li>
                         </ol>
                     </nav>
-                    <h1 class="h2">Log Kunjungan</h1>
-                    <p>Jika kamu melakukan kunjungan BK, silahkan klik tombol<b> + Kunjungan Baru</b> dibawah.</p>
+                    <h1 class="h2">Daftar Siswa</h1>
 
                     <div class="card">
                         <div class="card-body">
-                            <a class="btn btn-primary mb-4" href="create.php" style="color: white; width: 150px;"><i class="lni lni-plus"></i> Kunjungan Baru</a>
+                            <form method="GET">
+                                <div class="d-flex align-items-center gap-2">
+                                    <p class="mb-0">Anda sedang menampilkan data kelas:</p>
+                                    <select name="kelas" id="kelasDropdown" class="form-select w-auto" onchange="this.form.submit()">
+                                        <option value="all" <?php echo $selectedClass === 'all' ? 'selected' : ''; ?>>Semua Kelas</option>
+                                        <?php foreach (array_keys($siswa_per_kelas) as $kelas) { ?>
+                                            <option value="<?php echo $kelas; ?>" <?php echo $selectedClass === $kelas ? 'selected' : ''; ?>>
+                                                <?php echo $kelas; ?>
+                                            </option>
+                                        <?php } ?>
+                                    </select>
+                                </div>
+                            </form>
+
+                            <!-- Tabel Siswa -->
                             <div class="table-responsive">
-                                <table class="table" id="table">
+                                <table class="table">
                                     <thead>
                                         <tr>
                                             <th scope="col">#</th>
-                                            <th scope="col">Tanggal/Waktu</th>
-                                            <th scope="col">Guru</th>
-                                            <th scope="col">Keperluan</th>
+                                            <th scope="col">NIS</th>
+                                            <th scope="col">Nama</th>
+                                            <th scope="col">L/P</th>
+                                            <th scope="col">Tempat, Tanggal Lahir</th>
+                                            <th scope="col">No Telepon</th>
+                                            <th scope="col">Kelas</th>
+                                            <th scope="col">Guru Pengampu</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php
-                                            $rowNumber = 1;  
-                                            while ($row = $result->fetch_assoc()) {
-                                                echo '
-                                                    <tr>
-                                                        <td>'.$rowNumber.'</td>
-                                                        <td>'.date("d F Y H:i:s", strtotime($row["date"])).'</td>
-                                                        <td>'.$row['guru_name'].'</td>
-                                                        <td>'.$row['keperluan'].'</td>
-                                                    </tr>
-                                                ';$rowNumber++;
+                                        $rowNumber = 1;
+
+                                        // Tampilkan data siswa berdasarkan filter kelas
+                                        foreach ($siswa_per_kelas as $kelas => $siswa) {
+                                            if ($selectedClass !== 'all' && $kelas !== $selectedClass) {
+                                                continue; // Skip kelas yang tidak sesuai filter
                                             }
+
+                                            foreach ($siswa as $row) { ?>
+                                                <tr>
+                                                    <td><?php echo $rowNumber++; ?></td>
+                                                    <td><?php echo $row['nis']; ?></td>
+                                                    <td><?php echo $row['nama_siswa']; ?></td>
+                                                    <td><?php echo $row['jk']; ?></td>
+                                                    <td><?php echo $row['tmp_lahir']; ?>, <?php echo date("d F Y", strtotime($row["tgl_lahir"])); ?></td>
+                                                    <td><?php echo $row['phone']; ?></td>
+                                                    <td><?php echo $kelas; ?></td>
+                                                    <td><?php echo $row['nama_guru']; ?></td>
+                                                </tr>
+                                            <?php }
+                                        }
                                         ?>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
+
+
                     <footer class="pt-5 d-flex justify-content-between">
-                        <span>Copyright © 2024 <a href="#">BKSPENTHREE.</a></span>
+                        <span>Copyright © 2024 <a href="#">BKSPENTHREE</a></span>
                         <ul class="nav m-0">
                             <li class="nav-item">
                                 <a class="nav-link text-secondary"href="#">Hubungi Kami</a>

@@ -71,6 +71,7 @@
                             
                             if($resultSiswa->num_rows > 0) {
                                 $siswa = $resultSiswa->fetch_assoc();
+                                $_SESSION['siswa_id'] = $siswa['id'];
                                 $_SESSION['name'] = $siswa['name'];
                             }
                         }
