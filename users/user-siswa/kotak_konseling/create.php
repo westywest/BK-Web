@@ -26,10 +26,10 @@
     include '../../../function/connectDB.php';
     
     
-    if($_SERVER['REQUEST_METHOD'] === 'POST'){
+    if($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user_id = $_SESSION['user_id'];
         $guru_id = intval($_POST['guru_id']);
-        $message = $_POST['message'];
+        $message = htmlspecialchars(trim($_POST['message']));
 
         if (empty($guru_id) || $guru_id == 0) {
             $_SESSION['error'] = "Harap pilih guru!";
@@ -40,7 +40,7 @@
             header("Location: " . $_SERVER['PHP_SELF']);
             exit;
         } else  {
-            $sql = "INSERT INTO konseling (id, message, guru_id, status) VALUES (null, ?, ?, 'open')";
+            $sql = "INSERT INTO kotak_konseling (id, message, guru_id, status) VALUES (null, ?, ?, 'open')";
             $addKotak = $conn->prepare($sql);
             $addKotak->bind_param("si", $message, $guru_id);
             $addKotak->execute();
@@ -90,6 +90,12 @@
                     <a href="../profil/index.php" class="sidebar-link">
                         <i class='bx bxs-user-detail'></i>
                         <span>Profil</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="../pendaftaran_konseling/index.php" class="sidebar-link">
+                        <i class='bx bxs-file-plus'></i>
+                        <span>Pendaftaran Konseling</span>
                     </a>
                 </li>
                 <li class="sidebar-item">

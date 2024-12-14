@@ -38,9 +38,9 @@
     include '../../../function/connectDB.php';
     $user_id = $_SESSION['user_id'];
     
-    $sql = "SELECT konseling.id, konseling.date, konseling.message, konseling.guru_id, konseling.status, guru.id AS guru_id, guru.name AS guru_name, users.id AS user_id, anon_mapping.id AS anon_id, anon_mapping.konseling_id, anon_mapping.user_id FROM konseling
-    JOIN guru ON konseling.guru_id = guru.id
-    JOIN anon_mapping ON konseling.id = anon_mapping.konseling_id
+    $sql = "SELECT kotak_konseling.id, kotak_konseling.date, kotak_konseling.message, kotak_konseling.guru_id, kotak_konseling.status, guru.id AS guru_id, guru.name AS guru_name, users.id AS user_id, anon_mapping.id AS anon_id, anon_mapping.konseling_id, anon_mapping.user_id FROM kotak_konseling
+    JOIN guru ON kotak_konseling.guru_id = guru.id
+    JOIN anon_mapping ON kotak_konseling.id = anon_mapping.konseling_id
     JOIN users ON anon_mapping.user_id = users.id
     WHERE users.id = ?
     ORDER BY id DESC";
@@ -51,8 +51,8 @@
     $result = $stmt->get_result();
 
     //Memeriksa apakah ada kotak konseling dengan status 'open'
-    $sql_check_open = "SELECT COUNT(*) AS open_count FROM konseling 
-                        JOIN anon_mapping ON konseling.id = anon_mapping.konseling_id
+    $sql_check_open = "SELECT COUNT(*) AS open_count FROM kotak_konseling 
+                        JOIN anon_mapping ON kotak_konseling.id = anon_mapping.konseling_id
                         JOIN users ON anon_mapping.user_id = users.id
                         WHERE users.id = ? AND status = 'open'";
     $stmt_check_open = $conn->prepare($sql_check_open);
@@ -84,6 +84,12 @@
                     <a href="../profil/index.php" class="sidebar-link">
                         <i class='bx bxs-user-detail'></i>
                         <span>Profil</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="../pendaftaran_konseling/index.php" class="sidebar-link">
+                        <i class='bx bxs-file-plus'></i>
+                        <span>Pendaftaran Konseling</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
@@ -139,7 +145,7 @@
                             </a>
                         <?php else: ?>
                             <div class="alert alert-warning alert-dismissible fade show">
-                                <strong>Perhatian!</strong> Anda masih memiliki kotak konseling yang berstatus "open". Harap selesaikan kotak konseling tersebut sebelum membuat yang baru.
+                                <strong>Perhatian!</strong> Kamu masih memiliki kotak konseling yang berstatus "open". Harap selesaikan kotak konseling tersebut sebelum membuat yang baru.
                             </div>
                         <?php endif; ?>
                             <div class="table-responsive">

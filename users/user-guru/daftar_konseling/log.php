@@ -12,9 +12,8 @@
     <title>Kotak Konseling | Guru</title>
 </head>
 <body>
-    <?php
+    <?php 
     session_start();
-
     // Cek apakah user sudah login dan memiliki role 'guru'
     if (!isset($_SESSION['status']) || $_SESSION['role'] !== "guru") {
         // Redirect ke halaman login jika bukan guru
@@ -25,46 +24,42 @@
     include '../../../function/connectDB.php';
     
     $username = $_SESSION['username'];
+    
     $user_id = $_SESSION['user_id'];
+
+    if (!isset($_SESSION['guru_id'])) {
+        echo "guru_id tidak ditemukan di session!";
+        exit;
+    }
+    
     $guru_id = $_SESSION['guru_id'];
 
-    $konseling_id = $_GET['id'];
-    $sql = "SELECT id, date, message, reply, status FROM kotak_konseling WHERE id = ? ORDER BY id DESC";
+    $sql = "SELECT konseling.id, 
+               konseling.siswa_id, 
+               konseling.guru_id,
+               konseling.keluhan,
+               konseling.tanggal_konseling, 
+               konseling.tindak_lanjut, 
+               konseling.status,
+               siswa.id AS siswa_id,
+               siswa.name,
+               siswa.kelas_id,
+               kelas.id AS kelas_id,
+               kelas.class_name 
+        FROM konseling
+        JOIN siswa ON konseling.siswa_id = siswa.id
+        JOIN kelas ON siswa.kelas_id = kelas.id
+        WHERE konseling.guru_id = ? AND konseling.status = 'completed'
+        ORDER BY konseling.id DESC";
+
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $konseling_id);
+    $stmt->bind_param("i", $guru_id);
     $stmt->execute();
     $result = $stmt->get_result();
-    $data = $result->fetch_assoc();
-
-    if($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $reply = $_POST['reply'];
-
-        if (empty($reply)) {
-            $_SESSION['error'] = "Balasan tidak boleh kosong!";
-            header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $konseling_id);
-            exit;
-        }
-
-        $sql = "UPDATE kotak_konseling SET reply = ?, status = 'closed' WHERE id = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("si", $reply, $konseling_id);
-
-        if ($stmt->execute()) {
-            echo "<script>
-                    alert('Balasan berhasil dikirim, konseling ditutup!');
-                    window.location.href = '/BK/users/user-guru/kotak_konseling/index.php';
-                  </script>";
-                    exit;
-        } else {
-            $_SESSION['error'] = "Gagal mengirim balasan!";
-            header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $konseling_id);
-            exit;
-        }
-    }
-
 
     ?>
-    <div class="wrapper">
+
+<div class="wrapper">
         <aside id="sidebar">
             <div class="d-flex sidebar-header">
                 <button class="toggle-btn" type="button">
@@ -76,7 +71,7 @@
             </div>
             <ul class="sidebar-nav">
                 <li class="sidebar-item">
-                    <a href="../../dashboard.php" class="sidebar-link">
+                    <a href="../dashboard.php" class="sidebar-link">
                         <i class='bx bx-home' ></i>
                         <span>Dashboard</span>
                     </a>
@@ -99,8 +94,8 @@
                         <span>Daftar Siswa</span>
                     </a>
                 </li>
-                <li class="sidebar-item">
-                    <a href="../daftar_konseling/index.php" class="sidebar-link">
+                <li class="sidebar-item active">
+                    <a href="index.php" class="sidebar-link">
                         <i class='bx bx-list-check' ></i>
                         <span>Daftar Konseling</span>
                     </a>
@@ -111,8 +106,8 @@
                         <span>Kunjungan</span>
                     </a>
                 </li>
-                <li class="sidebar-item active">
-                    <a href="index.php" class="sidebar-link">
+                <li class="sidebar-item">
+                    <a href="../kotak_konseling/index.php" class="sidebar-link">
                         <i class='bx bxs-inbox'></i>
                         <span>Kotak Konseling</span>
                     </a>
@@ -138,49 +133,62 @@
                 </a>
             </div>
         </aside>
-
         <div class="main p-3">
             <main>
                 <div class="container-fluid">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="/BK/users/user-guru/kotak_konseling/index.php">Data Kotak Konseling</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Reply Balasan</li>
+                            <li class="breadcrumb-item"><a href="index.php">Data Siswa Konseling</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Log Konseling</li>
                         </ol>
                     </nav>
-                    <h1 class="h2">Reply Balasan</h1>
-                    <p>Note : Jika sudah dibalas auto closed</p>
+                    <h1 class="h2">Log Konseling</h1>
+                    <p>Konseling yang sudah selesai atau berstatus <b>Completed</b> akan dipindahkan disini.</p>
 
                     <div class="card">
                         <div class="card-body">
-                            <form action="" method="post" enctype="multipart/form-data">
-                                <!-- Menampilkan pesan error jika ada -->
-                                <?php if (isset($_SESSION['error'])): ?>
-                                    <div class="alert alert-warning alert-dismissible fade show">
-                                        <strong>WARNING!</strong> <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
-                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                    </div>
-                                <?php endif; ?>
+                        <div class="table-responsive">
+                                <table class="table" id="table">
+                                    <thead>
+                                        <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Nama</th>
+                                        <th scope="col">Kelas</th>
+                                        <th scope="col">Keluhan</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Tanggal Konseling</th>
+                                        <th scope="col">Tindak Lanjut</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        $rowNumber = 1;
+                                        while ($row = $result->fetch_assoc()) {
+                                            $badgeClass = '';
 
-                                <div class="mb-3">
-                                    <label for="message" class="form-label">Pesan</label><br>
-                                    <!-- Mengganti textarea dengan div untuk pesan -->
-                                    <div class="message-box" style="border: 1px solid #ccc; padding: 10px; background-color: #f9f9f9; border-radius: 5px; min-height: 100px;">
-                                        <?php echo htmlspecialchars($data['message']); ?>
-                                    </div>
-                                </div>
-                                <!-- Formulir untuk balasan -->
-                                <div class="mb-3">
-                                    <label for="reply" class="form-label">Kirim Balasan</label>
-                                    <!-- Jika sudah ada balasan, tambahkan readonly pada textarea -->
-                                    <textarea name="reply" id="reply" class="form-control" rows="4" placeholder="Tulis balasan disini..." <?php echo isset($data['reply']) && !empty($data['reply']) ? 'readonly' : ''; ?>><?php echo isset($data['reply']) ? htmlspecialchars($data['reply']) : ''; ?></textarea>
-                                </div>
-
-                                <!-- Jika reply sudah ada, sembunyikan tombol kirim -->
-                                <?php if (empty($data['reply'])): ?>
-                                    <button class="btn btn-primary my-3" type="submit" name="submit" style="color: white;">Kirim</button>
-                                <?php endif; ?>
-                            </form>
+                                            // Status Pending
+                                            if ($row['status'] === "completed") {
+                                                $badgeClass = 'bg-primary';
+                                            }
+                                            echo '
+                                                <tr>
+                                                    <td>' . $rowNumber . '</td>
+                                                    <td>' . $row["name"] . '</td>
+                                                    <td>' . $row["class_name"] . '</td>
+                                                    <td>' . $row["keluhan"] . '</td>
+                                                    <td>
+                                                        <span class="badge ' . $badgeClass . '">' . ucfirst($row['status']) . '</span>
+                                                    </td>
+                                                    <td>' . $row["tanggal_konseling"] . '</td>
+                                                    <td>' . $row["tindak_lanjut"] . '</td>
+                                                </tr>';
+                                                $rowNumber++;
+                                        }
+                                            
+                                        ?>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                     <footer class="pt-5 d-flex justify-content-between">

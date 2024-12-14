@@ -9,60 +9,53 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" href="../../../assets/css/style_user.css">
-    <title>Kotak Konseling | Guru</title>
+    <title>Pendaftaran Konseling | Siswa</title>
 </head>
 <body>
-    <?php
+    <?php 
     session_start();
 
-    // Cek apakah user sudah login dan memiliki role 'guru'
-    if (!isset($_SESSION['status']) || $_SESSION['role'] !== "guru") {
-        // Redirect ke halaman login jika bukan guru
+    // Cek apakah user sudah login dan memiliki role 'siswa'
+    if (!isset($_SESSION['status']) || $_SESSION['role'] !== "siswa") {
+        
         header("Location:/BK/users/index.php");
         exit;
     }
     
     include '../../../function/connectDB.php';
-    
-    $username = $_SESSION['username'];
-    $user_id = $_SESSION['user_id'];
-    $guru_id = $_SESSION['guru_id'];
+    if($_SERVER['REQUEST_METHOD'] === 'POST'){
+        $user_id = $_SESSION['user_id'];
+        $siswa_id = $_SESSION['siswa_id'];
+        $guru_id = intval($_POST['guru_id']);
+        $keluhan = htmlspecialchars(trim($_POST['keluhan']));
 
-    $konseling_id = $_GET['id'];
-    $sql = "SELECT id, date, message, reply, status FROM kotak_konseling WHERE id = ? ORDER BY id DESC";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $konseling_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $data = $result->fetch_assoc();
-
-    if($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $reply = $_POST['reply'];
-
-        if (empty($reply)) {
-            $_SESSION['error'] = "Balasan tidak boleh kosong!";
-            header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $konseling_id);
+        if (empty($guru_id) || $guru_id == 0) {
+            $_SESSION['error'] = "Harap pilih guru!";
+            header("Location: " . $_SERVER['PHP_SELF']);
             exit;
-        }
-
-        $sql = "UPDATE kotak_konseling SET reply = ?, status = 'closed' WHERE id = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("si", $reply, $konseling_id);
-
-        if ($stmt->execute()) {
-            echo "<script>
-                    alert('Balasan berhasil dikirim, konseling ditutup!');
-                    window.location.href = '/BK/users/user-guru/kotak_konseling/index.php';
-                  </script>";
-                    exit;
+        } elseif (empty($keluhan)) {
+            $_SESSION['error'] = "Harap isi keluhan kamu!";
+            header("Location: " . $_SERVER['PHP_SELF']);
+            exit;
         } else {
-            $_SESSION['error'] = "Gagal mengirim balasan!";
-            header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $konseling_id);
-            exit;
+            $sql = "INSERT INTO konseling (id, siswa_id, guru_id, keluhan, status) VALUES (null, ?, ?, ?, 'Pending')";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param('iis', $siswa_id, $guru_id, $keluhan);
+
+            if ($stmt->execute()) {
+                echo "<script>
+                        alert('Berhasil mendaftar konseling!');
+                        window.location.href = '/BK/users/user-siswa/pendaftaran_konseling/index.php';
+                      </script>";
+                exit;
+            } else {
+                $_SESSION['error'] = "Gagal mendaftar konseling!";
+            }
+            
+            $stmt->close();
+            $conn->close();
         }
     }
-
-
     ?>
     <div class="wrapper">
         <aside id="sidebar">
@@ -76,43 +69,31 @@
             </div>
             <ul class="sidebar-nav">
                 <li class="sidebar-item">
-                    <a href="../../dashboard.php" class="sidebar-link">
+                    <a href="../dashboard.php" class="sidebar-link">
                         <i class='bx bx-home' ></i>
                         <span>Dashboard</span>
                     </a>
                 </li>
-                <li class="sidebar-item">
+                <li class="sidebar-item ">
                     <a href="../profil/index.php" class="sidebar-link">
                         <i class='bx bxs-user-detail'></i>
                         <span>Profil</span>
                     </a>
                 </li>
-                <li class="sidebar-item">
-                    <a href="../informasi/index.php" class="sidebar-link">
-                        <i class='bx bx-news'></i>
-                        <span>Informasi</span>
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a href="../daftar_siswa/index.php" class="sidebar-link">
-                        <i class='bx bx-group' ></i>
-                        <span>Daftar Siswa</span>
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a href="../daftar_konseling/index.php" class="sidebar-link">
-                        <i class='bx bx-list-check' ></i>
-                        <span>Daftar Konseling</span>
+                <li class="sidebar-item active">
+                    <a href="index.php" class="sidebar-link">
+                        <i class='bx bxs-file-plus'></i>
+                        <span>Pendaftaran Konseling</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
                     <a href="../kunjungan/index.php" class="sidebar-link">
-                        <i class='bx bx-list-ul' ></i>
+                        <i class='bx bx-list-plus'></i>
                         <span>Kunjungan</span>
                     </a>
                 </li>
-                <li class="sidebar-item active">
-                    <a href="index.php" class="sidebar-link">
+                <li class="sidebar-item">
+                    <a href="../kotak_konseling/index.php" class="sidebar-link">
                         <i class='bx bxs-inbox'></i>
                         <span>Kotak Konseling</span>
                     </a>
@@ -138,18 +119,17 @@
                 </a>
             </div>
         </aside>
-
         <div class="main p-3">
             <main>
                 <div class="container-fluid">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="/BK/users/user-guru/kotak_konseling/index.php">Data Kotak Konseling</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Reply Balasan</li>
+                            <li class="breadcrumb-item"><a href="index.php">Log Pendaftaran Konseling</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Daftar Konseling</li>
                         </ol>
                     </nav>
-                    <h1 class="h2">Reply Balasan</h1>
-                    <p>Note : Jika sudah dibalas auto closed</p>
+                    <h1 class="h2">Daftar Konseling</h1>
+                    <p>Jika ingin melakukan konseling, lakukan pendaftaran disini.</p>
 
                     <div class="card">
                         <div class="card-body">
@@ -163,28 +143,28 @@
                                 <?php endif; ?>
 
                                 <div class="mb-3">
-                                    <label for="message" class="form-label">Pesan</label><br>
-                                    <!-- Mengganti textarea dengan div untuk pesan -->
-                                    <div class="message-box" style="border: 1px solid #ccc; padding: 10px; background-color: #f9f9f9; border-radius: 5px; min-height: 100px;">
-                                        <?php echo htmlspecialchars($data['message']); ?>
-                                    </div>
+                                    <label for="guru_id" class="form-label">Guru</label>
+                                    <select class="form-select" aria-label="Default select example" name="guru_id" required>
+                                        <option value="0">--Pilih Guru BK--</option>
+                                        <?php
+                                            $query = mysqli_query($conn, "SELECT * FROM guru") or die (mysqli_error($conn));
+                                            while($data = mysqli_fetch_array($query)){
+                                                echo "<option value=$data[id]>$data[nip] - $data[name]</option>";
+                                            }
+                                        ?>
+                                    </select>
                                 </div>
-                                <!-- Formulir untuk balasan -->
                                 <div class="mb-3">
-                                    <label for="reply" class="form-label">Kirim Balasan</label>
-                                    <!-- Jika sudah ada balasan, tambahkan readonly pada textarea -->
-                                    <textarea name="reply" id="reply" class="form-control" rows="4" placeholder="Tulis balasan disini..." <?php echo isset($data['reply']) && !empty($data['reply']) ? 'readonly' : ''; ?>><?php echo isset($data['reply']) ? htmlspecialchars($data['reply']) : ''; ?></textarea>
+                                    <label for="keluhan" class="form-label">Keluhan</label>
+                                    <input type="text" class="form-control" name="keluhan" id="keluhan" required placeholder="Isi dengan keluhan kamu disini">
                                 </div>
 
-                                <!-- Jika reply sudah ada, sembunyikan tombol kirim -->
-                                <?php if (empty($data['reply'])): ?>
-                                    <button class="btn btn-primary my-3" type="submit" name="submit" style="color: white;">Kirim</button>
-                                <?php endif; ?>
+                                <button class="btn btn-primary my-3" type="submit" name="submit" style="color: white;">Daftar Konseling</button>
                             </form>
                         </div>
                     </div>
                     <footer class="pt-5 d-flex justify-content-between">
-                        <span>Copyright © 2024 <a href="#">BKSPENTHREE</a></span>
+                        <span>Copyright © 2024 <a href="#">BKSPENTHREE.</a></span>
                         <ul class="nav m-0">
                             <li class="nav-item">
                                 <a class="nav-link text-secondary"href="#">Hubungi Kami</a>
@@ -208,3 +188,4 @@
     </script>
     </body>
 </html>
+</body>

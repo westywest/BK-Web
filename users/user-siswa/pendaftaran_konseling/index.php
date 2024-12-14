@@ -9,7 +9,7 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" href="../../../assets/css/style_user.css">
-    <title>Kunjungan | Siswa</title>
+    <title>Pendaftaran Konseling | Siswa</title>
     <style>
         .buttons{
             width: 40px;                
@@ -37,16 +37,42 @@
     
     include '../../../function/connectDB.php';
     $user_id = $_SESSION['user_id'];
-    
-    $sql = "SELECT kunjungan_siswa.id AS kunjungan_id, kunjungan_siswa.user_id, kunjungan_siswa.guru_id, kunjungan_siswa.keperluan, kunjungan_siswa.date, users.id AS user_id, guru.id AS guru_id, guru.name AS guru_name
-    FROM kunjungan_siswa JOIN users ON kunjungan_siswa.user_id = users.id
-    JOIN guru ON kunjungan_siswa.guru_id = guru.id
-    WHERE users.id = ?";
+    $siswa_id = $_SESSION['siswa_id'];
 
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $sql = "SELECT konseling.id AS konseling_id, 
+            konseling.siswa_id, 
+            konseling.guru_id, 
+            konseling.keluhan, 
+            konseling.status, 
+            konseling.tanggal_konseling,
+            konseling.tindak_lanjut, 
+            guru.id AS guru_id,
+            guru.name AS guru_name,
+            guru.phone,
+            siswa.id AS siswa_id 
+        FROM konseling
+        JOIN guru ON konseling.guru_id = guru.id
+        JOIN siswa ON konseling.siswa_id  = siswa.id
+        WHERE siswa.id = ?
+        ORDER BY konseling_id DESC";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $siswa_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $sql_check_status = "SELECT COUNT(*) AS pendingORconfirmed 
+                     FROM konseling 
+                     JOIN siswa ON konseling.siswa_id = siswa.id 
+                     WHERE siswa.id = ? AND (status = 'pending' OR status = 'confirmed')";
+
+        $check_status = $conn->prepare($sql_check_status);
+        $check_status->bind_param("i", $siswa_id);
+        $check_status->execute();
+        $result_Check = $check_status->get_result();
+        $row_check_status = $result_Check->fetch_assoc();
+
+        $has_open = $row_check_status['pendingORconfirmed'] > 0;
 
     ?>
     <div class="wrapper">
@@ -72,14 +98,14 @@
                         <span>Profil</span>
                     </a>
                 </li>
-                <li class="sidebar-item">
-                    <a href="../pendaftaran_konseling/index.php" class="sidebar-link">
+                <li class="sidebar-item active">
+                    <a href="index.php" class="sidebar-link">
                         <i class='bx bxs-file-plus'></i>
                         <span>Pendaftaran Konseling</span>
                     </a>
                 </li>
-                <li class="sidebar-item active">
-                    <a href="index.php" class="sidebar-link">
+                <li class="sidebar-item">
+                    <a href="../kunjungan/index.php" class="sidebar-link">
                         <i class='bx bx-list-plus'></i>
                         <span>Kunjungan</span>
                     </a>
@@ -116,40 +142,80 @@
                 <div class="container-fluid">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="#">Kunjungan</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Log Kunjungan</li>
+                            <li class="breadcrumb-item"><a href="#">Pendaftaran Konseling</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Log Pendaftaran Konseling</li>
                         </ol>
                     </nav>
-                    <h1 class="h2">Log Kunjungan</h1>
-                    <p>Jika kamu melakukan kunjungan BK, silahkan klik tombol<b> + Kunjungan Baru</b> dibawah.</p>
+                    <h1 class="h2">Log Pendaftaran Konseling</h1>
+                    <p>Jika ingin melakukan konseling, lakukan pendaftaran disini.</p>
 
                     <div class="card">
                         <div class="card-body">
-                            <a class="btn btn-primary mb-4" href="create.php" style="color: white; width: 150px;"><i class="lni lni-plus"></i> Kunjungan Baru</a>
+                        <?php if (!$has_open): ?>
+                            <a class="btn btn-primary mb-4" href="create.php" style="color: white; width: 160px;">
+                                <i class="lni lni-plus"></i> Daftar Konseling
+                            </a>
+                        <?php else: ?>
+                            <div class="alert alert-warning alert-dismissible fade show">
+                                <strong>Perhatian!</strong> Kamu masih memiliki konseling yang berstatus "pending/confirmed". Harap selesaikan konseling tersebut sebelum membuat yang baru.
+                            </div>
+                        <?php endif; ?>
                             <div class="table-responsive">
                                 <table class="table" id="table">
                                     <thead>
                                         <tr>
                                             <th scope="col">#</th>
-                                            <th scope="col">Tanggal/Waktu</th>
                                             <th scope="col">Guru</th>
-                                            <th scope="col">Keperluan</th>
+                                            <th scope="col">No. Telepon</th>
+                                            <th scope="col">Keluhan</th>
+                                            <th scope="col">Tanggal Konseling</th>
+                                            <th scope="col">Tindak Lanjut</th>
+                                            <th scope="col">Status</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php
                                             $rowNumber = 1;  
                                             while ($row = $result->fetch_assoc()) {
+                                                $badgeClass = '';
+                                                if ($row['status'] === 'pending') {
+                                                    $badgeClass = 'bg-warning';
+                                                    $tglKonseling = '';
+                                                    $tindakLanjut = '';
+                                                } elseif ($row['status'] === 'confirmed') {
+                                                    $badgeClass = 'bg-success';
+                                                    $tglKonseling = htmlspecialchars($row['tanggal_konseling']);
+                                                    $tindakLanjut = '';
+                                                } elseif ($row['status'] === 'completed') {
+                                                    $badgeClass = 'bg-primary';
+                                                    $tglKonseling = htmlspecialchars($row['tanggal_konseling']);
+                                                    $tindakLanjut = htmlspecialchars($row['tindak_lanjut']);
+                                                } else {
+                                                    $badgeClass = 'bg-secondary';
+                                                    $tglKonseling = '';
+                                                    $tindakLanjut = '';
+                                                }
+
                                                 echo '
                                                     <tr>
-                                                        <td>'.$rowNumber.'</td>
-                                                        <td>'.date("d F Y H:i:s", strtotime($row["date"])).'</td>
-                                                        <td>'.$row['guru_name'].'</td>
-                                                        <td>'.$row['keperluan'].'</td>
+                                                        <td>' . $rowNumber . '</td>
+                                                        <td>' . htmlspecialchars($row['guru_name']) . '</td>
+                                                        <td>' . htmlspecialchars($row['phone']) . '</td>
+                                                        <td>' . htmlspecialchars($row['keluhan']) . '</td>
+                                                        <td>
+                                                            ' . $tglKonseling . '
+                                                        </td>
+                                                        <td>
+                                                            ' . $tindakLanjut . '
+                                                        </td>
+                                                        <td>
+                                                            <span class="badge ' . $badgeClass . '">' . ucfirst($row['status']) . '</span>
+                                                        </td>
                                                     </tr>
-                                                ';$rowNumber++;
+                                                ';
+                                                $rowNumber++;
                                             }
-                                        ?>
+                                            ?>
                                     </tbody>
                                 </table>
                             </div>
@@ -180,3 +246,4 @@
     </script>
     </body>
 </html>
+</body>

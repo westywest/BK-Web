@@ -28,7 +28,7 @@
     
     $user_id = $_SESSION['user_id'];
     $guru_id = $_SESSION['guru_id'];
-    $sql = "SELECT id, date, message, reply, status FROM konseling WHERE guru_id = ? AND status = 'closed' ORDER BY id DESC";
+    $sql = "SELECT id, date, message, reply, status FROM kotak_konseling WHERE guru_id = ? AND status = 'closed' ORDER BY id DESC";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $guru_id);
     $stmt->execute();
@@ -68,6 +68,12 @@
                     <a href="../daftar_siswa/index.php" class="sidebar-link">
                         <i class='bx bx-group' ></i>
                         <span>Daftar Siswa</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="../daftar_konseling/index.php" class="sidebar-link">
+                        <i class='bx bx-list-check' ></i>
+                        <span>Daftar Konseling</span>
                     </a>
                 </li>
                 <li class="sidebar-item">

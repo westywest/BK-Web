@@ -69,6 +69,12 @@
                     </a>
                 </li>
                 <li class="sidebar-item">
+                    <a href="../daftar_konseling/index.php" class="sidebar-link">
+                        <i class='bx bx-list-check' ></i>
+                        <span>Daftar Konseling</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
                     <a href="../kunjungan/index.php" class="sidebar-link">
                         <i class='bx bx-list-ul' ></i>
                         <span>Kunjungan</span>

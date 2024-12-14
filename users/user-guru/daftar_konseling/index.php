@@ -12,7 +12,7 @@
     <title>Kotak Konseling | Guru</title>
 </head>
 <body>
-    <?php
+    <?php 
     session_start();
     // Cek apakah user sudah login dan memiliki role 'guru'
     if (!isset($_SESSION['status']) || $_SESSION['role'] !== "guru") {
@@ -33,17 +33,35 @@
     }
     
     $guru_id = $_SESSION['guru_id'];
-    
-    $sql = "SELECT id, date, message, reply, guru_id, status FROM kotak_konseling WHERE guru_id = ? AND status = 'open' ORDER BY id DESC";
+
+    $sql = "SELECT konseling.id, 
+               konseling.siswa_id, 
+               konseling.guru_id,
+               konseling.keluhan,
+               konseling.tanggal_konseling, 
+               konseling.tindak_lanjut, 
+               konseling.status,
+               siswa.id AS siswa_id,
+               siswa.name,
+               siswa.kelas_id,
+               kelas.id AS kelas_id,
+               kelas.class_name 
+        FROM konseling
+        JOIN siswa ON konseling.siswa_id = siswa.id
+        JOIN kelas ON siswa.kelas_id = kelas.id
+        WHERE konseling.guru_id = ? AND (konseling.status = 'pending' OR konseling.status = 'confirmed')
+        ORDER BY konseling.id DESC";
+
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $guru_id);
     $stmt->execute();
     $result = $stmt->get_result();
 
-    
+
 
     ?>
-    <div class="wrapper">
+
+<div class="wrapper">
         <aside id="sidebar">
             <div class="d-flex sidebar-header">
                 <button class="toggle-btn" type="button">
@@ -78,8 +96,8 @@
                         <span>Daftar Siswa</span>
                     </a>
                 </li>
-                <li class="sidebar-item">
-                    <a href="../daftar_konseling/index.php" class="sidebar-link">
+                <li class="sidebar-item active">
+                    <a href="index.php" class="sidebar-link">
                         <i class='bx bx-list-check' ></i>
                         <span>Daftar Konseling</span>
                     </a>
@@ -90,8 +108,8 @@
                         <span>Kunjungan</span>
                     </a>
                 </li>
-                <li class="sidebar-item active">
-                    <a href="index.php" class="sidebar-link">
+                <li class="sidebar-item">
+                    <a href="../kotak_konseling/index.php" class="sidebar-link">
                         <i class='bx bxs-inbox'></i>
                         <span>Kotak Konseling</span>
                     </a>
@@ -117,79 +135,82 @@
                 </a>
             </div>
         </aside>
-
         <div class="main p-3">
             <main>
                 <div class="container-fluid">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="#">Kotak Konseling</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Data Kotak Konseling</li>
+                            <li class="breadcrumb-item"><a href="#">Daftar Konseling</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Data Siswa Konseling</li>
                         </ol>
                     </nav>
-                    <h1 class="h2">Data Kotak Konseling</h1>
-                    <p>Note : Jika sudah dibalas auto closed</p>
-
+                    <h1 class="h2">Data Siswa Konseling</h1>
+                    <p>Kelola data konseling siswa berdasarkan status dan lakukan tindak lanjut sesuai kebutuhan.</p>
                     <div class="card">
                         <div class="card-body">
-                        <a class="btn btn-secondary mb-4" href="log.php" style="color: white; width: 50px;"><i class='bx bx-history'></i></a>
-                            <div class="table-responsive">
-                                <table class="table" id="table">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">#</th>
-                                            <th scope="col">Waktu</th>
-                                            <th scope="col">Message</th>
-                                            <th scope="col">Status</th>
-                                            <th scope="col">Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php
-                                        $rowNumber = 1;
+                            <a class="btn btn-secondary mb-4" href="log.php" style="color: white; width: 50px;">
+                                <i class='bx bx-history'></i>
+                            </a>
+                            <form method="POST" action="update_konseling.php"> <!-- Form untuk Submit -->
+                                <div class="table-responsive">
+                                    <table class="table" id="table">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">#</th>
+                                                <th scope="col">Nama</th>
+                                                <th scope="col">Kelas</th>
+                                                <th scope="col">Keluhan</th>
+                                                <th scope="col">Status</th>
+                                                <th scope="col">Tanggal Konseling</th>
+                                                <th scope="col">Tindak Lanjut</th>
+                                                <th scope="col">Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                            $rowNumber = 1;
                                             while ($row = $result->fetch_assoc()) {
-                                                // Tentukan kelas badge berdasarkan status
                                                 $badgeClass = '';
-                                                $replyButton = ''; // Variabel untuk tombol balas
-                                                $showButton = '';  // Variabel untuk tombol show
-                                                
+                                                $dateField = ''; // Input tanggal
+                                                $tindakLanjutField = ''; // Input tindak lanjut
+                                                $dateValue = ''; // Tanggal read-only jika confirmed
+                                                $submitButton = ''; // Tombol submit
+
+                                                // Status Pending
                                                 if ($row['status'] === "pending") {
-                                                    $badgeClass = 'bg-warning';  // Warna kuning untuk pending
-                                                    $replyButton = '<a class="btn btn-sm btn-warning" href="reply.php?id='.$row['id'].'">
-                                                                        <i class="bx bx-reply"></i> Balas
-                                                                    </a>';  // Tombol balas untuk status open
-                                                } elseif ($row['status'] === "confirmed") {
-                                                    $badgeClass = 'bg-success';  // Warna hijau untuk confirmed
-                                                    $showButton = '<a class="btn btn-sm btn-info" href="reply.php?id='.$row['id'].'">
-                                                                    <i class="bx bx-show"></i>
-                                                                </a>';  // Tombol show untuk status closed
-                                                } else {
-                                                    $badgeClass = 'bg-light';  // Warna terang untuk status lain
+                                                    $badgeClass = 'bg-warning'; // Warna kuning untuk pending
+                                                    $dateField = '<input type="datetime-local" name="date[' . $row['id'] . ']" class="form-control" required>';
+                                                    $submitButton = '<button type="submit" name="submit_pending" value="' . $row['id'] . '" class="btn btn-sm btn-primary">Konfirmasi</button>';
                                                 }
-                                                
-                                                // Menampilkan baris tabel
+                                                // Status Confirmed
+                                                elseif ($row['status'] === "confirmed") {
+                                                    $badgeClass = 'bg-success'; // Warna hijau untuk confirmed
+                                                    $dateValue = $row['tanggal_konseling']; // Asumsi ada kolom tanggal konseling
+                                                    $dateField = '<input type="text" class="form-control" value="' . $dateValue . '" readonly>';
+                                                    $tindakLanjutField = '<input type="text" name="tindak_lanjut[' . $row['id'] . ']" class="form-control" placeholder="Isi Tindak Lanjut" required>';
+                                                    $submitButton = '<button type="submit" name="submit_confirmed" value="' . $row['id'] . '" class="btn btn-sm btn-primary">Submit</button>';
+                                                }
+
                                                 echo '
-                                                    <tr>
-                                                        <td>'.$rowNumber.'</td>
-                                                        <td>'.date("d F Y H:i:s", strtotime($row["date"])).'</td>
-                                                        <td>'.$row["message"].'</td>
-                                                        <td>
-                                                            <span class="badge ' . $badgeClass . '">
-                                                                ' . ucfirst($row['status']) . '
-                                                            </span>
-                                                        </td>
-                                                        <td>
-                                                            ' . $showButton . '  <!-- Tombol Tampilkan jika status closed -->
-                                                            ' . $replyButton . '  <!-- Tombol Balas jika status open -->
-                                                        </td>
-                                                    </tr>
-                                                ';
+                                                <tr>
+                                                    <td>' . $rowNumber . '</td>
+                                                    <td>' . $row["name"] . '</td>
+                                                    <td>' . $row["class_name"] . '</td>
+                                                    <td>' . $row["keluhan"] . '</td>
+                                                    <td>
+                                                        <span class="badge ' . $badgeClass . '">' . ucfirst($row['status']) . '</span>
+                                                    </td>
+                                                    <td>' . $dateField . '</td>
+                                                    <td>' . $tindakLanjutField . '</td>
+                                                    <td>' . $submitButton . '</td>
+                                                </tr>';
                                                 $rowNumber++;
                                             }
-                                        ?>
-                                    </tbody>
-                                </table>
-                            </div>
+                                            ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </form>
                         </div>
                     </div>
                     <footer class="pt-5 d-flex justify-content-between">

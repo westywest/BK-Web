@@ -68,6 +68,12 @@
                     </a>
                 </li>
                 <li class="sidebar-item">
+                    <a href="../pendaftaran_konseling/index.php" class="sidebar-link">
+                        <i class='bx bxs-file-plus'></i>
+                        <span>Pendaftaran Konseling</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
                     <a href="../kunjungan/index.php" class="sidebar-link">
                         <i class='bx bx-list-plus'></i>
                         <span>Kunjungan</span>

@@ -27,9 +27,9 @@
     
     $user_id = $_SESSION['user_id'];
     $konseling_id = $_GET['konseling_id'];
-    $sql = "SELECT konseling.id AS konseling_id, konseling.date, konseling.message, konseling.reply, konseling.guru_id, konseling.status, guru.id AS guru_id, guru.name AS guru_name, users.id AS user_id, anon_mapping.id AS anon_id, anon_mapping.konseling_id, anon_mapping.user_id FROM konseling
-    JOIN guru ON konseling.guru_id = guru.id
-    JOIN anon_mapping ON konseling.id = anon_mapping.konseling_id
+    $sql = "SELECT kotak_konseling.id AS konseling_id, kotak_konseling.date, kotak_konseling.message, kotak_konseling.reply, kotak_konseling.guru_id, kotak_konseling.status, guru.id AS guru_id, guru.name AS guru_name, users.id AS user_id, anon_mapping.id AS anon_id, anon_mapping.konseling_id, anon_mapping.user_id FROM kotak_konseling
+    JOIN guru ON kotak_konseling.guru_id = guru.id
+    JOIN anon_mapping ON kotak_konseling.id = anon_mapping.konseling_id
     JOIN users ON anon_mapping.user_id = users.id
     WHERE konseling_id = ?";
     $stmt = $conn->prepare($sql);
@@ -64,6 +64,12 @@
                     <a href="../profil/index.php" class="sidebar-link">
                         <i class='bx bxs-user-detail'></i>
                         <span>Profil</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="../pendaftaran_konseling/index.php" class="sidebar-link">
+                        <i class='bx bxs-file-plus'></i>
+                        <span>Pendaftaran Konseling</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
