@@ -222,3 +222,23 @@ a.sidebar-link:hover {
 #sidebar:not(.expand) .user-profile-footer .user-info {
   display: none; /* Sembunyikan teks */
 }
+
+.img-info {
+  max-width: 100%; /* Agar gambar tidak melampaui container */
+  max-height: 400px; /* Batas tinggi maksimum */
+  width: 400px;
+  height: 240px;
+  object-fit: cover; /* Memastikan gambar terpotong jika tidak sesuai rasio */
+  object-position: 50% 50%; /* Fokus di tengah gambar */
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+.img-infoLates {
+  width: 100px; /* Ubah ukuran lebar sesuai keinginan */
+  height: 80px; /* Ubah ukuran tinggi sesuai keinginan */
+  object-fit: cover; /* Agar gambar tetap terpotong dengan rapi */
+  object-position: center; /* Gambar tetap terpusat */
+  display: block; /* Agar gambar berada di bawah input file */
+  margin-top: 10px; /* Jarak antara input dan gambar */
+}

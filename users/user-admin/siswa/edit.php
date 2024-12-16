@@ -45,7 +45,7 @@
     }
 
     if(isset($_POST['submit'])) {
-        $name = $_POST['name'];
+        $name = ($_POST['name']);
         $tmp_lahir = $_POST['tmp_lahir'];
         $tgl_lahir = $_POST['tgl_lahir'];
         $jk = $_POST['jk'];

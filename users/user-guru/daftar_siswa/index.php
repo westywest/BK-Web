@@ -162,7 +162,7 @@
 
                             <!-- Tabel Siswa -->
                             <div class="table-responsive">
-                                <table class="table">
+                                <table class="table" id="table">
                                     <thead>
                                         <tr>
                                             <th scope="col">#</th>
@@ -188,13 +188,13 @@
                                             foreach ($siswa as $row) { ?>
                                                 <tr>
                                                     <td><?php echo $rowNumber++; ?></td>
-                                                    <td><?php echo $row['nis']; ?></td>
-                                                    <td><?php echo $row['nama_siswa']; ?></td>
-                                                    <td><?php echo $row['jk']; ?></td>
-                                                    <td><?php echo $row['tmp_lahir']; ?>, <?php echo date("d F Y", strtotime($row["tgl_lahir"])); ?></td>
-                                                    <td><?php echo $row['phone']; ?></td>
-                                                    <td><?php echo $kelas; ?></td>
-                                                    <td><?php echo $row['nama_guru']; ?></td>
+                                                    <td><?php echo htmlspecialchars($row['nis']); ?></td>
+                                                    <td><?php echo htmlspecialchars($row['nama_siswa']); ?></td>
+                                                    <td><?php echo htmlspecialchars($row['jk']); ?></td>
+                                                    <td><?php echo htmlspecialchars($row['tmp_lahir']); ?>, <?php echo date("d F Y", strtotime($row["tgl_lahir"])); ?></td>
+                                                    <td><?php echo htmlspecialchars($row['phone']); ?></td>
+                                                    <td><?php echo htmlspecialchars($kelas); ?></td>
+                                                    <td><?php echo htmlspecialchars($row['nama_guru']); ?></td>
                                                 </tr>
                                             <?php }
                                         }

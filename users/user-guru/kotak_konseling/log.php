@@ -10,6 +10,19 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" href="../../../assets/css/style_user.css">
     <title>Dashboard | Guru</title>
+    <style>
+        .buttons{
+            width: 40px;                
+            font-size: 18px;              
+        }.btn{
+            display: inline-flex;       
+            align-items: center;      
+            justify-content: center;       
+            height: 40px;                  
+            padding: 0;                    
+            border-radius: 5px;            
+        }
+    </style>
 </head>
 <body>
     <?php
@@ -148,7 +161,7 @@
                                                             <span class="badge bg-secondary">'.ucfirst($row['status']).'</span>
                                                         </td>
                                                         <td>
-                                                            <a class="btn btn-sm btn-info" href="reply.php?id='.$row['id'].'">
+                                                            <a class="btn btn-sm btn-info buttons" href="reply.php?id='.$row['id'].'">
                                                                 <i class="bx bx-show"></i>
                                                             </a>
                                                         </td>

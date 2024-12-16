@@ -9,12 +9,11 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" href="../../../assets/css/style_user.css">
-    <title>Kotak Konseling | Guru</title>
+    <title>Informasi | Guru</title>
 </head>
 <body>
-    <?php
+    <?php 
     session_start();
-
     // Cek apakah user sudah login dan memiliki role 'guru'
     if (!isset($_SESSION['status']) || $_SESSION['role'] !== "guru") {
         // Redirect ke halaman login jika bukan guru
@@ -23,48 +22,95 @@
     }
     
     include '../../../function/connectDB.php';
+
+    // Ambil nilai ENUM dari database
+    $field = 'jenis';
+    $table = 'informasi';
+    $sqlEnum = "SHOW COLUMNS FROM $table LIKE '$field'";
+    $resultEnum = $conn->query($sqlEnum);
+    $enumValues = [];
+    if ($resultEnum && $rowEnum = $resultEnum->fetch_assoc()) {
+        preg_match("/^enum\((.*)\)$/", $rowEnum['Type'], $matches);
+        $enumValues = explode(",", str_replace("'", "", $matches[1]));
+    }
+
+    // Upload foto
+    if (!empty($_FILES['foto']['name'])) { 
+        $namaFile = $_FILES['foto']['name'];
+        $ukuranFile = $_FILES['foto']['size'];
+        $error = $_FILES['foto']['error'];
+        $tmpName = $_FILES['foto']['tmp_name'];
     
-    $username = $_SESSION['username'];
-    $user_id = $_SESSION['user_id'];
-    $guru_id = $_SESSION['guru_id'];
-
-    $konseling_id = $_GET['id'];
-    $sql = "SELECT id, date, message, reply, status FROM kotak_konseling WHERE id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $konseling_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $data = $result->fetch_assoc();
-
-    if($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $reply = $_POST['reply'];
-
-        if (empty($reply)) {
-            $_SESSION['error'] = "Balasan tidak boleh kosong!";
-            header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $konseling_id);
-            exit;
-        }
-
-        $sql = "UPDATE kotak_konseling SET reply = ?, status = 'closed' WHERE id = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("si", $reply, $konseling_id);
-
-        if ($stmt->execute()) {
-            echo "<script>
-                    alert('Balasan berhasil dikirim, konseling ditutup!');
-                    window.location.href = '/BK/users/user-guru/kotak_konseling/index.php';
-                  </script>";
-                    exit;
+        if ($error === 4) {
+            // Tidak ada file di-upload
+            $foto = "default.png";
         } else {
-            $_SESSION['error'] = "Gagal mengirim balasan!";
-            header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $konseling_id);
+            $ekstensiGambarValid = ['jpg', 'jpeg', 'png'];
+            $ekstensiGambar = strtolower(pathinfo($namaFile, PATHINFO_EXTENSION));
+    
+            if (!in_array($ekstensiGambar, $ekstensiGambarValid)) {
+                $_SESSION['error'] = "Yang anda upload bukan foto!";
+            } elseif ($ukuranFile > 2048000) {
+                $_SESSION['error'] = "Ukuran foto terlalu besar!";
+            } else {
+                $uploadDir = "../../../assets/images/uploads/";
+                $fileName = time() . "_" . preg_replace('/[^A-Za-z0-9.\-_]/', '_', $namaFile);
+                $targetFilePath = $uploadDir . $fileName;
+    
+                if (move_uploaded_file($tmpName, $targetFilePath)) {
+                    $foto = $fileName; 
+                } else {
+                    $_SESSION['error'] = "Gagal mengunggah foto. Menggunakan foto default.";
+                    $foto = "default.png";
+                }
+            }
+        }
+    } else {
+        $foto = "default.png";
+    }
+    
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $username = $_SESSION['username'];
+        $guru_id = $_SESSION['guru_id'];
+        $title = $_POST['title'];
+        $content = $_POST['content'];
+        $jenis = $_POST['jenis'];
+
+        if (empty($title)) {
+            $_SESSION['error'] = "Judul tidak boleh kosong!";
+            header("Location: " . $_SERVER['PHP_SELF']);
             exit;
+        } elseif(empty($jenis) || $jenis == 0) {
+            $_SESSION['error'] = "Harap pilih jenis informasi!";
+            header("Location: " . $_SERVER['PHP_SELF']);
+            exit;
+        } elseif (empty($content)) {
+            $_SESSION['error'] = "Isi informasi tidak boleh kosong!";
+            header("Location: " . $_SERVER['PHP_SELF']);
+            exit;
+        } else {
+            $sql = "INSERT INTO informasi (guru_id, title, content, foto, jenis) VALUES (?, ?, ?, ?, ?)";
+            $addInfo = $conn->prepare($sql);
+            $addInfo->bind_param("issss", $guru_id, $title, $content, $foto, $jenis);
+
+            if ($addInfo->execute() && $addInfo->affected_rows > 0) {
+                echo "<script>
+                        alert('Informasi berhasil dibuat!');
+                        window.location.href = '/BK/users/user-guru/informasi/index.php';
+                    </script>";
+                exit;
+            } else {
+                $_SESSION['error'] = "Gagal membuat Informasi!";
+                header("Location: " . $_SERVER['PHP_SELF']);
+                exit;
+            }
         }
     }
 
-
     ?>
-    <div class="wrapper">
+
+<div class="wrapper">
         <aside id="sidebar">
             <div class="d-flex sidebar-header">
                 <button class="toggle-btn" type="button">
@@ -76,7 +122,7 @@
             </div>
             <ul class="sidebar-nav">
                 <li class="sidebar-item">
-                    <a href="../../dashboard.php" class="sidebar-link">
+                    <a href="../dashboard.php" class="sidebar-link">
                         <i class='bx bx-home' ></i>
                         <span>Dashboard</span>
                     </a>
@@ -87,8 +133,8 @@
                         <span>Profil</span>
                     </a>
                 </li>
-                <li class="sidebar-item">
-                    <a href="../informasi/index.php" class="sidebar-link">
+                <li class="sidebar-item active">
+                    <a href="index.php" class="sidebar-link">
                         <i class='bx bx-news'></i>
                         <span>Informasi</span>
                     </a>
@@ -111,8 +157,8 @@
                         <span>Kunjungan</span>
                     </a>
                 </li>
-                <li class="sidebar-item active">
-                    <a href="index.php" class="sidebar-link">
+                <li class="sidebar-item">
+                    <a href="../kotak_konseling/index.php" class="sidebar-link">
                         <i class='bx bxs-inbox'></i>
                         <span>Kotak Konseling</span>
                     </a>
@@ -138,19 +184,18 @@
                 </a>
             </div>
         </aside>
-
         <div class="main p-3">
             <main>
                 <div class="container-fluid">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="/BK/users/user-guru/kotak_konseling/index.php">Data Kotak Konseling</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Reply Balasan</li>
+                            <li class="breadcrumb-item"><a href="index.php">Informasi</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Data Informasi</li>
                         </ol>
                     </nav>
-                    <h1 class="h2">Reply Balasan</h1>
-                    <p>Note : Jika sudah dibalas auto closed</p>
-
+                    <h1 class="h2">Data Informasi</h1>
+                    <p>Pengumuman berupa artikel, berita, acara yang akan datang.</p>
+                    <p>Kegiatan berupa acara yang telah dilaksanakan.</p>
                     <div class="card">
                         <div class="card-body">
                             <form action="" method="post" enctype="multipart/form-data">
@@ -163,28 +208,35 @@
                                 <?php endif; ?>
 
                                 <div class="mb-3">
-                                    <label for="message" class="form-label">Pesan</label><br>
-                                    <!-- Mengganti textarea dengan div untuk pesan -->
-                                    <div class="message-box" style="border: 1px solid #ccc; padding: 10px; background-color: #f9f9f9; border-radius: 5px; min-height: 100px;">
-                                        <?php echo htmlspecialchars($data['message']); ?>
-                                    </div>
+                                    <label for="jenis" class="form-label">Jenis Informasi</label>
+                                    <select class="form-select" name="jenis" required>
+                                        <option value="0">--Pilih Jenis Informasi--</option>
+                                        <?php foreach ($enumValues as $value): ?>
+                                            <option value="<?= htmlspecialchars($value) ?>"><?= ucfirst($value) ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
                                 </div>
-                                <!-- Formulir untuk balasan -->
                                 <div class="mb-3">
-                                    <label for="reply" class="form-label">Kirim Balasan</label>
-                                    <!-- Jika sudah ada balasan, tambahkan readonly pada textarea -->
-                                    <textarea name="reply" id="reply" class="form-control" rows="4" placeholder="Tulis balasan disini..." <?php echo isset($data['reply']) && !empty($data['reply']) ? 'readonly' : ''; ?>><?php echo isset($data['reply']) ? htmlspecialchars($data['reply']) : ''; ?></textarea>
+                                    <label for="title" class="form-label">Judul</label>
+                                    <input type="text" class="form-control" name="title" id="title" required placeholder="Judul Informasi">
                                 </div>
-
-                                <!-- Jika reply sudah ada, sembunyikan tombol kirim -->
-                                <?php if (empty($data['reply'])): ?>
-                                    <button class="btn btn-primary my-3" type="submit" name="submit" style="color: white;">Kirim</button>
-                                <?php endif; ?>
+                                <div class="mb-3">
+                                    <label for="foto" class="form-label">Foto</label>
+                                    <input type="file" class="form-control" name="foto" id="foto">
+                                    <small class="form-text text-muted">Opsional. Jika tidak diunggah, akan menggunakan foto default.</small>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="content" class="form-label">Isi Kontent</label>
+                                    <textarea name="content" id="content" class="form-control" rows="10" placeholder="Tulis isi konten disini..."></textarea>
+                                </div>
+                                
+                                
+                                <button class="btn btn-primary my-3" type="submit" name="submit" style="color: white;">Submit</button>
                             </form>
                         </div>
                     </div>
                     <footer class="pt-5 d-flex justify-content-between">
-                        <span>Copyright © 2024 <a href="#">BKSPENTHREE</a></span>
+                        <span>Copyright © 2024 <a href="#">BKSPENTHREE.</a></span>
                         <ul class="nav m-0">
                             <li class="nav-item">
                                 <a class="nav-link text-secondary"href="#">Hubungi Kami</a>
@@ -198,13 +250,5 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../../assets/script/script_admin.js"></script>
-    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-    <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap5.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            $('#table').DataTable();
-        });
-    </script>
     </body>
 </html>

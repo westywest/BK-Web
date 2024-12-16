@@ -56,7 +56,8 @@
         FROM kunjungan_siswa 
         JOIN users ON kunjungan_siswa.user_id = users.id
         JOIN guru ON kunjungan_siswa.guru_id = guru.id
-        JOIN siswa ON users.id = siswa.user_id"; // Menghubungkan users.id ke siswa.user_id
+        JOIN siswa ON users.id = siswa.user_id
+        ORDER BY kunjungan_siswa.id DESc"; // Menghubungkan users.id ke siswa.user_id
 
     $stmt = $conn->prepare($sql);
     $stmt->execute();
