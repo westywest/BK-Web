@@ -34,41 +34,53 @@
         $enumValues = explode(",", str_replace("'", "", $matches[1]));
     }
 
-    // Upload foto
-    if (!empty($_FILES['foto']['name'])) { 
+    function upload() {
         $namaFile = $_FILES['foto']['name'];
         $ukuranFile = $_FILES['foto']['size'];
         $error = $_FILES['foto']['error'];
         $tmpName = $_FILES['foto']['tmp_name'];
     
+        // Path ke foto default
+        $fotoDefault = '../../../assets/images/default/default.png';
+    
+        // Cek apakah tidak ada gambar yang di-upload
         if ($error === 4) {
-            // Tidak ada file di-upload
-            $foto = "default.png";
-        } else {
-            $ekstensiGambarValid = ['jpg', 'jpeg', 'png'];
-            $ekstensiGambar = strtolower(pathinfo($namaFile, PATHINFO_EXTENSION));
-    
-            if (!in_array($ekstensiGambar, $ekstensiGambarValid)) {
-                $_SESSION['error'] = "Yang anda upload bukan foto!";
-            } elseif ($ukuranFile > 2048000) {
-                $_SESSION['error'] = "Ukuran foto terlalu besar!";
-            } else {
-                $uploadDir = "../../../assets/images/uploads/";
-                $fileName = time() . "_" . preg_replace('/[^A-Za-z0-9.\-_]/', '_', $namaFile);
-                $targetFilePath = $uploadDir . $fileName;
-    
-                if (move_uploaded_file($tmpName, $targetFilePath)) {
-                    $foto = $fileName; 
-                } else {
-                    $_SESSION['error'] = "Gagal mengunggah foto. Menggunakan foto default.";
-                    $foto = "default.png";
-                }
-            }
+            return $fotoDefault; // Kembalikan path foto default
         }
-    } else {
-        $foto = "default.png";
-    }
     
+        // Cek apakah file yang di-upload adalah gambar
+        $ekstensiGambarValid = ['jpg', 'jpeg', 'png'];
+        $ekstensiGambar = explode('.', $namaFile);
+        $ekstensiGambar = strtolower(end($ekstensiGambar));
+    
+        if (!in_array($ekstensiGambar, $ekstensiGambarValid)) {
+            $_SESSION['error'] = "Yang anda upload bukan foto!";
+            header("Location: " . $_SERVER['PHP_SELF']);
+            exit;
+        }
+    
+        // Cek jika ukuran file terlalu besar
+        if ($ukuranFile > 10485760) {
+            $_SESSION['error'] = "Ukuran foto terlalu besar!";
+            header("Location: " . $_SERVER['PHP_SELF']);
+            exit;
+        }
+    
+        // Lolos pengecekan, file siap di-upload
+        // Generate nama file unik
+        $foto = uniqid() . '.' . $ekstensiGambar;
+    
+        // Pindahkan file ke folder tujuan
+        $uploadDir = '../../../assets/images/uploads/';
+        if (!move_uploaded_file($tmpName, $uploadDir . $foto)) {
+            echo "<script>
+                alert('Gagal mengunggah file!');
+                </script>";
+            return false;
+        }
+    
+        return $uploadDir . $foto; // Kembalikan path file yang di-upload
+    }    
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $username = $_SESSION['username'];
@@ -76,12 +88,15 @@
         $title = $_POST['title'];
         $content = $_POST['content'];
         $jenis = $_POST['jenis'];
-
+    
+        $foto = upload(); // Memanggil fungsi upload()
+    
+    
         if (empty($title)) {
             $_SESSION['error'] = "Judul tidak boleh kosong!";
             header("Location: " . $_SERVER['PHP_SELF']);
             exit;
-        } elseif(empty($jenis) || $jenis == 0) {
+        } elseif (empty($jenis) || $jenis == 0) {
             $_SESSION['error'] = "Harap pilih jenis informasi!";
             header("Location: " . $_SERVER['PHP_SELF']);
             exit;
@@ -93,7 +108,7 @@
             $sql = "INSERT INTO informasi (guru_id, title, content, foto, jenis) VALUES (?, ?, ?, ?, ?)";
             $addInfo = $conn->prepare($sql);
             $addInfo->bind_param("issss", $guru_id, $title, $content, $foto, $jenis);
-
+    
             if ($addInfo->execute() && $addInfo->affected_rows > 0) {
                 echo "<script>
                         alert('Informasi berhasil dibuat!');
@@ -101,12 +116,13 @@
                     </script>";
                 exit;
             } else {
-                $_SESSION['error'] = "Gagal membuat Informasi!";
+                $_SESSION['error'] = "Gagal membuat informasi!";
                 header("Location: " . $_SERVER['PHP_SELF']);
                 exit;
             }
         }
     }
+    
 
     ?>
 
@@ -221,7 +237,7 @@
                                     <input type="text" class="form-control" name="title" id="title" required placeholder="Judul Informasi">
                                 </div>
                                 <div class="mb-3">
-                                    <label for="foto" class="form-label">Foto</label>
+                                    <label for="foto" class="form-label">Foto</label> <small style="color: red;">Maks. ukuran 10 MB</small>
                                     <input type="file" class="form-control" name="foto" id="foto">
                                     <small class="form-text text-muted">Opsional. Jika tidak diunggah, akan menggunakan foto default.</small>
                                 </div>

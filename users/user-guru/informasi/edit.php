@@ -23,6 +23,8 @@
     
     include '../../../function/connectDB.php';
     $informasi_id = $_GET['id'];
+    
+    
     $sql = "SELECT informasi.id AS informasi_id, 
             informasi.guru_id, informasi.date, 
             informasi.title, informasi.jenis, 
@@ -58,63 +60,52 @@
         $content = $data['content'];
     }
 
-    function upload($oldFile = null) {
+    function upload() {
         $namaFile = $_FILES['foto']['name'];
         $ukuranFile = $_FILES['foto']['size'];
         $error = $_FILES['foto']['error'];
         $tmpName = $_FILES['foto']['tmp_name'];
     
-        // Cek apakah tidak ada gambar yang diupload
+        // Path ke foto default
+        $fotoDefault = '../../../assets/images/default/default.png';
+    
+        // Cek apakah tidak ada gambar yang di-upload
         if ($error === 4) {
-            echo "<script>
-                    alert('Pilih gambar terlebih dahulu!');
-                  </script>";
-            die();
+            return $fotoDefault; // Kembalikan path foto default
         }
     
-        // Cek apakah yang diupload adalah gambar
+        // Cek apakah file yang di-upload adalah gambar
         $ekstensiGambarValid = ['jpg', 'jpeg', 'png'];
         $ekstensiGambar = explode('.', $namaFile);
         $ekstensiGambar = strtolower(end($ekstensiGambar));
+    
         if (!in_array($ekstensiGambar, $ekstensiGambarValid)) {
-            echo "<script>
-                    alert('Yang Anda upload bukan foto!');
-                  </script>";
-            die();
-        }
-    
-        // Cek jika ukurannya terlalu besar
-        if ($ukuranFile > 2048000) {
-            echo "<script>
-                    alert('Ukuran foto terlalu besar!');
-                  </script>";
-            die();
-        }
-    
-        // Jika ada gambar lama, hapus gambar tersebut
-        if ($oldFile) {
-            $oldFilePath = '../../../assets/images/uploads/' . $oldFile;
-            if (file_exists($oldFilePath)) {
-                unlink($oldFilePath); // Menghapus file lama
-            }
-        }
-    
-        // Lolos pengecekan, foto siap diupload
-        // Generate nama baru untuk file
-        $namaFileBaru = uniqid();
-        $namaFileBaru .= '.' . $ekstensiGambar;
-        $uploadPath = '../../../assets/images/uploads/' . $namaFileBaru;
-    
-        // Pindahkan file gambar ke folder uploads
-        if (move_uploaded_file($tmpName, $uploadPath)) {
-            return $namaFileBaru; // Kembalikan nama file baru
-        } else {
-            echo "<script>
-                    alert('Gagal meng-upload foto!');
-                  </script>";
+            $_SESSION['error'] = "Yang anda upload bukan foto!";
             header("Location: " . $_SERVER['PHP_SELF']);
-            exit();
+            exit;
         }
+    
+        // Cek jika ukuran file terlalu besar
+        if ($ukuranFile > 10485760) {
+            $_SESSION['error'] = "Ukuran foto terlalu besar!";
+            header("Location: " . $_SERVER['PHP_SELF']);
+            exit;
+        }
+    
+        // Lolos pengecekan, file siap di-upload
+        // Generate nama file unik
+        $foto = uniqid() . '.' . $ekstensiGambar;
+    
+        // Pindahkan file ke folder tujuan
+        $uploadDir = '../../../assets/images/uploads/';
+        if (!move_uploaded_file($tmpName, $uploadDir . $foto)) {
+            echo "<script>
+                alert('Gagal mengunggah file!');
+                </script>";
+            return false;
+        }
+    
+        return $uploadDir . $foto; // Kembalikan path file yang di-upload
     }
     
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -122,20 +113,39 @@
         $guru_id = $_SESSION['guru_id'];
         $title = $_POST['title'];
         $content = $_POST['content'];
-        $fotoLama  = $_POST['fotoLama'];
+        $fotoLama = $_POST['fotoLama'];
         $jenis = $_POST['jenis'];
-
-        if($_FILES['foto']['error'] === 4){
-            $foto = $fotoLama;
-        }else{
-            $foto = upload();
+        $informasi_id = isset($_POST['id']) ? $_POST['id'] : null;
+    
+        if (!$informasi_id) {
+            $_SESSION['error'] = "ID informasi tidak ditemukan!";
+            header("Location: " . $_SERVER['PHP_SELF']);
+            exit;
         }
-
+    
+        // Gunakan foto lama jika tidak ada file baru yang diunggah
+        $foto = $fotoLama;
+        if ($_FILES['foto']['error'] !== 4) {
+            $fotoBaru = upload();
+            if ($fotoBaru === false) {
+                $_SESSION['error'] = "Gagal mengunggah foto baru!";
+                header("Location: " . $_SERVER['PHP_SELF']);
+                exit;
+            }
+            $foto = $fotoBaru;
+    
+            // Hapus foto lama jika ada file baru yang diunggah
+            if (file_exists($fotoLama) && $fotoLama !== '../../../assets/images/default/default.png') {
+                unlink($fotoLama);
+            }
+        }
+    
+        // Validasi input
         if (empty($title)) {
             $_SESSION['error'] = "Judul tidak boleh kosong!";
             header("Location: " . $_SERVER['PHP_SELF']);
             exit;
-        } elseif(empty($jenis) || $jenis == 0) {
+        } elseif (empty($jenis) || $jenis == 0) {
             $_SESSION['error'] = "Harap pilih jenis informasi!";
             header("Location: " . $_SERVER['PHP_SELF']);
             exit;
@@ -143,28 +153,26 @@
             $_SESSION['error'] = "Isi informasi tidak boleh kosong!";
             header("Location: " . $_SERVER['PHP_SELF']);
             exit;
+        }
+    
+        // Update ke database
+        $sql = "UPDATE informasi SET title=?, content=?, foto=?, jenis=? WHERE id = ?";
+        $updInfo = $conn->prepare($sql);
+        $updInfo->bind_param("sssss", $title, $content, $foto, $jenis, $informasi_id);
+    
+        if ($updInfo->execute() && $updInfo->affected_rows > 0) {
+            echo "<script>
+                    alert('Informasi berhasil diupdate!');
+                    window.location.href = '/BK/users/user-guru/informasi/index.php';
+                </script>";
+            exit;
         } else {
-            // Panggil fungsi upload dan ganti foto lama jika ada
-            $newFileName = upload($fotoLama); // Gantikan gambar lama dengan gambar baru
-
-
-            $sql = "UPDATE informasi SET title=?, content=?, foto=?, jenis=? WHERE id = ?";
-            $updInfo = $conn->prepare($sql);
-            $updInfo->bind_param("sssss", $title, $content, $foto, $jenis, $informasi_id);
-
-            if ($updInfo->execute() && $updInfo->affected_rows > 0) {
-                echo "<script>
-                        alert('Informasi berhasil diupdate!');
-                        window.location.href = '/BK/users/user-guru/informasi/index.php';
-                    </script>";
-                exit;
-            } else {
-                $_SESSION['error'] = "Gagal mengupdate Informasi!";
-                header("Location: " . $_SERVER['PHP_SELF']);
-                exit;
-            }
+            $_SESSION['error'] = "Gagal mengupdate Informasi!";
+            header("Location: " . $_SERVER['PHP_SELF']);
+            exit;
         }
     }
+    
 
     
     ?>
