@@ -88,9 +88,9 @@
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="../informasi/index.php" class="sidebar-link">
+                    <a href="../publikasi/index.php" class="sidebar-link">
                         <i class='bx bx-news'></i>
-                        <span>Informasi</span>
+                        <span>Publikasi</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
@@ -108,19 +108,19 @@
                 <li class="sidebar-item active">
                     <a href="index.php" class="sidebar-link">
                         <i class='bx bx-list-ul' ></i>
-                        <span>Kunjungan</span>
+                        <span>Kunjungan Siswa</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="../kotak_konseling/index.php" class="sidebar-link">
+                    <a href="../kotak_saran/index.php" class="sidebar-link">
                         <i class='bx bxs-inbox'></i>
-                        <span>Kotak Konseling</span>
+                        <span>Kotak Saran</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="../pelanggaran/index.php" class="sidebar-link">
+                    <a href="../kasus/index.php" class="sidebar-link">
                         <i class='bx bx-error'></i>
-                        <span>Pelanggaran Siswa</span>
+                        <span>Catatan Kasus</span>
                     </a>
                 </li>
             </ul>
@@ -144,11 +144,11 @@
                 <div class="container-fluid">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="#">Kunjungan</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Log Kunjungan</li>
+                            <li class="breadcrumb-item"><a href="#">Kunjungan Siswa</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Log Kunjungan Siswa</li>
                         </ol>
                     </nav>
-                    <h1 class="h2">Log Kunjungan</h1>
+                    <h1 class="h2">Log Kunjungan Siswa</h1>
                     <p>Log Kunjungan Siswa</p>
 
                     <div class="card">

@@ -83,9 +83,9 @@
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="../informasi/index.php" class="sidebar-link">
+                    <a href="../publikasi/index.php" class="sidebar-link">
                         <i class='bx bx-news'></i>
-                        <span>Informasi</span>
+                        <span>Publikasi</span>
                     </a>
                 </li>
                 <li class="sidebar-item active">
@@ -103,13 +103,13 @@
                 <li class="sidebar-item">
                     <a href="../kunjungan/index.php" class="sidebar-link">
                         <i class='bx bx-list-ul' ></i>
-                        <span>Kunjungan</span>
+                        <span>Kunjungan Siswa</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="../kotak_konseling/index.php" class="sidebar-link">
+                    <a href="../kotak_saran/index.php" class="sidebar-link">
                         <i class='bx bxs-inbox'></i>
-                        <span>Kotak Konseling</span>
+                        <span>Kotak Saran</span>
                     </a>
                 </li>
                 <li class="sidebar-item">

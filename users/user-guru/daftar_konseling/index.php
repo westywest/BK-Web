@@ -85,9 +85,9 @@
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="../informasi/index.php" class="sidebar-link">
+                    <a href="../publikasi/index.php" class="sidebar-link">
                         <i class='bx bx-news'></i>
-                        <span>Informasi</span>
+                        <span>Publikasi</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
@@ -105,13 +105,13 @@
                 <li class="sidebar-item">
                     <a href="../kunjungan/index.php" class="sidebar-link">
                         <i class='bx bx-list-ul' ></i>
-                        <span>Kunjungan</span>
+                        <span>Kunjungan Siswa</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="../kotak_konseling/index.php" class="sidebar-link">
+                    <a href="../kotak_saran/index.php" class="sidebar-link">
                         <i class='bx bxs-inbox'></i>
-                        <span>Kotak Konseling</span>
+                        <span>Kotak Saran</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
@@ -145,7 +145,7 @@
                         </ol>
                     </nav>
                     <h1 class="h2">Data Siswa Konseling</h1>
-                    <p>Kelola data konseling siswa berdasarkan status dan lakukan tindak lanjut sesuai kebutuhan.</p>
+                    <p>Ketika status <span class="badge bg-warning">Pending</span>, silahkan atur jadwal untuk pertemuan konseling. Setelah itu status akan berubah menjadi <span class="badge bg-success">Confirmed</span> untuk mengkonfirmasi ke siswa jadwal konselingnya. Setelah melakukan konseling, guru mengisi field Tindak lanjut dari hasil konseling. Setelah itu status akan berubah menjadi <span class="badge bg-primary">Completed</span> dan berpindah ke halaman Log Konseling.</p>
                     <div class="card">
                         <div class="card-body">
                             <a class="btn btn-secondary mb-4" href="log.php" style="color: white; width: 50px;">
