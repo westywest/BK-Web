@@ -1,0 +1,104 @@
+@import url("https://fonts.cdnfonts.com/css/roboto");
+
+body {
+    font-family: "Roboto Medium", sans-serif;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    background-color: #f9f9f9;
+}
+
+/* Styling Header */
+.header-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: none;
+}
+
+.header-table td {
+    border: none; /* Hilangkan garis tabel */
+    vertical-align: middle;
+}
+
+.logo-cell {
+    width: 20%; /* Atur lebar kolom logo */
+    text-align: left;
+}
+
+.logo {
+    width: 80px; /* Ukuran logo */
+    height: auto;
+}
+
+.text-cell {
+    text-align: left;
+    padding-left: 10px; /* Jarak antara logo dan teks */
+}
+
+.school-address {
+    font-size: 14px; /* Ukuran teks lebih kecil untuk alamat */
+    margin: 5px 0 0; /* Jarak atas sedikit dari nama sekolah */
+    color: #000; 
+}
+
+.school-name {
+    font-size: 18px; /* Ukuran teks lebih kecil */
+    margin: 0; /* Hilangkan margin bawaan */
+    color: #000;
+}
+
+.divider {
+    border: none;
+    height: 1px;
+    background-color: #ccc; /* Warna garis */
+    width: 95%; /* Lebar garis diperpanjang hingga hampir penuh */
+    margin: 10px auto; /* Tengah halaman dengan jarak vertikal */
+}
+
+.tglCetak {
+    font-size: 12px;
+    color: #555;
+}
+
+main h3 {
+    text-align: center;
+    margin: 20px 0;
+    font-size: 16px;
+    text-transform: uppercase;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+table td {
+    padding: 8px 12px;
+    vertical-align: top;
+    font-size: 14px;
+}
+
+table td:first-child {
+    width: 40%;
+    font-weight: bold;
+    text-align: left;
+    white-space: nowrap;
+    color: #555;
+}
+
+table td:nth-child(2) {
+    width: 60%;
+    text-align: left;
+    word-wrap: break-word;
+    color: #333;
+}
+
+table td,
+table th {
+    border-bottom: 1px solid #ddd;
+}
+
+table td:last-child {
+    border-bottom: none;
+}

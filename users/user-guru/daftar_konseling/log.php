@@ -10,6 +10,19 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" href="../../../assets/css/style_user.css">
     <title>Kotak Konseling | Guru</title>
+    <style>
+        .buttons{
+            width: 40px;                
+            font-size: 18px;              
+        }.btn{
+            display: inline-flex;       
+            align-items: center;      
+            justify-content: center;       
+            height: 40px;                  
+            padding: 0;                    
+            border-radius: 5px;            
+        }
+    </style>
 </head>
 <body>
     <?php 
@@ -158,6 +171,7 @@
                                         <th scope="col">Status</th>
                                         <th scope="col">Tanggal Konseling</th>
                                         <th scope="col">Tindak Lanjut</th>
+                                        <th scope="col">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -181,6 +195,11 @@
                                                     </td>
                                                     <td>' . $row["tanggal_konseling"] . '</td>
                                                     <td>' . $row["tindak_lanjut"] . '</td>
+                                                    <td>
+                                                        <a class="btn btn-sm btn-secondary buttons" href="../../../cetak/cetak_log_daftar_konseling.php?id='.$row['id'].'">
+                                                            <i class="bx bx-printer"></i>
+                                                        </a>
+                                                    </td>
                                                 </tr>';
                                                 $rowNumber++;
                                         }
