@@ -39,6 +39,10 @@
     
     // Ambil username dari session
     $username = $_SESSION['username'];
+
+    $start_date = isset($_GET['start_date']) ? $_GET['start_date'] : null;
+    $end_date = isset($_GET['end_date']) ? $_GET['end_date'] : null;
+
     
     // Query untuk mengambil data guru berdasarkan username yang login
     $sql = "SELECT 
@@ -51,15 +55,41 @@
             guru.id AS guru_id, 
             guru.name AS guru_name, 
             siswa.id AS siswa_id, 
-            siswa.name AS siswa_name, 
-            siswa.user_id AS siswa_user_id
+            siswa.name AS siswa_name,
+            siswa.kelas_id AS siswa_kelas_id, 
+            siswa.user_id AS siswa_user_id,
+            kelas.id AS kelas_id,
+            kelas.class_name
         FROM kunjungan_siswa 
         JOIN users ON kunjungan_siswa.user_id = users.id
         JOIN guru ON kunjungan_siswa.guru_id = guru.id
         JOIN siswa ON users.id = siswa.user_id
-        ORDER BY kunjungan_siswa.id DESc"; // Menghubungkan users.id ke siswa.user_id
+        JOIN kelas ON siswa.kelas_id = kelas.id";
+
+    // Tambahkan waktu maksimal untuk end_date jika ada
+    if (!is_null($end_date)) {
+        $end_date .= ' 23:59:59';
+    }
+    // Menambahkan kondisi filter untuk tanggal jika ada
+    if ($start_date && $end_date) {
+        $sql .= " AND kunjungan_siswa.date BETWEEN ? AND ?";
+    } elseif ($start_date) {
+        $sql .= " AND kunjungan_siswa.date >= ?";
+    } elseif ($end_date) {
+        $sql .= " AND kunjungan_siswa.date <= ?";
+    }
+    $sql .= " ORDER BY kunjungan_siswa.date DESC";
 
     $stmt = $conn->prepare($sql);
+
+    // Bind parameter berdasarkan ada tidaknya filter tanggal
+    if ($start_date && $end_date) {
+        $stmt->bind_param("ss", $start_date, $end_date);  // "iss" untuk integer, string, string
+    } elseif ($start_date) {
+        $stmt->bind_param("s", $start_date);  // "is" untuk integer, string
+    } elseif ($end_date) {
+        $stmt->bind_param("s", $end_date);  // "is" untuk integer, string
+    }
     $stmt->execute();
     $result = $stmt->get_result();
     
@@ -151,8 +181,54 @@
                     <h1 class="h2">Log Kunjungan Siswa</h1>
                     <p>Log Kunjungan Siswa</p>
 
+                    <form method="GET" action="" class="d-flex" style="margin-bottom: 10px;">
+                        <div class="row g-3 align-items-center">
+                            <div class="col-auto">
+                                <label for="start_date" class="form-label">Tanggal Mulai</label>
+                                <input type="date" id="start_date" name="start_date" class="form-control" style="width: 200px; height:40px;">
+                            </div>
+                            <div class="col-auto">
+                                <label for="end_date" class="form-label">Tanggal Akhir</label>
+                                <input type="date" id="end_date" name="end_date" class="form-control" style="width: 200px; height:40px;">
+                            </div>
+                            <div class="col-auto">
+                                <label class="form-label d-block" style="visibility: hidden;">&nbsp;</label> <!-- Spacer -->
+                                <button type="submit" class="btn btn-primary buttons"><i class='bx bx-filter-alt'></i></button>
+                            </div>
+                        </div>
+                    </form>
+
                     <div class="card">
                         <div class="card-body">
+                            <?php if ($start_date || $end_date): ?>
+                                <p class="alert alert-info">
+                                    Menampilkan data konseling 
+                                    <?php if ($start_date && $end_date): ?>
+                                        dari <strong><?= date('d-m-Y', strtotime($start_date)) ?></strong> sampai <strong><?= date('d-m-Y', strtotime($end_date)) ?></strong>.
+                                    <?php elseif ($start_date): ?>
+                                        mulai dari <strong><?= date('d-m-Y', strtotime($start_date)) ?></strong>.
+                                    <?php elseif ($end_date): ?>
+                                        sampai <strong><?= date('d-m-Y', strtotime($end_date)) ?></strong>.
+                                    <?php endif; ?>
+                                </p>
+                                <a href="index.php" class="btn btn-secondary mb-3" style="color: white; width: 180px;">Tampilkan Semua Data</a>
+                            <?php else: ?>
+                                <p class="alert alert-secondary">
+                                    Menampilkan semua data konseling.
+                                </p>
+                            <?php endif; ?>
+                            
+                            <?php if ($result->num_rows > 0): ?>
+                                <form method="POST" action="../../cetak/cetakAll_kunjungan.php">
+                                    <?php if (!empty($start_date)): ?>
+                                        <input type="hidden" name="start_date" value="<?= htmlspecialchars($start_date) ?>">
+                                    <?php endif; ?>
+                                    <?php if (!empty($end_date)): ?>
+                                        <input type="hidden" name="end_date" value="<?= htmlspecialchars($end_date) ?>">
+                                    <?php endif; ?>
+                                    <button type="submit" class="btn btn-success mt-3" style="color: white; width: 100px; margin-bottom: 10px;">Cetak PDF</button>
+                                </form>
+                            <?php endif; ?>
                             <div class="table-responsive">
                                 <table class="table" id="table">
                                     <thead>
@@ -160,6 +236,7 @@
                                             <th scope="col">#</th>
                                             <th scope="col">Waktu Kunjungan</th>
                                             <th scope="col">Nama Siswa</th>
+                                            <th scope="col">Kelas</th>
                                             <th scope="col">Guru yang ditemui</th>
                                             <th scope="col">Keperluan</th>
                                         </tr>
@@ -173,6 +250,7 @@
                                                         <td>'.$rowNumber.'</td>
                                                         <td>'.date("d F Y H:i:s", strtotime($row["date"])).'</td>
                                                         <td>'.$row['siswa_name'].'</td>
+                                                        <td>'.$row['class_name'].'</td>
                                                         <td>'.$row['guru_name'].'</td>
                                                         <td>'.$row['keperluan'].'</td>
                                                     </tr>

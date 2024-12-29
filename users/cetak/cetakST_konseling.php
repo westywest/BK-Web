@@ -1,6 +1,13 @@
 <?php 
 ob_start();
+session_start();
 include '../../function/connectDB.php';
+// Cek apakah user sudah login dan memiliki role 'guru'
+if (!isset($_SESSION['status']) || $_SESSION['role'] !== "guru") {
+    // Redirect ke halaman login jika bukan guru
+    header("Location:/BK/users/index.php");
+    exit;
+}
 $id = $_GET['id'];
 $sql = "SELECT konseling.id, 
                konseling.siswa_id, 

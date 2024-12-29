@@ -39,7 +39,10 @@
     $sql = "SELECT siswa.id AS siswa_id, siswa.user_id, siswa.nis, siswa.name AS nama_siswa, siswa.jk, siswa.tmp_lahir, siswa.tgl_lahir, siswa.phone, siswa.kelas_id, kelas.id AS kelas_id, kelas.class_name, kelas.guru_id, guru.id AS guru_id, guru.name AS nama_guru
     FROM siswa JOIN kelas ON siswa.kelas_id = kelas.id
     JOIN guru ON kelas.guru_id = guru.id
-    ORDER BY siswa_id DESC";
+    ORDER BY 
+        CAST(SUBSTRING_INDEX(kelas.class_name, ' ', 1) AS UNSIGNED) ASC,  -- Urutkan berdasarkan angka kelas
+        SUBSTRING(kelas.class_name, LENGTH(SUBSTRING_INDEX(kelas.class_name, ' ', -1)) + 2) ASC,  -- Urutkan berdasarkan huruf kelas
+        siswa.nis ASC";
     $datas = $conn->prepare($sql);
     $datas->execute();
     $resulSiswa = $datas->get_result();
@@ -159,6 +162,10 @@
                                     </select>
                                 </div>
                             </form>
+                            <form method="POST" action="../../cetak/cetakAll_siswa.php">
+                                <input type="hidden" name="kelas" value="<?php echo htmlspecialchars($selectedClass); ?>">
+                                <button type="submit" class="btn btn-success mt-3" style="color: white; width: 100px; margin-bottom: 10px;">Cetak PDF</button>
+                            </form>
 
                             <!-- Tabel Siswa -->
                             <div class="table-responsive">
@@ -168,10 +175,10 @@
                                             <th scope="col">#</th>
                                             <th scope="col">NIS</th>
                                             <th scope="col">Nama</th>
+                                            <th scope="col">Kelas</th>
                                             <th scope="col">L/P</th>
                                             <th scope="col">Tempat, Tanggal Lahir</th>
                                             <th scope="col">No Telepon</th>
-                                            <th scope="col">Kelas</th>
                                             <th scope="col">Guru Pengampu</th>
                                         </tr>
                                     </thead>
@@ -190,10 +197,10 @@
                                                     <td><?php echo $rowNumber++; ?></td>
                                                     <td><?php echo htmlspecialchars($row['nis']); ?></td>
                                                     <td><?php echo htmlspecialchars($row['nama_siswa']); ?></td>
+                                                    <td><?php echo htmlspecialchars($kelas); ?></td>
                                                     <td><?php echo htmlspecialchars($row['jk']); ?></td>
                                                     <td><?php echo htmlspecialchars($row['tmp_lahir']); ?>, <?php echo date("d F Y", strtotime($row["tgl_lahir"])); ?></td>
                                                     <td><?php echo htmlspecialchars($row['phone']); ?></td>
-                                                    <td><?php echo htmlspecialchars($kelas); ?></td>
                                                     <td><?php echo htmlspecialchars($row['nama_guru']); ?></td>
                                                 </tr>
                                             <?php }

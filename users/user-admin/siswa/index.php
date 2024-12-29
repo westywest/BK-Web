@@ -37,10 +37,26 @@
     FROM siswa JOIN kelas ON siswa.kelas_id = kelas.id
     JOIN guru ON kelas.guru_id = guru.id
     JOIN users ON siswa.user_id = users.id
-    ORDER BY siswa_id DESC";
+    ORDER BY 
+        CAST(SUBSTRING_INDEX(kelas.class_name, ' ', 1) AS UNSIGNED) ASC,  -- Urutkan berdasarkan angka kelas
+        SUBSTRING(kelas.class_name, LENGTH(SUBSTRING_INDEX(kelas.class_name, ' ', -1)) + 2) ASC,  -- Urutkan berdasarkan huruf kelas
+        siswa.nis ASC";
     $datas = $conn->prepare($sql);
     $datas->execute();
     $resulSiswa = $datas->get_result();
+
+    // Mengelompokkan siswa berdasarkan kelas
+    $siswa_per_kelas = [];
+    while ($row = $resulSiswa->fetch_assoc()) {
+        $kelas = $row['class_name'];
+        if (!isset($siswa_per_kelas[$kelas])) {
+            $siswa_per_kelas[$kelas] = [];
+        }
+        $siswa_per_kelas[$kelas][] = $row;
+
+        // Filter kelas berdasarkan dropdown
+        $selectedClass = $_GET['kelas'] ?? 'all';
+    }
     ?>
     <div class="wrapper">
         <aside id="sidebar">
@@ -105,10 +121,27 @@
                     <h1 class="h2">Daftar Siswa</h1>
                     <p>Untuk menambah Siswa silahkan klik tombol<b> + Tambah Data</b> dibawah.</p>
 
+                    <form method="GET">
+                        <div class="d-flex align-items-center gap-2" style="margin-bottom: 20px;">
+                            <p class="mb-0">Anda sedang menampilkan data kelas:</p>
+                            <select name="kelas" id="kelasDropdown" class="form-select w-auto" onchange="this.form.submit()">
+                                <option value="all" <?php echo $selectedClass === 'all' ? 'selected' : ''; ?>>Semua Kelas</option>
+                                    <?php foreach (array_keys($siswa_per_kelas) as $kelas) { ?>
+                                        <option value="<?php echo $kelas; ?>" <?php echo $selectedClass === $kelas ? 'selected' : ''; ?>>
+                                            <?php echo $kelas; ?>
+                                        </option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+                        </form>
+
                     <div class="card">
                         <div class="card-body">
-                            <a class="btn btn-primary mb-4" href="create.php" style="color: white; width: 135px;"><i class="lni lni-plus"></i> Tambah Data</a>
-                            <a href="../../cetak_author.php" class="btn btn-block btn-primary mb-4 buttons"><i class="lni lni-printer"></i></a>
+                            <form method="POST" action="../../cetak/cetakAll_siswa.php">
+                                <input type="hidden" name="kelas" value="<?php echo htmlspecialchars($selectedClass); ?>">
+                                <a class="btn btn-primary mb-4" href="create.php" style="color: white; width: 135px; margin-bottom: 20px;"><i class="lni lni-plus"></i> Tambah Data</a>
+                                <button type="submit" class="btn btn-block btn-primary mb-4 buttons"><i class="lni lni-printer"></i></button>
+                            </form>
                             <div class="table-responsive">
                                 <table class="table" id="table">
                                     <thead>
@@ -116,38 +149,53 @@
                                             <th scope="col">#</th>
                                             <th scope="col">NIS</th>
                                             <th scope="col">Nama</th>
+                                            <th scope="col">Kelas</th>
                                             <th scope="col">L/P</th>
                                             <th scope="col">Tempat, Tanggal Lahir</th>
                                             <th scope="col">No Telepon</th>
-                                            <th scope="col">Kelas</th>
                                             <th scope="col">Guru Pengampu</th>
                                             <th scope="col">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php
-                                            $rowNumber = 1;  
-                                            while ($row = $resulSiswa->fetch_assoc()) {
-                                                echo '
-                                                    <tr>
-                                                        <td>'.$rowNumber.'</td>
-                                                        <td>'.$row['nis'].'</td>
-                                                        <td>'.$row['nama_siswa'].'</td>
-                                                        <td>'.$row['jk'].'</td>
-                                                        <td>'.$row['tmp_lahir'].', '.date("d F Y", strtotime($row["tgl_lahir"])).'</td>
-                                                        <td>'.$row['phone'].'</td>
-                                                        <td>'.$row['class_name'].'</td>
-                                                        <td>'.$row['nama_guru'].'</td>
+                                    <?php
+                                        $rowNumber = 1;
 
-                                                        <td>
-                                                            <a class="btn btn-sm btn-warning buttons" href="edit.php?id='.$row['siswa_id'].'"><i class="lni lni-pencil-1"></i></a>
-                                                            <a onclick="return confirm(`Apakah anda yakin?`)" class="btn btn-sm btn-danger buttons" href="delete.php?id='.$row['siswa_id'].'"><i class="lni lni-trash-3"></i></a>
-                                                            <a class="btn btn-sm btn-primary buttons" href="../../cetak_detailNews.php?id=' . $row['siswa_id'] . '"><i class="lni lni-printer"></i></a>
-                                                        </td>
-                                                    </tr>
-                                                '; $rowNumber++;
+                                        // Tampilkan data siswa berdasarkan filter kelas
+                                        foreach ($siswa_per_kelas as $kelas => $siswa) {
+                                            if ($selectedClass !== 'all' && $kelas !== $selectedClass) {
+                                                continue; // Skip kelas yang tidak sesuai filter
                                             }
+
+                                            foreach ($siswa as $row) { ?>
+                                                <tr>
+                                                    <td><?php echo $rowNumber++; ?></td>
+                                                    <td><?php echo htmlspecialchars($row['nis']); ?></td>
+                                                    <td><?php echo htmlspecialchars($row['nama_siswa']); ?></td>
+                                                    <td><?php echo htmlspecialchars($kelas); ?></td>
+                                                    <td><?php echo htmlspecialchars($row['jk']); ?></td>
+                                                    <td><?php echo htmlspecialchars($row['tmp_lahir']); ?>, <?php echo date("d F Y", strtotime($row["tgl_lahir"])); ?></td>
+                                                    <td><?php echo htmlspecialchars($row['phone']); ?></td>
+                                                    <td><?php echo htmlspecialchars($row['nama_guru']); ?></td>
+                                                    <td>
+                                                        <!-- Edit Button -->
+                                                        <a class="btn btn-sm btn-warning buttons" href="edit.php?id=<?php echo $row['siswa_id']; ?>">
+                                                            <i class="lni lni-pencil-1"></i>
+                                                        </a>
+                                                        <!-- Delete Button -->
+                                                        <a onclick="return confirm('Apakah anda yakin?')" class="btn btn-sm btn-danger buttons" href="delete.php?id=<?php echo $row['siswa_id']; ?>">
+                                                            <i class="lni lni-trash-3"></i>
+                                                        </a>
+                                                        <!-- Print Button -->
+                                                        <a class="btn btn-sm btn-primary buttons" href="../../cetak_detailNews.php?id=<?php echo $row['siswa_id']; ?>">
+                                                            <i class="lni lni-printer"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            <?php }
+                                        }
                                         ?>
+
                                     </tbody>
                                 </table>
                             </div>
