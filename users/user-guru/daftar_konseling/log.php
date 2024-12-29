@@ -35,6 +35,9 @@
     }
     
     include '../../../function/connectDB.php';
+
+    $start_date = isset($_GET['start_date']) ? $_GET['start_date'] : null;
+    $end_date = isset($_GET['end_date']) ? $_GET['end_date'] : null;
     
     $username = $_SESSION['username'];
     
@@ -62,11 +65,34 @@
         FROM konseling
         JOIN siswa ON konseling.siswa_id = siswa.id
         JOIN kelas ON siswa.kelas_id = kelas.id
-        WHERE konseling.guru_id = ? AND konseling.status = 'completed'
-        ORDER BY konseling.id DESC";
+        WHERE konseling.guru_id = ? AND konseling.status = 'completed'";
 
+
+    // Tambahkan waktu maksimal untuk end_date jika ada
+    if (!is_null($end_date)) {
+        $end_date .= ' 23:59:59';
+    }
+    // Menambahkan kondisi filter untuk tanggal jika ada
+    if ($start_date && $end_date) {
+        $sql .= " AND konseling.tanggal_konseling BETWEEN ? AND ?";
+    } elseif ($start_date) {
+        $sql .= " AND konseling.tanggal_konseling >= ?";
+    } elseif ($end_date) {
+        $sql .= " AND konseling.tanggal_konseling <= ?";
+    }
+    $sql .= " ORDER BY konseling.tanggal_konseling DESC";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $guru_id);
+
+    // Bind parameter berdasarkan ada tidaknya filter tanggal
+    if ($start_date && $end_date) {
+        $stmt->bind_param("iss", $guru_id, $start_date, $end_date);  // "iss" untuk integer, string, string
+    } elseif ($start_date) {
+        $stmt->bind_param("is", $guru_id, $start_date);  // "is" untuk integer, string
+    } elseif ($end_date) {
+        $stmt->bind_param("is", $guru_id, $end_date);  // "is" untuk integer, string
+    } else {
+        $stmt->bind_param("i", $guru_id);  // Hanya ID guru
+    }
     $stmt->execute();
     $result = $stmt->get_result();
 
@@ -158,8 +184,56 @@
                     <h1 class="h2">Log Konseling</h1>
                     <p>Konseling yang sudah selesai atau berstatus <b>Completed</b> akan dipindahkan disini.</p>
 
+                    <form method="GET" action="" class="d-flex" style="margin-bottom: 10px;">
+                        <div class="row g-3 align-items-center">
+                            <div class="col-auto">
+                                <label for="start_date" class="form-label">Tanggal Mulai</label>
+                                <input type="date" id="start_date" name="start_date" class="form-control" style="width: 200px; height:40px;">
+                            </div>
+                            <div class="col-auto">
+                                <label for="end_date" class="form-label">Tanggal Akhir</label>
+                                <input type="date" id="end_date" name="end_date" class="form-control" style="width: 200px; height:40px;">
+                            </div>
+                            <div class="col-auto">
+                                <label class="form-label d-block" style="visibility: hidden;">&nbsp;</label> <!-- Spacer -->
+                                <button type="submit" class="btn btn-primary buttons"><i class='bx bx-filter-alt'></i></button>
+                            </div>
+                        </div>
+                    </form>
+
                     <div class="card">
                         <div class="card-body">
+                        <?php if ($start_date || $end_date): ?>
+                            <p class="alert alert-info">
+                                Menampilkan data konseling 
+                                <?php if ($start_date && $end_date): ?>
+                                    dari <strong><?= date('d-m-Y', strtotime($start_date)) ?></strong> sampai <strong><?= date('d-m-Y', strtotime($end_date)) ?></strong>.
+                                <?php elseif ($start_date): ?>
+                                    mulai dari <strong><?= date('d-m-Y', strtotime($start_date)) ?></strong>.
+                                <?php elseif ($end_date): ?>
+                                    sampai <strong><?= date('d-m-Y', strtotime($end_date)) ?></strong>.
+                                <?php endif; ?>
+                            </p>
+                            <a href="log.php" class="btn btn-secondary mb-3" style="color: white; width: 180px;">Tampilkan Semua Data</a>
+                        <?php else: ?>
+                            <p class="alert alert-secondary">
+                                Menampilkan semua data konseling.
+                            </p>
+                        <?php endif; ?>
+                        
+                        <?php if ($result->num_rows > 0): ?>
+                            <form method="POST" action="../../cetak/cetakAll_konseling.php">
+                                <?php if (!empty($start_date)): ?>
+                                    <input type="hidden" name="start_date" value="<?= htmlspecialchars($start_date) ?>">
+                                <?php endif; ?>
+                                <?php if (!empty($end_date)): ?>
+                                    <input type="hidden" name="end_date" value="<?= htmlspecialchars($end_date) ?>">
+                                <?php endif; ?>
+                                <button type="submit" class="btn btn-success mt-3" style="color: white; width: 100px; margin-bottom: 10px;">Cetak PDF</button>
+                            </form>
+                        <?php endif; ?>
+                        
+
                         <div class="table-responsive">
                                 <table class="table" id="table">
                                     <thead>
@@ -180,7 +254,7 @@
                                         while ($row = $result->fetch_assoc()) {
                                             $badgeClass = '';
 
-                                            // Status Pending
+                                            // Status COMPLETED
                                             if ($row['status'] === "completed") {
                                                 $badgeClass = 'bg-primary';
                                             }
@@ -193,10 +267,10 @@
                                                     <td>
                                                         <span class="badge ' . $badgeClass . '">' . ucfirst($row['status']) . '</span>
                                                     </td>
-                                                    <td>' . $row["tanggal_konseling"] . '</td>
+                                                    <td>' . date('d-m-Y', strtotime($row["tanggal_konseling"])) . ' (' . date('H:i', strtotime($row["tanggal_konseling"])) . ')' . '</td>
                                                     <td>' . $row["tindak_lanjut"] . '</td>
                                                     <td>
-                                                        <a class="btn btn-sm btn-secondary buttons" href="../../../cetak/cetak_log_daftar_konseling.php?id='.$row['id'].'">
+                                                        <a class="btn btn-sm btn-secondary buttons" href="../../cetak/cetakST_konseling.php?id='.$row['id'].'">
                                                             <i class="bx bx-printer"></i>
                                                         </a>
                                                     </td>

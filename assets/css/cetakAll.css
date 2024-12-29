@@ -1,0 +1,88 @@
+@import url("https://fonts.cdnfonts.com/css/roboto");
+
+body {
+    font-family: "Roboto Medium", sans-serif;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    background-color: #f9f9f9;
+}
+
+.container {
+    padding: 20px;
+}
+header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+.header-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: none;
+}
+.logo {
+    width: 80px; /* Ukuran logo */
+    height: auto;
+}
+.school-name {
+    margin: 0;
+    font-size: 24px;
+    text-transform: uppercase;
+}
+.school-address {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #555;
+}
+.divider {
+    border: 1px solid #000;
+    margin: 10px 0;
+}
+.text-cell {
+    text-align: left;
+    padding-left: 10px; /* Jarak antara logo dan teks */
+}
+main {
+    text-align: left;
+}
+h3 {
+    text-align: center;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+}
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+.table th, .table td {
+    border: 1px solid #000; /* Garis tabel di semua sisi */
+    padding: 8px;
+}
+.table th {
+    text-align: center;
+    font-weight: bold;
+    background-color: #fff; /* Latar belakang putih */
+}
+.table td {
+    text-align: left;
+}
+.table td.text-right {
+    text-align: right;
+}
+.table tr:nth-child(even) {
+    background-color: #f9f9f9; /* Warna berbeda untuk baris genap */
+}
+.badge {
+    padding: 5px 10px;
+    border-radius: 4px;
+    color: white;
+}
+.bg-primary {
+    background-color: #007bff;
+}
+.tglCetak {
+    font-size: 12px;
+    text-align: right;
+    color: #555;
+}

@@ -36,9 +36,9 @@ body {
 }
 
 .school-address {
-    font-size: 14px; /* Ukuran teks lebih kecil untuk alamat */
-    margin: 5px 0 0; /* Jarak atas sedikit dari nama sekolah */
-    color: #000; 
+    margin: 5px 0;
+    font-size: 14px;
+    color: #555;
 }
 
 .school-name {
@@ -53,11 +53,6 @@ body {
     background-color: #ccc; /* Warna garis */
     width: 95%; /* Lebar garis diperpanjang hingga hampir penuh */
     margin: 10px auto; /* Tengah halaman dengan jarak vertikal */
-}
-
-.tglCetak {
-    font-size: 12px;
-    color: #555;
 }
 
 main h3 {
@@ -101,4 +96,10 @@ table th {
 
 table td:last-child {
     border-bottom: none;
+}
+
+.tglCetak {
+    font-size: 12px;
+    text-align: right;
+    color: #555;
 }

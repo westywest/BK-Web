@@ -1,6 +1,6 @@
 <?php 
 ob_start();
-include '../function/connectDB.php';
+include '../../function/connectDB.php';
 $id = $_GET['id'];
 $sql = "SELECT konseling.id, 
                konseling.siswa_id, 
@@ -37,19 +37,9 @@ $sql = "SELECT konseling.id,
         $tindak_lanjut = $data['tindak_lanjut'];
         $class_name = $data['class_name'];
         $guru_name = $data['guru_name'];
-        $tanggalCetak = date('d F Y, H:i:s');
-
-        // Konversi ke DateTime
-        $datetime = new DateTime($tanggal_konseling);
-
-        // Set locale ke Indonesia
-        setlocale(LC_TIME, 'id_ID.utf8');
-
-        // Format tanggal menjadi "26 Desember 2024"
-        $tanggal = strftime('%d %B %Y', $datetime->getTimestamp());
-
-        // Format jam tetap "14:30:00"
-        $jam = $datetime->format('H:i:s');
+        // Set tanggal cetak
+        date_default_timezone_set('Asia/Jakarta'); // Atur timezone ke Jakarta
+        $tanggalCetak = date('d-m-Y H:i:s');
     }
 ?>
 
@@ -59,8 +49,8 @@ $sql = "SELECT konseling.id,
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[<?= $tanggal ?>] Daftar Konseling - <?= $name_siswa ?></title>
-    <link rel="stylesheet" href="../assets/css/style_cetak.css">
+    <title>[<?= htmlspecialchars(date('d-m-Y', strtotime($tanggal_konseling))); ?>] Daftar Konseling - <?= htmlspecialchars($name_siswa); ?></title>
+    <link rel="stylesheet" href="../../assets/css/style_cetak.css">
 </head>
 <body>
     <div class="container">
@@ -68,7 +58,7 @@ $sql = "SELECT konseling.id,
             <table class="header-table">
                 <tr>
                     <td class="logo-cell">
-                        <img src="../assets/images/logo.jpg" alt="Logo" class="logo">
+                        <img src="../../assets/images/logo.jpg" alt="Logo" class="logo">
                     </td>
                     <td class="text-cell">
                         <h1 class="school-name">SMP NEGERI 3 PURWOKERTO</h1>
@@ -85,38 +75,38 @@ $sql = "SELECT konseling.id,
             <table>
                 <tr>
                     <td><b>NIS</b></td>
-                    <td><?php echo $nis; ?></td>
+                    <td><?php echo htmlspecialchars($nis); ?></td>
                 </tr>
                 <tr>
                     <td><b>Nama</b></td>
-                    <td><?php echo $name_siswa; ?></td>
+                    <td><?php echo htmlspecialchars($name_siswa); ?></td>
                 </tr>
                 <tr>
                     <td><b>Kelas</b></td>
-                    <td><?php echo $class_name; ?></td>
+                    <td><?php echo htmlspecialchars($class_name); ?></td>
                 </tr>
                 <tr>
                     <td><b>Keluhan</b></td>
-                    <td><?php echo $keluhan; ?></td>
+                    <td><?php echo htmlspecialchars($keluhan); ?></td>
                 </tr>
                 <tr>
                     <td><b>Guru BK</b></td>
-                    <td><?php echo $guru_name; ?></td>
+                    <td><?php echo htmlspecialchars($guru_name); ?></td>
                 </tr>
                 <tr>
                     <td><b>Tanggal Konseling</b></td>
-                    <td><?php echo $tanggal; ?> Pukul <?php echo $jam ?></td>
+                    <td><?php echo htmlspecialchars(date('d-m-Y', strtotime($tanggal_konseling))); ?> Pukul <?php echo htmlspecialchars(date('H:i', strtotime($tanggal_konseling))) ?></td>
                 </tr>
                 <tr>
                     <td><b>Tindak Lanjut</b></td>
-                    <td><?php echo $tindak_lanjut; ?></td>
+                    <td><?php echo htmlspecialchars($tindak_lanjut); ?></td>
                 </tr>
                 <tr>
                     <td><b>Status Konseling</b></td>
-                    <td><?php echo $status; ?></td>
+                    <td><?php echo htmlspecialchars($status); ?></td>
                 </tr>
             </table>
-            <p class="tglCetak">Dicetak pada <?php echo $tanggalCetak ?></p>
+            <p class="tglCetak">Dicetak pada <?php echo htmlspecialchars($tanggalCetak) ?></p>
         </main>
     </div>
     <?php
@@ -134,7 +124,7 @@ $sql = "SELECT konseling.id,
         ob_end_clean();
         $mpdf->WriteHTML(utf8_encode($html));
         
-        $content = $mpdf->Output("[".$tanggal."] Daftar Konseling - ".$name_siswa.".pdf", "D");
+        $content = $mpdf->Output("[".htmlspecialchars(date('d-m-Y', strtotime($tanggal_konseling)))."] Daftar Konseling - ".htmlspecialchars($name_siswa).".pdf", "D");
     ?>
 </body>
 </html>
