@@ -242,3 +242,13 @@ a.sidebar-link:hover {
   display: block; /* Agar gambar berada di bawah input file */
   margin-top: 10px; /* Jarak antara input dan gambar */
 }
+.chart-container {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chart-container div {
+  width: 100%;
+}

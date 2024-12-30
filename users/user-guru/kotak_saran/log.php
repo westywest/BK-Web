@@ -137,6 +137,9 @@
 
                     <div class="card">
                         <div class="card-body">
+                            <form method="POST" action="../../cetak/cetakAll_kotakSaran.php">
+                                <button type="submit" class="btn btn-success mt-3" style="color: white; width: 100px; margin-bottom: 10px;">Cetak PDF</button>
+                            </form>
                             <div class="table-responsive">
                                 <table class="table" id="table">
                                     <thead>
@@ -158,7 +161,7 @@
                                                         <td>'.date("d F Y H:i:s", strtotime($row["date"])).'</td>
                                                         <td>'.$row["message"].'</td>
                                                         <td>
-                                                            <span class="badge bg-secondary">'.ucfirst($row['status']).'</span>
+                                                            <span class="badge bg-primary">'.ucfirst($row['status']).'</span>
                                                         </td>
                                                         <td>
                                                             <a class="btn btn-sm btn-info buttons" href="reply.php?id='.$row['id'].'">

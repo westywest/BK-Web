@@ -55,6 +55,7 @@
     $kasus = $conn->prepare($sql);
     $kasus->execute();
     $result = $kasus->get_result();
+
     
     ?>
     <div class="wrapper">
@@ -144,7 +145,8 @@
                     <div class="card">
                         <div class="card-body">
                             <a class="btn btn-primary mb-4" href="create.php" style="color: white; width: 135px;"><i class="lni lni-plus"></i> Kasus Baru</a>
-                            <a class="btn btn-primary mb-4" href="jenis_layanan/index.php" style="color: white; width: 135px;"><i class="lni lni-plus"></i> Jenis Layanan</a>
+                            <a class="btn btn-primary mb-4" href="jenis_layanan/index.php" style="color: white; width: 140px;"><i class="lni lni-plus"></i> Jenis Layanan</a>
+                            <a class="btn btn-block btn-primary mb-4 buttons" href="../../cetak/cetakAll_kasus.php"><i class="lni lni-printer"></i></a>
                             <div class="table-responsive">
                                 <table class="table" id="table">
                                     <thead>
@@ -173,7 +175,6 @@
                                                         <td>
                                                             <a class="btn btn-sm btn-warning buttons" href="edit.php?id='.$row['kasus_id'].'"><i class="lni lni-pencil-1"></i></a>
                                                             <a onclick="return confirm(`Apakah anda yakin?`)" class="btn btn-sm btn-danger buttons" href="delete.php?id='.$row['kasus_id'].'"><i class="lni lni-trash-3"></i></a>
-                                                            <a class="btn btn-sm btn-primary buttons" href="../../cetak_detailNews.php?id=' . $row['kasus_id'] . '"><i class="lni lni-printer"></i></a>
                                                         </td>
                                                     </tr>
                                                 '; $rowNumber++;

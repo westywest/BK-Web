@@ -161,7 +161,7 @@
                         </ol>
                     </nav>
                     <h1 class="h2">Data Publikasi</h1>
-                    <p>Pengumuman berupa artikel, berita, acara yang akan datang.</p>
+                    <p>Informasi berupa artikel, berita, acara yang akan datang.</p>
                     <p>Kegiatan berupa acara yang telah dilaksanakan.</p>
                     <div class="card">
                         <div class="card-body">
@@ -212,7 +212,6 @@
                                                         <a class="btn btn-sm btn-info buttons" href="show.php?id=<?= htmlspecialchars($row['publikasi_id']); ?>"><i class="bx bx-show"></i></a>
                                                         <a class="btn btn-sm btn-warning buttons" href="edit.php?id=<?= htmlspecialchars($row['publikasi_id']); ?>"><i class="lni lni-pencil-1"></i></a>
                                                         <a onclick="return confirm('Apakah anda yakin?')" class="btn btn-sm btn-danger buttons" href="delete.php?id=<?= htmlspecialchars($row['publikasi_id']); ?>"><i class="lni lni-trash-3"></i></a>
-                                                        <a class="btn btn-sm btn-primary buttons" href="../../cetak_detailNews.php?id=<?= htmlspecialchars($row['publikasi_id']); ?>"><i class="lni lni-printer"></i></a>
                                                     </td>
                                                 </tr>
                                             <?php }

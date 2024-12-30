@@ -1,3 +1,52 @@
+    <?php
+    session_start();
+    if (!isset($_SESSION['status']) || $_SESSION['role'] !== "guru") {
+        // Redirect ke halaman login jika bukan guru
+        header("Location:/BK/users/index.php");
+        exit;
+    }
+
+    include '../../function/connectDB.php';
+
+    $data = [];
+    try {
+        // Query untuk mendapatkan jumlah masing-masing jenis kasus
+        $sql = "SELECT jenis_layanan.jenis AS jenis, 
+                    COUNT(kasus.id) AS total
+                FROM kasus
+                JOIN jenis_layanan ON kasus.jenis_id = jenis_layanan.id
+                GROUP BY jenis_layanan.jenis";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        while ($row = $result->fetch_assoc()) {
+            $data[] = [$row['jenis'], (int)$row['total']];
+        }
+        $stmt->close();
+    } catch (Exception $e) {
+        die("Error: " . $e->getMessage());
+    }
+
+    $kunjunganPerBulan = [];
+    try {
+        // Query untuk menghitung jumlah kunjungan siswa per bulan
+        $sql = "SELECT DATE_FORMAT(date, '%M %Y') AS bulan, COUNT(id) AS total
+                FROM kunjungan_siswa
+                GROUP BY DATE_FORMAT(date, '%M %Y')
+                ORDER BY DATE_FORMAT(date, '%Y-%m')";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        while ($row = $result->fetch_assoc()) {
+            $kunjunganPerBulan[] = [$row['bulan'], (int)$row['total']];
+        }
+        $stmt->close();
+    } catch (Exception $e) {
+        die("Error: " . $e->getMessage());
+    }
+    ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,20 +58,65 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="../../assets/css/style_user.css">
     <title>Dashboard | Guru</title>
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load("current", {packages:["corechart"]});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            var data = google.visualization.arrayToDataTable([
+                ['Jenis', 'Total'],
+                <?php
+                foreach ($data as $d) {
+                    echo "['" . addslashes($d[0]) . "', " . $d[1] . "],";
+                }
+                ?>
+            ]);
+
+            var options = {
+                title: 'Distribusi Catatan Kasus Siswa Berdasarkan Jenisnya',
+                pieHole: 0.4,
+            };
+
+            var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
+            chart.draw(data, options);
+        }
+    </script>
+
+    <script type="text/javascript">
+        google.charts.load("current", {packages: ["corechart"]});
+        google.charts.setOnLoadCallback(drawBarChart);
+
+        function drawBarChart() {
+            var data = google.visualization.arrayToDataTable([
+                ['Bulan', 'Jumlah Kunjungan'],
+                <?php
+                foreach ($kunjunganPerBulan as $row) {
+                    echo "['" . addslashes($row[0]) . "', " . $row[1] . "],";
+                }
+                ?>
+            ]);
+
+            var options = {
+                title: 'Jumlah Kunjungan Siswa per Bulan',
+                hAxis: {
+                    title: 'Bulan',
+                },
+                vAxis: {
+                    title: 'Jumlah Kunjungan',
+                },
+                chartArea: {width: '50%'},
+                colors: ['#76A7FA']
+            };
+
+            var chart = new google.visualization.ColumnChart(document.getElementById('bar_chart'));
+            chart.draw(data, options);
+        }
+    </script>
+
 </head>
 <body>
-    <?php
-    session_start();
-    if (!isset($_SESSION['status']) || $_SESSION['role'] !== "guru") {
-        // Redirect ke halaman login jika bukan guru
-        header("Location:/BK/users/index.php");
-        exit;
-
-        include '../../function/connectDB.php';
-
-
-    }
-    ?>
     <div class="wrapper">
         <aside id="sidebar">
             <div class="d-flex sidebar-header">
@@ -86,8 +180,8 @@
             <div class="user-profile-footer p-2 d-flex align-items-center">
                 <img src="../../assets/images/profile.jpg" alt="User Avatar" class="rounded-circle me-2" style="width: 40px; height: 40px;">
                 <div class="user-info">
-                    <h6 class="text-white mb-0"><?php echo ($_SESSION['name']) ?></h6>
-                    <small><?php echo($_SESSION['role']) ?></small>
+                    <h6 class="text-white mb-0"><?php echo htmlspecialchars($_SESSION['name']) ?></h6>
+                    <small><?php echo htmlspecialchars($_SESSION['role']) ?></small>
                 </div>
             </div>
             <div class="sidebar-footer">
@@ -109,7 +203,10 @@
                     </nav>
                     <h1 class="h2">Selamat Datang <?php echo($_SESSION['name'])?>!</h1>
                     <p>Ini adalah halaman awal setelah anda berhasil login.</p>
-
+                    <div class="chart-container d-flex">
+                        <div id="donutchart" style="flex: 1; height: 500px;"></div>
+                        <div id="bar_chart" style="flex: 1; height: 500px;"></div>
+                    </div>
                     <footer class="pt-5 d-flex justify-content-between">
                         <span>Copyright © 2024 <a href="#">BKSPENTHREE</a></span>
                         <ul class="nav m-0">

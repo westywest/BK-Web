@@ -115,9 +115,9 @@
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="../pelanggaran/index.php" class="sidebar-link">
+                    <a href="../kasus/index.php" class="sidebar-link">
                         <i class='bx bx-error'></i>
-                        <span>Pelanggaran Siswa</span>
+                        <span>Catatan Kasus</span>
                     </a>
                 </li>
             </ul>

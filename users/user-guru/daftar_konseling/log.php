@@ -152,9 +152,9 @@
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="../pelanggaran/index.php" class="sidebar-link">
+                    <a href="../kasus/index.php" class="sidebar-link">
                         <i class='bx bx-error'></i>
-                        <span>Pelanggaran Siswa</span>
+                        <span>Catatan Kasus</span>
                     </a>
                 </li>
             </ul>
@@ -261,14 +261,14 @@
                                             echo '
                                                 <tr>
                                                     <td>' . $rowNumber . '</td>
-                                                    <td>' . $row["name"] . '</td>
-                                                    <td>' . $row["class_name"] . '</td>
-                                                    <td>' . $row["keluhan"] . '</td>
+                                                    <td>' . htmlspecialchars($row["name"]) . '</td>
+                                                    <td>' . htmlspecialchars($row["class_name"]) . '</td>
+                                                    <td>' . htmlspecialchars($row["keluhan"]) . '</td>
                                                     <td>
-                                                        <span class="badge ' . $badgeClass . '">' . ucfirst($row['status']) . '</span>
+                                                        <span class="badge ' . $badgeClass . '">' . htmlspecialchars(ucfirst($row['status'])) . '</span>
                                                     </td>
-                                                    <td>' . date('d-m-Y', strtotime($row["tanggal_konseling"])) . ' (' . date('H:i', strtotime($row["tanggal_konseling"])) . ')' . '</td>
-                                                    <td>' . $row["tindak_lanjut"] . '</td>
+                                                    <td>' . htmlspecialchars(date('d-m-Y', strtotime($row["tanggal_konseling"]))) . ' (' . htmlspecialchars(date('H:i', strtotime($row["tanggal_konseling"]))) . ')' . '</td>
+                                                    <td>' . htmlspecialchars($row["tindak_lanjut"]) . '</td>
                                                     <td>
                                                         <a class="btn btn-sm btn-secondary buttons" href="../../cetak/cetakST_konseling.php?id='.$row['id'].'">
                                                             <i class="bx bx-printer"></i>

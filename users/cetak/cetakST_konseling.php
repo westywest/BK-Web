@@ -36,7 +36,7 @@ $sql = "SELECT konseling.id,
     $result = $stmt->get_result();
 
     if ($data = $result->fetch_assoc()){
-        $name_siswa = $data['siswa_name'];
+        $siswa_name = $data['siswa_name'];
         $nis = $data['nis'];
         $keluhan = $data['keluhan'];
         $tanggal_konseling = $data['tanggal_konseling'];
@@ -86,7 +86,7 @@ $sql = "SELECT konseling.id,
                 </tr>
                 <tr>
                     <td><b>Nama</b></td>
-                    <td><?php echo htmlspecialchars($name_siswa); ?></td>
+                    <td><?php echo htmlspecialchars($siswa_name); ?></td>
                 </tr>
                 <tr>
                     <td><b>Kelas</b></td>
@@ -129,7 +129,7 @@ $sql = "SELECT konseling.id,
         $html = ob_get_contents();
 
         ob_end_clean();
-        $mpdf->WriteHTML(utf8_encode($html));
+        $mpdf->WriteHTML($html);
         
         $content = $mpdf->Output("[".htmlspecialchars(date('d-m-Y', strtotime($tanggal_konseling)))."] Daftar Konseling - ".htmlspecialchars($name_siswa).".pdf", "D");
     ?>

@@ -137,7 +137,7 @@
 
                     <div class="card">
                         <div class="card-body">
-                            <form method="POST" action="../../cetak/cetakAll_siswa.php">
+                            <form method="POST" action="../../cetak/cetakAll_students.php">
                                 <input type="hidden" name="kelas" value="<?php echo htmlspecialchars($selectedClass); ?>">
                                 <a class="btn btn-primary mb-4" href="create.php" style="color: white; width: 135px; margin-bottom: 20px;"><i class="lni lni-plus"></i> Tambah Data</a>
                                 <button type="submit" class="btn btn-block btn-primary mb-4 buttons"><i class="lni lni-printer"></i></button>
@@ -187,7 +187,7 @@
                                                             <i class="lni lni-trash-3"></i>
                                                         </a>
                                                         <!-- Print Button -->
-                                                        <a class="btn btn-sm btn-primary buttons" href="../../cetak_detailNews.php?id=<?php echo $row['siswa_id']; ?>">
+                                                        <a class="btn btn-sm btn-primary buttons" href="../../cetak/cetak_student.php?id=<?php echo $row['siswa_id']; ?>">
                                                             <i class="lni lni-printer"></i>
                                                         </a>
                                                     </td>

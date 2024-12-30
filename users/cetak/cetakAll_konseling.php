@@ -135,14 +135,14 @@ $tanggalCetak = date('d-m-Y H:i:s');
                     echo '
                         <tr>
                             <td class="text-right">' . $rowNumber . '</td>
-                            <td>' . $row["siswa_name"] . '</td>
-                            <td>' . $row["class_name"] . '</td>
-                            <td>' . $row["keluhan"] . '</td>
+                            <td>' . htmlspecialchars($row["siswa_name"]) . '</td>
+                            <td>' . htmlspecialchars($row["class_name"]) . '</td>
+                            <td>' . htmlspecialchars($row["keluhan"]) . '</td>
                             <td>
                                 <span class="badge ' . $badgeClass . '">' . ucfirst($row['status']) . '</span>
                             </td>
-                            <td class="text-right">' . date('d-m-Y', strtotime($row["tanggal_konseling"])) . ' (' . date('H:i', strtotime($row["tanggal_konseling"])) . ')' . '</td>
-                            <td>' . $row["tindak_lanjut"] . '</td>
+                            <td class="text-right">' . htmlspecialchars(date('d-m-Y', strtotime($row["tanggal_konseling"]))) . ' (' . htmlspecialchars(date('H:i', strtotime($row["tanggal_konseling"]))) . ')' . '</td>
+                            <td>' . htmlspecialchars($row["tindak_lanjut"]) . '</td>
                         </tr>';
                         $rowNumber++;
                     }
@@ -166,7 +166,7 @@ $tanggalCetak = date('d-m-Y H:i:s');
         $html = ob_get_contents();
 
         ob_end_clean();
-        $mpdf->WriteHTML(utf8_encode($html));
+        $mpdf->WriteHTML($html);
         
         $content = $mpdf->Output("Daftar Konseling.pdf", "D");
     ?>

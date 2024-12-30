@@ -139,7 +139,7 @@
                                     <thead>
                                         <tr>
                                             <th scope="col">#</th>
-                                            <th scope="col">Waktu</th>
+                                            <th scope="col">Tanggal/Waktu</th>
                                             <th scope="col">Message</th>
                                             <th scope="col">Status</th>
                                             <th scope="col">Aksi</th>

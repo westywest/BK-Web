@@ -153,7 +153,7 @@ $tanggalCetak = date('d-m-Y H:i:s');
         $html = ob_get_contents();
 
         ob_end_clean();
-        $mpdf->WriteHTML(utf8_encode($html));
+        $mpdf->WriteHTML($html);
         
         $content = $mpdf->Output("Daftar Kunjungan Siswa.pdf", "D");
     ?>

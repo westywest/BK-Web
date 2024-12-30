@@ -108,8 +108,10 @@
 
                     <div class="card">
                         <div class="card-body">
-                            <a class="btn btn-primary mb-4" href="create.php" style="color: white; width: 135px;"><i class="lni lni-plus"></i> Tambah Data</a>
-                            <a href="../../cetak_author.php" class="btn btn-block btn-primary mb-4 buttons"><i class="lni lni-printer"></i></a>
+                            <form method="post" action="../../cetak/cetakAll_teachers.php">
+                                <a class="btn btn-primary mb-4" href="create.php" style="color: white; width: 135px;"><i class="lni lni-plus"></i> Tambah Data</a>
+                                <button type="submit" class="btn btn-block btn-primary mb-4 buttons"><i class="lni lni-printer"></i></button>
+                            </form>
                             <div class="table-responsive">
                                 <table class="table" id="table">
                                     <thead>
@@ -129,15 +131,15 @@
                                                 echo '
                                                     <tr>
                                                         <td>'.$rowNumber.'</td>
-                                                        <td>'.$row['nip'].'</td>
-                                                        <td>'.$row['username'].'</td>
-                                                        <td>'.$row['name'].'</td>
-                                                        <td>'.$row['phone'].'</td>
+                                                        <td>'.htmlspecialchars($row['nip']).'</td>
+                                                        <td>'.htmlspecialchars($row['username']).'</td>
+                                                        <td>'.htmlspecialchars($row['name']).'</td>
+                                                        <td>'.htmlspecialchars($row['phone']).'</td>
 
                                                         <td>
                                                             <a class="btn btn-sm btn-warning buttons" href="edit.php?id='.$row['guru_id'].'"><i class="lni lni-pencil-1"></i></a>
                                                             <a onclick="return confirm(`Apakah anda yakin?`)" class="btn btn-sm btn-danger buttons" href="delete.php?id='.$row['guru_id'].'"><i class="lni lni-trash-3"></i></a>
-                                                            <a class="btn btn-sm btn-primary buttons" href="../../cetak_detailNews.php?id=' . $row['guru_id'] . '"><i class="lni lni-printer"></i></a>
+                                                            <a class="btn btn-sm btn-primary buttons" href="../../cetak/cetak_teacher.php?id=' . $row['guru_id'] . '"><i class="lni lni-printer"></i></a>
                                                         </td>
                                                     </tr>
                                                 '; $rowNumber++;

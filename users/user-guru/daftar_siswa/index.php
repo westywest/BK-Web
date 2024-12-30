@@ -116,9 +116,9 @@
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="../pelanggaran/index.php" class="sidebar-link">
+                    <a href="../kasus/index.php" class="sidebar-link">
                         <i class='bx bx-error'></i>
-                        <span>Pelanggaran Siswa</span>
+                        <span>Catatan Kasus</span>
                     </a>
                 </li>
             </ul>
@@ -180,6 +180,7 @@
                                             <th scope="col">Tempat, Tanggal Lahir</th>
                                             <th scope="col">No Telepon</th>
                                             <th scope="col">Guru Pengampu</th>
+                                            <th scope="col">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -202,6 +203,11 @@
                                                     <td><?php echo htmlspecialchars($row['tmp_lahir']); ?>, <?php echo date("d F Y", strtotime($row["tgl_lahir"])); ?></td>
                                                     <td><?php echo htmlspecialchars($row['phone']); ?></td>
                                                     <td><?php echo htmlspecialchars($row['nama_guru']); ?></td>
+                                                    <td>
+                                                        <a class="btn btn-sm btn-primary buttons" href="../../cetak/cetak_student.php?id=<?php echo $row['siswa_id']; ?>">
+                                                            <i class="lni lni-printer"></i>
+                                                        </a>
+                                                    </td>
                                                 </tr>
                                             <?php }
                                         }
