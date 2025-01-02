@@ -2,6 +2,10 @@
 ob_start();
 session_start();
 include '../../function/connectDB.php';
+if (!isset($_SESSION['status']) || $_SESSION['role'] !== "admin") {
+    header("Location:/BK/users/index.php");
+    exit;
+}
 
 $sql = "SELECT guru.id AS guru_id, guru.user_id, guru.nip, guru.name, guru.phone, users.id as user_id, users.username, users.role FROM guru 
     JOIN users ON guru.user_id = users.id

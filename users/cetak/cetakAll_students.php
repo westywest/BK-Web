@@ -2,6 +2,12 @@
 ob_start();
 session_start();
 include '../../function/connectDB.php';
+
+if (!isset($_SESSION['status']) || ($_SESSION['role'] !== "guru" && $_SESSION['role'] !== "admin")) {
+    // Redirect ke halaman login jika bukan guru atau admin
+    header("Location:/BK/users/index.php");
+    exit;
+}
 $selectedClass = $_POST['kelas'] ?? 'all';
 
 // Tentukan SQL berdasarkan kelas yang dipilih

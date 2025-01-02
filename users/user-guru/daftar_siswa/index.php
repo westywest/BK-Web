@@ -162,7 +162,7 @@
                                     </select>
                                 </div>
                             </form>
-                            <form method="POST" action="../../cetak/cetakAll_siswa.php">
+                            <form method="POST" action="../../cetak/cetakAll_students.php">
                                 <input type="hidden" name="kelas" value="<?php echo htmlspecialchars($selectedClass); ?>">
                                 <button type="submit" class="btn btn-success mt-3" style="color: white; width: 100px; margin-bottom: 10px;">Cetak PDF</button>
                             </form>

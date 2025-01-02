@@ -9,9 +9,7 @@ on:
       - "coverage"
 
 jobs:
-
   coverage:
-
     name: "Code coverage"
 
     runs-on: ${{ matrix.operating-system }}

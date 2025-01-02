@@ -1,26 +1,26 @@
-@import url('https://fonts.cdnfonts.com/css/roboto');
+@import url("https://fonts.cdnfonts.com/css/roboto");
 body {
-    font-family: 'Roboto Medium', sans-serif;
-    height: 100vh;
-    width: 100%;
-    background-color: #0e2238;
+  font-family: "Roboto Medium", sans-serif;
+  height: 100vh;
+  width: 100%;
+  background-color: #0e2238;
 }
 form {
-    background-color: white;
-    max-width: 455px;
+  background-color: white;
+  max-width: 455px;
 }
 .btn {
-    background-color: #0e2238;
-    color: white;
-    border: 0px;
+  background-color: #0e2238;
+  color: white;
+  border: 0px;
 }
 .btn:hover {
-    background-color: #4A628A;
-    border: 0px;
+  background-color: #4a628a;
+  border: 0px;
 }
 .a {
-    color: #0e2238;
+  color: #0e2238;
 }
 .a:hover {
-    color: #4A628A;
+  color: #4a628a;
 }

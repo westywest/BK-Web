@@ -3,6 +3,12 @@ ob_start();
 session_start();
 include '../../function/connectDB.php';
 
+if (!isset($_SESSION['status']) || ($_SESSION['role'] !== "guru" && $_SESSION['role'] !== "admin")) {
+    // Redirect ke halaman login jika bukan guru atau admin
+    header("Location:/BK/users/index.php");
+    exit;
+}
+
 $id = $_GET['id'];
 $sql = "SELECT siswa.id AS siswa_id, siswa.user_id, siswa.nis, siswa.name AS siswa_name, siswa.jk, siswa.tmp_lahir, siswa.tgl_lahir, siswa.kelas_id, siswa.phone, users.id AS user_id, kelas.id AS kelas_id, kelas.class_name, guru.id AS guru_id, guru.name AS guru_name
 FROM siswa 

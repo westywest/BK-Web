@@ -81,7 +81,7 @@
   }
 }
 .hero-section {
-  background: url(../images/gedung2.jpg) no-repeat center;
+  background: url(../images/service.jpg) no-repeat center;
   background-size: cover;
   width: 100%;
   height: 75vh; /* Set tinggi hanya 3/4 layar */
@@ -110,105 +110,83 @@
 .hero-section h2 {
   font-size: 1.2rem;
 }
-/* Slider Wrapper */
-.slider-wrapper {
-  overflow-x: auto;
-  overflow-y: hidden;
-  white-space: nowrap;
-  padding: 16px 0;
+
+/* about section */
+#about {
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+#about p {
+  text-align: justify;
 }
 
-.slider {
+/* Mengatur lebar tabel */
+table.service-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 30px;
+  table-layout: fixed;  /* Agar tabel tidak meluas */
+}
+
+/* Menghapus border tabel */
+table.service-table td {
+  border: none;
+  padding: 15px;
+  text-align: center;
+  vertical-align: top;  /* Menjaga agar teks tetap di atas setiap cell */
+}
+
+/* Menampilkan item dalam tabel secara horizontal menggunakan flexbox */
+table.service-table tr {
   display: flex;
-  gap: 16px;
+  justify-content: space-around;  /* Menjaga jarak antar item */
+  align-items: flex-start;  /* Menjaga isi tetap berada di atas */
+  width: 100%;
 }
 
-/* Card */
-.slider .card {
-  flex: 0 0 auto;
-  width: 20rem;
-  height: 19rem;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  background-color: #fff;
-  padding: 0;
-  transition: transform 0.3s;
-  overflow: hidden; /* Pastikan gambar tidak meluap keluar card */
-  cursor: pointer; /* Menambahkan kursor pointer agar menunjukkan bahwa card dapat diklik */
+/* Mengatur ikon dan teks dalam tabel secara horizontal */
+table.service-table .service-item {
+  display: flex;
+  flex-direction: column;  /* Menyusun item secara vertikal (ikon di atas teks) */
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
-
-.slider .card:hover {
-  transform: scale(1.05);
+/* Styling ikon */
+table.service-table .service-item i {
+  font-size: 40px;
+  margin-bottom: 10px;
 }
 
-/* Gambar di dalam Card */
-.card-img-top {
-  width: 100%; /* Memastikan gambar memenuhi lebar card */
-  height: 13rem; /* Sesuaikan tinggi gambar agar tidak memaksakan tinggi card */
-  object-fit: cover; /* Menjaga aspek rasio gambar, menutupi area card */
-  border-radius: 8px 8px 0 0; /* Membuat sudut atas gambar membulat */
-  margin: 0; /* Menghilangkan margin */
+/* Styling teks */
+table.service-table .service-item b {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: bold;
 }
 
-/* Judul */
-.card-title {
-  text-align: justify;
-  font-size: 1rem;
-  margin: 8px 0 16px 0;
-  white-space: normal; /* Izinkan teks untuk membungkus ke baris berikutnya */
-  overflow: visible; /* Tampilkan seluruh teks */
-  text-overflow: unset; /* Tidak ada "..." untuk judul */
-}
-
-/* Deskripsi */
-.lead {
-  text-align: justify;
-  font-size: 0.9rem;
-  color: #555;
-  overflow: hidden; /* Potong teks yang melebihi batas */
-  text-overflow: ellipsis; /* Tambahkan "..." jika teks dipotong */
-  display: -webkit-box;
-  -webkit-line-clamp: 3; /* Batasi teks hingga 3 baris (untuk browser Webkit) */
-  -webkit-box-orient: vertical; /* Orientasi box untuk Webkit */
-  display: -moz-box; /* Vendor prefix untuk Firefox (versi lama) */
-  -moz-line-clamp: 3; /* Vendor prefix untuk Firefox (versi lama) */
-  display: box; /* Vendor prefix untuk Firefox (versi lama) */
-  line-clamp: 3; /* Standar untuk browser terbaru */
-  box-orient: vertical; /* Orientasi box untuk browser modern */
-}
-.card-link {
-  text-decoration: none; /* Menghapus garis bawah */
-  color: inherit; /* Menjaga warna teks */
-}
-
-/*SECTION CARD*/
-
-
-
-.quote {
-  margin-top: 100px;
-}
-.about {
-  margin-top: 50px;
-}
-.event {
-  margin-top: 50px;
-}
-.teacher {
-  margin-top: 50px;
-}
-.btn-learn {
-  color: #0e2238;;
+/* Styling paragraf dan list */
+table.service-table .service-item p,
+table.service-table .service-item ul {
   font-size: 14px;
-  position: absolute;
-  bottom: 16px; /* Jarak dari bawah card */
-  right: 16px; /* Jarak dari kanan card */
+  line-height: 1.5;
 }
-.btn-learn:hover {
-  color: #22466c;
+
+/* Menjaga jarak antar item */
+table.service-table td {
+  width: 33%;
 }
+
+table.service-table .service-item ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+table.service-table .service-item ul li {
+  margin-bottom: 5px;
+}
+
 .img-fluid img {
   width: 50%;
 }
@@ -223,6 +201,7 @@ hr {
   display: block;
   opacity: 1;
 }
+
 #service hr {
   width: 70px;
   height: 2px;
@@ -230,4 +209,6 @@ hr {
   background-color: #0e2238;
   display: block;
   opacity: 1;
+  margin: auto;
+  margin-bottom: 10px;
 }

@@ -10,9 +10,7 @@ on:
       - "test"
 
 jobs:
-
   cs:
-
     name: "Coding standard"
 
     runs-on: ${{ matrix.operating-system }}

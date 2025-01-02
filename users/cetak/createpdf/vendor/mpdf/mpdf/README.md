@@ -8,15 +8,12 @@ under the [GNU GPL v2 licence](LICENSE.txt).
 [![Total Downloads](https://poser.pugx.org/mpdf/mpdf/downloads)](https://packagist.org/packages/mpdf/mpdf)
 [![License](https://poser.pugx.org/mpdf/mpdf/license)](https://packagist.org/packages/mpdf/mpdf)
 
-
 > ⚠ If you are viewing this file on mPDF GitHub repository homepage or on Packagist, please note that
 > the default repository branch is `development` which can differ from the last stable release.
 
-Requirements
-============
+# Requirements
 
-PHP versions and extensions
----------------------------
+## PHP versions and extensions
 
 - `PHP >=5.6 <7.3.0` is supported for `mPDF >= 7.0`
 - `PHP 7.3` is supported since `mPDF v7.1.7`
@@ -33,20 +30,17 @@ Additional extensions may be required for some advanced features such as `zlib` 
 embedded resources such as fonts, `bcmath` for generating barcodes or `xml` for character set conversion
 and SVG handling.
 
-Known server caveats
---------------------
+## Known server caveats
 
 mPDF has some problems with fetching external HTTP resources with single threaded servers such as `php -S`. A proper
 server such as nginx (php-fpm) or Apache is recommended.
 
-Support us
-==========
+# Support us
 
 Consider supporting development of mPDF with a donation of any value. [Donation button][1] can be found on the
 [main page of the documentation][1].
 
-Installation
-============
+# Installation
 
 Official installation method is via composer and its packagist package [mpdf/mpdf](https://packagist.org/packages/mpdf/mpdf).
 
@@ -54,8 +48,7 @@ Official installation method is via composer and its packagist package [mpdf/mpd
 $ composer require mpdf/mpdf
 ```
 
-Usage
-=====
+# Usage
 
 The simplest usage (since version 7.0) of the library would be as follows:
 
@@ -72,8 +65,7 @@ $mpdf->Output();
 
 This will output the PDF inline to the browser as `application/pdf` Content-type.
 
-Setup & Configuration
-=====================
+# Setup & Configuration
 
 All [configuration directives](https://mpdf.github.io/reference/mpdf-variables/overview.html) can
 be set by the `$config` parameter of the constructor.
@@ -83,7 +75,6 @@ The directory must have write permissions (mode `775` is recommended) for users 
 (typically `cli`, `webserver`, `fpm`).
 
 **Warning:** mPDF will clean up old temporary files in the temporary directory. Choose a path dedicated to mPDF only.
-
 
 ```php
 <?php
@@ -102,8 +93,7 @@ in the section on Installation & Setup in the [manual][1].
 If you have problems, please read the section on
 [troubleshooting](https://mpdf.github.io/troubleshooting/known-issues.html) in the manual.
 
-About CSS support and development state
-=======================================
+# About CSS support and development state
 
 mPDF as a whole is a quite dated software. Nowadays, better alternatives are available, albeit not written in PHP.
 
@@ -116,25 +106,21 @@ If you are looking for state of the art CSS support, mirroring existing HTML pag
 mPDF will still be updated to enhance some internal capabilities and to support newer versions of PHP,
 but better and/or newer CSS support will most likely not be implemented.
 
-Online manual
-=============
+# Online manual
 
 Online manual is available at https://mpdf.github.io/.
 
-General troubleshooting
-=============
+# General troubleshooting
 
 For general questions or troubleshooting please use [Discussions](https://github.com/mpdf/mpdf/discussions).
 
 You can also use the [mpdf tag](https://stackoverflow.com/questions/tagged/mpdf) at Stack Overflow as the StackOverflow user base is more likely to answer you in a timely manner.
 
-Contributing
-============
+# Contributing
 
 Before submitting issues and pull requests please read the [CONTRIBUTING.md](https://github.com/mpdf/mpdf/blob/development/.github/CONTRIBUTING.md) file.
 
-Unit Testing
-============
+# Unit Testing
 
 Unit testing for mPDF is done using [PHPUnit](https://phpunit.de/).
 

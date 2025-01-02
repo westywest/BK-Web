@@ -81,7 +81,7 @@
   }
 }
 .hero-section {
-  background: url(../images/gedung2.jpg) no-repeat center;
+  background: url(../images/info.png) no-repeat center;
   background-size: cover;
   width: 100%;
   height: 75vh; /* Set tinggi hanya 3/4 layar */
@@ -110,95 +110,6 @@
 .hero-section h2 {
   font-size: 1.2rem;
 }
-/* Slider Wrapper */
-.slider-wrapper {
-  overflow-x: auto;
-  overflow-y: hidden;
-  white-space: nowrap;
-  padding: 16px 0;
-}
-
-.slider {
-  display: flex;
-  gap: 16px;
-}
-
-/* Card */
-.slider .card {
-  flex: 0 0 auto;
-  width: 20rem;
-  height: 19rem;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  background-color: #fff;
-  padding: 0;
-  transition: transform 0.3s;
-  overflow: hidden; /* Pastikan gambar tidak meluap keluar card */
-  cursor: pointer; /* Menambahkan kursor pointer agar menunjukkan bahwa card dapat diklik */
-}
-
-
-.slider .card:hover {
-  transform: scale(1.05);
-}
-
-/* Gambar di dalam Card */
-.card-img-top {
-  width: 100%; /* Memastikan gambar memenuhi lebar card */
-  height: 13rem; /* Sesuaikan tinggi gambar agar tidak memaksakan tinggi card */
-  object-fit: cover; /* Menjaga aspek rasio gambar, menutupi area card */
-  border-radius: 8px 8px 0 0; /* Membuat sudut atas gambar membulat */
-  margin: 0; /* Menghilangkan margin */
-}
-
-/* Judul */
-.card-title {
-  text-align: justify;
-  font-size: 1rem;
-  margin: 8px 0 16px 0;
-  white-space: normal; /* Izinkan teks untuk membungkus ke baris berikutnya */
-  overflow: visible; /* Tampilkan seluruh teks */
-  text-overflow: unset; /* Tidak ada "..." untuk judul */
-}
-
-/* Deskripsi */
-.lead {
-  text-align: justify;
-  font-size: 0.9rem;
-  color: #555;
-  overflow: hidden; /* Potong teks yang melebihi batas */
-  text-overflow: ellipsis; /* Tambahkan "..." jika teks dipotong */
-  display: -webkit-box;
-  -webkit-line-clamp: 3; /* Batasi teks hingga 3 baris (untuk browser Webkit) */
-  -webkit-box-orient: vertical; /* Orientasi box untuk Webkit */
-  display: -moz-box; /* Vendor prefix untuk Firefox (versi lama) */
-  -moz-line-clamp: 3; /* Vendor prefix untuk Firefox (versi lama) */
-  display: box; /* Vendor prefix untuk Firefox (versi lama) */
-  line-clamp: 3; /* Standar untuk browser terbaru */
-  box-orient: vertical; /* Orientasi box untuk browser modern */
-}
-.card-link {
-  text-decoration: none; /* Menghapus garis bawah */
-  color: inherit; /* Menjaga warna teks */
-}
-
-/*SECTION CARD*/
-
-
-
-.quote {
-  margin-top: 100px;
-}
-.about {
-  margin-top: 50px;
-}
-.event {
-  margin-top: 50px;
-}
-.teacher {
-  margin-top: 50px;
-}
 .btn-learn {
   color: #0e2238;;
   font-size: 14px;
@@ -208,9 +119,6 @@
 }
 .btn-learn:hover {
   color: #22466c;
-}
-.img-fluid img {
-  width: 50%;
 }
 .footer-p {
   margin-top: 20px;
@@ -223,11 +131,28 @@ hr {
   display: block;
   opacity: 1;
 }
-#service hr {
-  width: 70px;
-  height: 2px;
-  border: 1px solid #0e2238;
-  background-color: #0e2238;
-  display: block;
-  opacity: 1;
+
+.card-link {
+  text-decoration: none; /* Menghapus garis bawah */
+  color: inherit; /* Menjaga warna teks */
+}
+/* Atur kontainer untuk Grid */
+.card {
+  margin-top: 10px;
+  box-shadow: 15px 15px 40px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+.card:hover {
+  transform: scale(1.05);
+  box-shadow: 20px 20px 50px rgba(0, 0, 0, 0.2); /* Ubah bayangan saat hover */
+}
+.img-area img {
+  width: 100%;
+}
+.img-fluid img {
+  width: 50%;
+}
+#info h2 {
+  margin-top: 40px;
 }

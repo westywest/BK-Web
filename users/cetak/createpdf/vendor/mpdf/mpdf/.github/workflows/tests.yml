@@ -11,9 +11,7 @@ on:
       - "test"
 
 jobs:
-
   tests:
-
     name: "Tests"
 
     runs-on: ${{ matrix.operating-system }}
