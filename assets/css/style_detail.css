@@ -1,0 +1,138 @@
+@import url("https://fonts.cdnfonts.com/css/roboto");
+body {
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Tinggi minimum 100% viewport */
+  margin: 0;
+}
+
+.wrapper {
+  flex: 1; /* Membuat konten utama mengisi ruang di antara header dan footer */
+}
+
+.navbar {
+    margin: 20px;
+    background-color: #fff;
+    height: 80px;
+    border-radius: 16px;
+    padding: 0.5rem;
+  }
+  .navbar-brand {
+    font-weight: 500;
+    color: #0e2238;
+    font-size: 1.25rem;
+    transition: 0.3s color;
+  }
+  .navbar img {
+    width: 155px; /* Ukuran logo default untuk desktop */
+    transition: width 0.3s ease; /* Efek transisi halus */
+  }
+  .offcanvas-header img {
+    width: 120px; /* Ukuran logo di dalam offcanvas */
+    transition: width 0.3s ease; /* Efek transisi halus */
+  }
+  .login-button {
+    background-color: #0e2238;
+    color: #fff;
+    font-size: 14px;
+    padding: 8px 20px;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: 0.3s background-color;
+  }
+  .login-button:hover {
+    background: #22466c;
+  }
+  .navbar-toggler {
+    border: none;
+    font-size: 1.25 rem;
+  }
+  .navbar-toggler:focus,
+  .btn-close:focus {
+    box-shadow: none;
+    outline: none;
+  }
+  .nav-link {
+    color: #666777;
+    font-weight: 500;
+    position: relative;
+  }
+  .nav-link:hover,
+  .nav-link.active {
+    color: #000;
+  }
+  @media (min-width: 991px) {
+    .nav-link::before {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 2px;
+      background-color: #0e2238;
+      visibility: hidden;
+      transition: 0.3s ease-in-out;
+    }
+    .nav-link:hover::before,
+    .nav-link.active::before {
+      width: 100%;
+      visibility: visible;
+    }
+  }
+  .offcanvas-header img {
+    width: 120px; /* Ukuran logo di dalam offcanvas */
+    transition: width 0.3s ease; /* Efek transisi halus */
+  }
+  /* Responsif: Tablet dan ponsel */
+  @media (max-width: 991px) {
+    .navbar-brand img {
+      width: 100px; /* Logo lebih kecil untuk tablet dan ponsel */
+    }
+  }
+
+  .author-profile{
+    object-fit: cover;
+    object-position: 50% 50%;
+    border-radius: 50%;
+    text-align: right;
+}
+.name-author{
+    text-align: left;
+}
+.judul{
+    text-decoration:none;
+    color: black;
+    font-weight: bold;
+}
+.detail {
+  max-width: 800px; /* Lebar maksimal */
+  margin: 0 auto; /* Tengah secara horizontal */
+  padding: 16px; /* Ruang di dalam elemen */
+  border-radius: 8px; /* Membuat sudut agak membulat */
+
+}
+.det-img {
+  max-width: 300px; /* Lebar maksimal lebih kecil dari container */
+  width: auto; /* Menyesuaikan lebar agar tetap proporsional */
+  height: auto; /* Menyesuaikan tinggi secara proporsional */
+  margin-top: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Tambahkan bayangan (opsional) */
+  border-radius: 8px; /* Opsional: sudut membulat */
+  display: inline-block; /* Pusatkan gambar jika di dalam div bertekst-align: center */
+}
+
+.titleContent{
+    color: #0e2238;
+    text-align: center;
+    font-family: 'Roboto Black', sans-serif;
+}
+.content{
+    text-align: justify;
+    margin-left: 60px;
+    margin-right: 60px;
+}
+.footer-p {
+  margin-top: 20px;
+}

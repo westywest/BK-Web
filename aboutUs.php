@@ -18,114 +18,116 @@ $resulGuru = $datas->get_result();
     <link rel="stylesheet" href="assets/css/style_aboutUs.css" />
   </head>
   <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg fixed-top">
-      <div class="container">
-        <a class="navbar-brand me-auto" href="index.php"
-          ><img src="assets/images/logonamenobg2.png"
-        /></a>
-
-        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
-          <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="offcanvasNavbarLabel">
-              <img src="assets/images/logonamenobg2.png" />
-            </h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-          </div>
-          <div class="offcanvas-body">
-            <ul class="navbar-nav justify-content-center flex-grow-1 pe-3">
-              <li class="nav-item">
-                <a class="nav-link mx-lg-2" aria-current="page" href="index.php">Home</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link mx-lg-2 " href="informasi.php">Informasi</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link mx-lg-2" href="service.php">Layanan</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link mx-lg-2" href="event.php">Event</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link mx-lg-2 active" href="aboutUs.php">About Us</a>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <a class="login-button" href="users/index.php"><i class="fa-solid fa-user"></i> Login</a>
-        <button class="navbar-toggler pe-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-      </div>
-    </nav>
-    <!-- End Navbar -->
-
-    <section class="hero-section">
-      <div class="container d-flex align-items-center justify-content-center fs-1 text-white flex-column">
-        <h1>ABOUT US</h1>
-      </div>
-    </section>
-
-    <section id="visi" class="visi section-padding">
-        <div class="container" style="margin-top: 40px;">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="section header text-center pb-5">
-                        <h2>VISI</h2>
-                        <hr style="margin: auto"/>
-                        <p>Menjadi lembaga yang memberikan layanan Bimbingan Konseling yang profesional, terpercaya, dan bermanfaat bagi siswa dalam mencapai kesejahteraan emosional, sosial, dan akademik.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="misi" class="misi section-padding">
+    <div class="wrapper">
+      <!-- Navbar -->
+      <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="section header text-center pb-5">
-                        <h2>MISI</h2>
-                        <hr style="margin: auto"/>
-                        <ul>
-                            <li>Menyediakan layanan bimbingan dan konseling yang responsif terhadap kebutuhan siswa.</li>
-                            <li>Membantu siswa dalam mengidentifikasi dan mengatasi masalah yang mereka hadapi, baik di sekolah maupun dalam kehidupan pribadi mereka.</li>
-                            <li>Mendorong siswa untuk berkembang secara holistik, dengan memfasilitasi pemahaman diri, pilihan karir, dan hubungan interpersonal yang sehat.</li>
-                            <li>Memberikan dukungan yang kuat kepada orang tua dan guru dalam mendukung perkembangan siswa.</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+          <a class="navbar-brand me-auto" href="index.php"
+            ><img src="assets/images/logonamenobg2.png"
+          /></a>
 
-    <!-- Teacher Section-->
-    <section id="teacher" class="teacher section-padding">
-      <div class="container">
-        <div class="row">
-          <div class="col-md-12">
-            <div class="section-header text-center pb-5">
-              <h2>Guru BK</h2>
-              <hr style="margin: auto" />
+          <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+            <div class="offcanvas-header">
+              <h5 class="offcanvas-title" id="offcanvasNavbarLabel">
+                <img src="assets/images/logonamenobg2.png" />
+              </h5>
+              <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+              <ul class="navbar-nav justify-content-center flex-grow-1 pe-3">
+                <li class="nav-item">
+                  <a class="nav-link mx-lg-2" aria-current="page" href="index.php">Home</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link mx-lg-2 " href="informasi.php">Informasi</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link mx-lg-2" href="service.php">Layanan</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link mx-lg-2" href="event.php">Event</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link mx-lg-2 active" href="aboutUs.php">About Us</a>
+                </li>
+              </ul>
             </div>
           </div>
+          <a class="login-button" href="users/index.php"><i class="fa-solid fa-user"></i> Login</a>
+          <button class="navbar-toggler pe-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
         </div>
-        <div class="row">
-        <?php
-        while ($row = $resulGuru->fetch_assoc()) {?>
-            <div class="col-12 col-md-4 col-lg-4">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <img src="assets/images/profile.jpg" alt=""class="img-fluid rounded-circle"/>
-                        <h3 class="card-tittle py-2"><?php echo htmlspecialchars($row['name']) ?></h3>
-                        <p class="card-text"><?php echo htmlspecialchars($row['nip']) ?></p>
-                    </div>
-                </div>
+      </nav>
+      <!-- End Navbar -->
+
+      <section class="hero-section">
+        <div class="container d-flex align-items-center justify-content-center fs-1 text-white flex-column">
+          <h1>ABOUT US</h1>
+        </div>
+      </section>
+
+      <section id="visi" class="visi section-padding">
+          <div class="container" style="margin-top: 40px;">
+              <div class="row">
+                  <div class="col-md-12">
+                      <div class="section header text-center pb-5">
+                          <h2>VISI</h2>
+                          <hr style="margin: auto"/>
+                          <p>Menjadi lembaga yang memberikan layanan Bimbingan Konseling yang profesional, terpercaya, dan bermanfaat bagi siswa dalam mencapai kesejahteraan emosional, sosial, dan akademik.</p>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </section>
+
+      <section id="misi" class="misi section-padding">
+          <div class="container">
+              <div class="row">
+                  <div class="col-md-12">
+                      <div class="section header text-center pb-5">
+                          <h2>MISI</h2>
+                          <hr style="margin: auto"/>
+                          <ul>
+                              <li>Menyediakan layanan bimbingan dan konseling yang responsif terhadap kebutuhan siswa.</li>
+                              <li>Membantu siswa dalam mengidentifikasi dan mengatasi masalah yang mereka hadapi, baik di sekolah maupun dalam kehidupan pribadi mereka.</li>
+                              <li>Mendorong siswa untuk berkembang secara holistik, dengan memfasilitasi pemahaman diri, pilihan karir, dan hubungan interpersonal yang sehat.</li>
+                              <li>Memberikan dukungan yang kuat kepada orang tua dan guru dalam mendukung perkembangan siswa.</li>
+                          </ul>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </section>
+
+      <!-- Teacher Section-->
+      <section id="teacher" class="teacher section-padding">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="section-header text-center pb-5">
+                <h2>Guru BK</h2>
+                <hr style="margin: auto" />
+              </div>
             </div>
-        <?php  }; ?>
+          </div>
+          <div class="row">
+          <?php
+          while ($row = $resulGuru->fetch_assoc()) {?>
+              <div class="col-12 col-md-4 col-lg-4">
+                  <div class="card text-center">
+                      <div class="card-body">
+                          <img src="assets/images/profile.jpg" alt=""class="img-fluid rounded-circle"/>
+                          <h3 class="card-tittle py-2"><?php echo htmlspecialchars($row['name']) ?></h3>
+                          <p class="card-text"><?php echo htmlspecialchars($row['nip']) ?></p>
+                      </div>
+                  </div>
+              </div>
+          <?php  }; ?>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
 
     
     <!-- Footer -->

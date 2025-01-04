@@ -40,12 +40,13 @@
         $error = $_FILES['foto']['error'];
         $tmpName = $_FILES['foto']['tmp_name'];
     
-        // Path ke foto default
-        $fotoDefault = '../../../assets/images/default/default.png';
-    
+        
         // Cek apakah tidak ada gambar yang di-upload
         if ($error === 4) {
-            return $fotoDefault; // Kembalikan path foto default
+            echo"<script>
+                alert('pilih gambar terlebih dahulu!');
+                </script>";
+        return false;
         }
     
         // Cek apakah file yang di-upload adalah gambar
@@ -237,7 +238,6 @@
                                 <div class="mb-3">
                                     <label for="foto" class="form-label">Foto</label> <small style="color: red;">Maks. ukuran 10 MB</small>
                                     <input type="file" class="form-control" name="foto" id="foto">
-                                    <small class="form-text text-muted">Opsional. Jika tidak diunggah, akan menggunakan foto default.</small>
                                 </div>
                                 <div class="mb-3">
                                     <label for="content" class="form-label">Isi Kontent</label>

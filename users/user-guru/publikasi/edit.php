@@ -66,12 +66,10 @@
         $error = $_FILES['foto']['error'];
         $tmpName = $_FILES['foto']['tmp_name'];
     
-        // Path ke foto default
-        $fotoDefault = '../../../assets/images/default/default.png';
     
         // Cek apakah tidak ada gambar yang di-upload
         if ($error === 4) {
-            return $fotoDefault; // Kembalikan path foto default
+            return false;
         }
     
         // Cek apakah file yang di-upload adalah gambar
@@ -113,9 +111,9 @@
         $guru_id = $_SESSION['guru_id'];
         $title = $_POST['title'];
         $content = $_POST['content'];
-        $fotoLama = $_POST['fotoLama'];
+        $fotoLama = $_POST['fotoLama']; // Ambil data foto lama
         $jenis = $_POST['jenis'];
-        $publikasi_id = isset($_POST['id']) ? $_POST['id'] : null;
+        $publikasi_id = $_POST['id'] ?? null;
     
         if (!$publikasi_id) {
             $_SESSION['error'] = "ID publikasi tidak ditemukan!";
@@ -123,20 +121,23 @@
             exit;
         }
     
-        // Gunakan foto lama jika tidak ada file baru yang diunggah
+        // Default: gunakan foto lama
         $foto = $fotoLama;
+    
+        // Jika ada file baru yang diunggah
         if ($_FILES['foto']['error'] !== 4) {
             $fotoBaru = upload();
-            if ($fotoBaru === false) {
+            if ($fotoBaru !== false) {
+                $foto = $fotoBaru;
+    
+                // Hapus foto lama jika ada file baru yang berhasil diunggah
+                if (file_exists($fotoLama)) {
+                    unlink($fotoLama);
+                }
+            } else {
                 $_SESSION['error'] = "Gagal mengunggah foto baru!";
                 header("Location: " . $_SERVER['PHP_SELF']);
                 exit;
-            }
-            $foto = $fotoBaru;
-    
-            // Hapus foto lama jika ada file baru yang diunggah
-            if (file_exists($fotoLama) && $fotoLama !== '../../../assets/images/default/default.png') {
-                unlink($fotoLama);
             }
         }
     
@@ -160,9 +161,9 @@
         $updInfo = $conn->prepare($sql);
         $updInfo->bind_param("sssss", $title, $content, $foto, $jenis, $publikasi_id);
     
-        if ($updInfo->execute() && $updInfo->affected_rows > 0) {
+        if ($updInfo->execute()) {
             echo "<script>
-                    alert('publikasi berhasil diupdate!');
+                    alert('Publikasi berhasil diupdate!');
                     window.location.href = '/BK/users/user-guru/publikasi/index.php';
                 </script>";
             exit;
@@ -172,9 +173,6 @@
             exit;
         }
     }
-    
-
-    
     ?>
     <div class="wrapper">
         <aside id="sidebar">

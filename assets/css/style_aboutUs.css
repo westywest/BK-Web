@@ -1,5 +1,20 @@
 @import url("https://fonts.cdnfonts.com/css/roboto");
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Tinggi minimum 100% viewport */
+  margin: 0;
+}
 
+.wrapper {
+  flex: 1; /* Membuat konten utama mengisi ruang di antara header dan footer */
+}
+
+footer {
+  background-color: #343a40; /* Warna footer */
+  padding: 16px;
+  text-align: center;
+}
 .navbar {
   margin: 20px;
   background-color: #fff;
@@ -203,4 +218,7 @@ hr {
   background-color: #0e2238;
   display: block;
   opacity: 1;
+}
+.footer-p {
+  margin-top: 20px;
 }

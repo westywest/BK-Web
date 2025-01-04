@@ -1,5 +1,20 @@
 @import url("https://fonts.cdnfonts.com/css/roboto");
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Tinggi minimum 100% viewport */
+  margin: 0;
+}
 
+.wrapper {
+  flex: 1; /* Membuat konten utama mengisi ruang di antara header dan footer */
+}
+
+footer {
+  background-color: #343a40; /* Warna footer */
+  padding: 16px;
+  text-align: center;
+}
 .navbar {
   margin: 20px;
   background-color: #fff;
@@ -120,37 +135,38 @@
   text-align: justify;
 }
 
-/* Mengatur lebar tabel */
+/* Mengatur tata letak tabel */
 table.service-table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 30px;
-  table-layout: fixed;  /* Agar tabel tidak meluas */
+  table-layout: auto; /* Biarkan tabel menyesuaikan lebarnya */
 }
 
-/* Menghapus border tabel */
-table.service-table td {
-  border: none;
-  padding: 15px;
-  text-align: center;
-  vertical-align: top;  /* Menjaga agar teks tetap di atas setiap cell */
-}
-
-/* Menampilkan item dalam tabel secara horizontal menggunakan flexbox */
+/* Membuat item dalam tabel fleksibel */
 table.service-table tr {
   display: flex;
-  justify-content: space-around;  /* Menjaga jarak antar item */
-  align-items: flex-start;  /* Menjaga isi tetap berada di atas */
+  flex-wrap: wrap; /* Membungkus item ke baris berikutnya */
+  justify-content: space-between; /* Memberikan jarak antara kolom */
   width: 100%;
 }
 
-/* Mengatur ikon dan teks dalam tabel secara horizontal */
+/* Atur ukuran kolom agar 2 per baris */
+table.service-table td {
+  flex-basis: calc(50% - 10px); /* Setiap kolom mengambil 50% lebar dengan jarak antar kolom */
+  margin-bottom: 20px; /* Jarak antar baris */
+  padding: 15px;
+  text-align: center;
+  vertical-align: top;
+  box-sizing: border-box; /* Pastikan padding dihitung dalam ukuran kolom */
+}
+
+/* Menyusun konten dalam kolom secara vertikal */
 table.service-table .service-item {
   display: flex;
-  flex-direction: column;  /* Menyusun item secara vertikal (ikon di atas teks) */
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  text-align: center;
 }
 
 /* Styling ikon */
@@ -161,7 +177,6 @@ table.service-table .service-item i {
 
 /* Styling teks */
 table.service-table .service-item b {
-  display: block;
   margin-bottom: 10px;
   font-weight: bold;
 }
@@ -173,11 +188,6 @@ table.service-table .service-item ul {
   line-height: 1.5;
 }
 
-/* Menjaga jarak antar item */
-table.service-table td {
-  width: 33%;
-}
-
 table.service-table .service-item ul {
   list-style-type: none;
   padding-left: 0;
@@ -186,6 +196,7 @@ table.service-table .service-item ul {
 table.service-table .service-item ul li {
   margin-bottom: 5px;
 }
+
 
 .img-fluid img {
   width: 50%;

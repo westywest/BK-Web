@@ -1,5 +1,20 @@
 @import url("https://fonts.cdnfonts.com/css/roboto");
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Tinggi minimum 100% viewport */
+  margin: 0;
+}
 
+.wrapper {
+  flex: 1; /* Membuat konten utama mengisi ruang di antara header dan footer */
+}
+
+footer {
+  background-color: #343a40; /* Warna footer */
+  padding: 16px;
+  text-align: center;
+}
 .navbar {
   margin: 20px;
   background-color: #fff;
@@ -147,6 +162,14 @@ hr {
   transform: scale(1.05);
   box-shadow: 20px 20px 50px rgba(0, 0, 0, 0.2); /* Ubah bayangan saat hover */
 }
+.n-img {
+  width: 20rem;
+  height: 160px;
+  object-fit: cover;
+  object-position: 50% 50%;
+  border-radius: 8px 8px 0 0; /* Membuat sudut atas gambar membulat */
+  margin: 0; /* Menghilangkan margin */
+}
 .img-area img {
   width: 100%;
 }
@@ -155,4 +178,12 @@ hr {
 }
 #info h2 {
   margin-top: 40px;
+}
+.card-title {
+  text-align: justify;
+  font-size: 1.2rem;
+  margin: 2px 0 16px 0;
+  white-space: normal; /* Izinkan teks untuk membungkus ke baris berikutnya */
+  overflow: visible; /* Tampilkan seluruh teks */
+  text-overflow: unset; /* Tidak ada "..." untuk judul */
 }
