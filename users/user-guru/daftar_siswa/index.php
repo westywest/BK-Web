@@ -36,6 +36,7 @@
     }
     
     include '../../../function/connectDB.php';
+    $fotoDefault = 'default.jpg';
     $sql = "SELECT siswa.id AS siswa_id, siswa.user_id, siswa.nis, siswa.name AS nama_siswa, siswa.jk, siswa.phone, siswa.kelas_id, kelas.id AS kelas_id, kelas.class_name, kelas.guru_id, guru.id AS guru_id, guru.name AS nama_guru
     FROM siswa JOIN kelas ON siswa.kelas_id = kelas.id
     JOIN guru ON kelas.guru_id = guru.id
@@ -69,7 +70,7 @@
                     <i class="lni lni-dashboard-square-1"></i>
                 </button>
                 <div class="sidebar-logo">
-                    <a href="../dashboard.php">SPENTHREE</a>
+                    <a href="../dashboard.php">BK SPENTHREE</a>
                 </div>
             </div>
             <ul class="sidebar-nav">
@@ -123,7 +124,7 @@
                 </li>
             </ul>
             <div class="user-profile-footer p-2 d-flex align-items-center">
-                <img src="../../../assets/images/profile.jpg" alt="User Avatar" class="rounded-circle me-2" style="width: 40px; height: 40px;">
+                <img src="../../../assets/images/teacher/<?php echo htmlspecialchars($_SESSION['foto'] ?: $fotoDefault); ?>" alt="User Avatar" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;">
                 <div class="user-info">
                     <h6 class="text-white mb-0"><?php echo ($_SESSION['name']) ?></h6>
                     <small><?php echo ucfirst($_SESSION['role']) ?></small>
@@ -218,7 +219,7 @@
 
 
                     <footer class="pt-5 d-flex justify-content-between">
-                        <span>Copyright © 2024 <a href="#">BKSPENTHREE</a></span>
+                        <span>Copyright © 2025 <a href="#">BKSPENTHREE</a></span>
                         <ul class="nav m-0">
                             <li class="nav-item">
                                 <a class="nav-link text-secondary"href="#">Hubungi Kami</a>

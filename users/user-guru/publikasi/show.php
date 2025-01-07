@@ -23,6 +23,7 @@
     
     include '../../../function/connectDB.php';
     $publikasi_id = $_GET['id'];
+    $fotoDefault = 'default.jpg';
     $sql = "SELECT publikasi.id AS publikasi_id, 
             publikasi.guru_id, publikasi.date, 
             publikasi.title, publikasi.jenis, 
@@ -57,7 +58,7 @@
                     <i class="lni lni-dashboard-square-1"></i>
                 </button>
                 <div class="sidebar-logo">
-                    <a href="../dashboard.php">SPENTHREE</a>
+                    <a href="../dashboard.php">BK SPENTHREE</a>
                 </div>
             </div>
             <ul class="sidebar-nav">
@@ -111,7 +112,7 @@
                 </li>
             </ul>
             <div class="user-profile-footer p-2 d-flex align-items-center">
-                <img src="../../../assets/images/profile.jpg" alt="User Avatar" class="rounded-circle me-2" style="width: 40px; height: 40px;">
+                <img src="../../../assets/images/teacher/<?php echo htmlspecialchars($_SESSION['foto'] ?: $fotoDefault); ?>" alt="User Avatar" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;">
                 <div class="user-info">
                     <h6 class="text-white mb-0"><?php echo ($_SESSION['name']) ?></h6>
                     <small><?php echo ucfirst($_SESSION['role']) ?></small>
@@ -160,13 +161,12 @@
                                 <input type="text" class="form-control" name="jenis" id="jenis" placeholder="jenis" value="<?php echo htmlspecialchars($jenis) ?>" disabled>
                             </div>
                             <div class="mb-3">
-                                <label for="content" class="form-label">Isi Kontent</label>
-                                <textarea name="content" id="content" class="form-control" rows="10" placeholder="Tulis isi konten disini..." disabled><?php echo htmlspecialchars($content) ?></textarea>
-                            </div>
+                                <label for="content" class="form-label">Isi Konten</label>
+                                <p class="content"><?php echo ($content) ?></p>                            </div>
                         </div>
                     </div>
                     <footer class="pt-5 d-flex justify-content-between">
-                        <span>Copyright © 2024 <a href="#">BKSPENTHREE.</a></span>
+                        <span>Copyright © 2025 <a href="#">BKSPENTHREE.</a></span>
                         <ul class="nav m-0">
                             <li class="nav-item">
                                 <a class="nav-link text-secondary"href="#">Hubungi Kami</a>
@@ -180,6 +180,15 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../../assets/script/script_admin.js"></script>
+    <script src="https://cdn.tiny.cloud/1/vj6infomcca3x4pe8wkje1i3195ywbkcl8alu0cc0fibtmnt/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+    tinymce.init({
+        selector: '#editor',
+        plugins: 'lists',
+        toolbar: 'bold italic underline | bullist numlist',
+        height: 500
+    });
+    </script>
     </body>
 </html>
 </body>

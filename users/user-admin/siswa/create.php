@@ -23,12 +23,29 @@
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $nis = intval(trim($_POST['nis']));
-        $name = htmlspecialchars(trim($_POST['name']));
+        $name = trim($_POST['name']);
         $jk = $_POST['jk'];
         $phone = trim($_POST['phone']);
         $kelas_id = intval($_POST['kelas_id']);
-        $pass = password_hash($_POST['pass'], PASSWORD_DEFAULT);
+        $new_password = $_POST['new_password'];
+        $confirm_password = $_POST['confirm_password'];
+
+        // Validasi password baru dan konfirmasi password
+        if ($new_password !== $confirm_password) {
+            $_SESSION['error'] = "Konfirmasi password tidak sesuai!";
+            header("Location: " . $_SERVER['PHP_SELF']); // Refresh halaman agar pesan error muncul
+            exit;
+        }
+        // Validasi panjang password baru
+        if (strlen($new_password) < 8) {
+            $_SESSION['error'] = "Minimal panjang karakter password 8!";
+            header("Location: " . $_SERVER['PHP_SELF']); // Refresh halaman agar pesan error muncul
+            exit;
+            
+        }
+        $hashed_new_password = password_hash($new_password, PASSWORD_DEFAULT);
     
+
         // Cek apakah NIS sudah ada di database
         $sql = "SELECT COUNT(*) FROM siswa WHERE nis = ?";
         $checkNIS = $conn->prepare($sql);
@@ -68,7 +85,7 @@
                 // Tambahkan data ke tabel users
                 $sql = "INSERT INTO users (id, username, password, role) VALUES (null, ?, ?, 'siswa')";
                 $datas = $conn->prepare($sql);
-                $datas->bind_param("ss", $nis, $pass);
+                $datas->bind_param("ss", $nis, $hashed_new_password);
                 $datas->execute();
             
                 if ($datas->affected_rows > 0) {
@@ -123,6 +140,12 @@
                     <a href="../dashboard.php" class="sidebar-link">
                         <i class="lni lni-home-2"></i>
                         <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="../profil/index.php" class="sidebar-link">
+                        <i class='bx bxs-user-detail'></i>
+                        <span>Profil</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
@@ -215,10 +238,17 @@
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="pass" class="form-label">Password</label>
+                                    <label for="new_password" class="form-label">Password</label><small style="color: red;"> *password minimal 8 karakter</small>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class='bx bxs-lock-alt'></i></span>
-                                        <input type="password" class="form-control" name="pass" id="pass" required placeholder="**********">
+                                        <input type="password" class="form-control" name="new_password" id="new_password" required placeholder="**********">
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="confirm_password" class="form-label">Konfirmasi Password</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class='bx bxs-lock-alt'></i></span>
+                                        <input type="password" class="form-control" name="confirm_password" id="confirm_password" required placeholder="**********">
                                     </div>
                                 </div>
                                 <button class="btn btn-primary my-3" type="submit" name="submit" style="color: white;">Save</button>
@@ -226,7 +256,7 @@
                         </div>
                     </div>
                     <footer class="pt-5 d-flex justify-content-between">
-                        <span>Copyright © 2024 <a href="#">BKSPENTHREE.</a></span>
+                        <span>Copyright © 2025 <a href="#">BKSPENTHREE.</a></span>
                         <ul class="nav m-0">
                             <li class="nav-item">
                                 <a class="nav-link text-secondary"href="#">Hubungi Kami</a>

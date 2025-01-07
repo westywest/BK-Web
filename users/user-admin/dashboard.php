@@ -77,6 +77,12 @@ $stmt->close();
                     </a>
                 </li>
                 <li class="sidebar-item">
+                    <a href="profil/index.php" class="sidebar-link">
+                        <i class='bx bxs-user-detail'></i>
+                        <span>Profil</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
                     <a href="guru/index.php" class="sidebar-link">
                         <i class="lni lni-user-4"></i>
                         <span>Guru</span>
@@ -125,7 +131,7 @@ $stmt->close();
                     <div id="donutchart" style="width: 900px; height: 500px;"></div>
 
                     <footer class="pt-5 d-flex justify-content-between">
-                        <span>Copyright © 2024 <a href="#">BKSPENTHREE</a></span>
+                        <span>Copyright © 2025 <a href="#">BKSPENTHREE</a></span>
                         <ul class="nav m-0">
                             <li class="nav-item">
                                 <a class="nav-link text-secondary"href="#">Hubungi Kami</a>

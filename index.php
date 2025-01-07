@@ -82,7 +82,7 @@ $resultInfo = $dataInfo->get_result();
           <div class="row">
             <div class="col-md-12">
               <div class="section-header text-center pb-5">
-                <h2>Latest Event</h2>
+                <h2>Publikasi Terbaru</h2>
                 <hr style="margin: auto" />
               </div>
             </div>
@@ -134,7 +134,7 @@ $resultInfo = $dataInfo->get_result();
           smpn3pwt@gmail.com
         </p>
         <p class="text-white footer-p">
-          Copyright © 2024 Website BK SMP NEGERI 3 PURWOKERTO
+          Copyright © 2025 Website BK SMP NEGERI 3 PURWOKERTO
         </p>
       </div>
     </footer>

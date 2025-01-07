@@ -62,6 +62,12 @@
                     </a>
                 </li>
                 <li class="sidebar-item">
+                    <a href="../profil/index.php" class="sidebar-link">
+                        <i class='bx bxs-user-detail'></i>
+                        <span>Profil</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
                     <a href="../guru/index.php" class="sidebar-link">
                         <i class="lni lni-user-4"></i>
                         <span>Guru</span>
@@ -110,7 +116,6 @@
                     <div class="card">
                         <div class="card-body">
                             <a class="btn btn-primary mb-4" href="create.php" style="color: white; width: 135px;"><i class="lni lni-plus"></i> Tambah Data</a>
-                            <a href="../../cetak_author.php" class="btn btn-block btn-primary mb-4 buttons"><i class="lni lni-printer"></i></a>
                             <div class="table-responsive">
                                 <table class="table" id="table">
                                     <thead>
@@ -148,7 +153,7 @@
                         </div>
                     </div>
                     <footer class="pt-5 d-flex justify-content-between">
-                        <span>Copyright © 2024 <a href="#">BKSPENTHREE.</a></span>
+                        <span>Copyright © 2025 <a href="#">BKSPENTHREE.</a></span>
                         <ul class="nav m-0">
                             <li class="nav-item">
                                 <a class="nav-link text-secondary"href="#">Hubungi Kami</a>

@@ -113,7 +113,7 @@ if ($data = $result->fetch_assoc()) {
           smpn3pwt@gmail.com
         </p>
         <p class="text-white footer-p">
-          Copyright © 2024 Website BK SMP NEGERI 3 PURWOKERTO
+          Copyright © 2025 Website BK SMP NEGERI 3 PURWOKERTO
         </p>
       </div>
     </footer>

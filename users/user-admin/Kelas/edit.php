@@ -66,7 +66,6 @@
     ?>
     <div class="wrapper">
         <aside id="sidebar">
-            <div class="d-flex">
             <div class="d-flex sidebar-header">
                 <button class="toggle-btn" type="button">
                     <i class="lni lni-dashboard-square-1"></i>
@@ -83,6 +82,12 @@
                     </a>
                 </li>
                 <li class="sidebar-item">
+                    <a href="../profil/index.php" class="sidebar-link">
+                        <i class='bx bxs-user-detail'></i>
+                        <span>Profil</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
                     <a href="../guru/index.php" class="sidebar-link">
                         <i class="lni lni-user-4"></i>
                         <span>Guru</span>
@@ -95,7 +100,7 @@
                     </a>
                 </li>
                 <li class="sidebar-item active">
-                    <a href="../Kelas/index.php" class="sidebar-link">
+                    <a href="index.php" class="sidebar-link">
                         <i class='bx bx-spreadsheet' ></i>
                         <span>Kelas</span>
                     </a>
@@ -155,7 +160,7 @@
                         </div>
                     </div>
                     <footer class="pt-5 d-flex justify-content-between">
-                        <span>Copyright © 2024 <a href="#">BKSPENTHREE.</a></span>
+                        <span>Copyright © 2025 <a href="#">BKSPENTHREE.</a></span>
                         <ul class="nav m-0">
                             <li class="nav-item">
                                 <a class="nav-link text-secondary"href="#">Hubungi Kami</a>
@@ -169,13 +174,5 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../../assets/script/script_admin.js"></script>
-    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-    <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap5.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            $('#table').DataTable();
-        });
-    </script>
     </body>
 </html>

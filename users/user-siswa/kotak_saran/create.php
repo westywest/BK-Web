@@ -29,7 +29,7 @@
     if($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user_id = $_SESSION['user_id'];
         $guru_id = intval($_POST['guru_id']);
-        $message = htmlspecialchars(trim($_POST['message']));
+        $message = trim($_POST['message']);
 
         if (empty($guru_id) || $guru_id == 0) {
             $_SESSION['error'] = "Harap pilih guru!";
@@ -76,7 +76,7 @@
                     <i class="lni lni-dashboard-square-1"></i>
                 </button>
                 <div class="sidebar-logo">
-                    <a href="../dashboard.php">SPENTHREE</a>
+                    <a href="../dashboard.php">BK SPENTHREE</a>
                 </div>
             </div>
             <ul class="sidebar-nav">
@@ -176,7 +176,7 @@
                         </div>
                     </div>
                     <footer class="pt-5 d-flex justify-content-between">
-                        <span>Copyright © 2024 <a href="#">BKSPENTHREE.</a></span>
+                        <span>Copyright © 2025 <a href="#">BKSPENTHREE.</a></span>
                         <ul class="nav m-0">
                             <li class="nav-item">
                                 <a class="nav-link text-secondary"href="#">Hubungi Kami</a>

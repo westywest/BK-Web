@@ -8,28 +8,26 @@
     <link href="https://cdn.lineicons.com/5.0/lineicons.css" rel="stylesheet" />
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="../../../assets/css/style_user.css">
-    <title>Profil | Siswa</title>
+    <title>Profil | Admin</title>
 </head>
 <body>
     <?php
     session_start();
 
-    // Cek apakah user sudah login dan memiliki role 'siswa'
-    if (!isset($_SESSION['status']) || $_SESSION['role'] !== "siswa") {
-        
+    // Cek apakah user sudah login dan memiliki role 'admin'
+    if (!isset($_SESSION['status']) || $_SESSION['role'] !== "admin") {
+        // Redirect ke halaman login jika bukan guru
         header("Location:/BK/users/index.php");
         exit;
     }
     
     include '../../../function/connectDB.php';
     
+    // Ambil username dari session
     $username = $_SESSION['username'];
-    // Query untuk mengambil data guru berdasarkan username yang login
-    $sql = "SELECT siswa.id AS siswa_id, siswa.nis, siswa.name, siswa.jk, siswa.phone, siswa.kelas_id, users.username, users.password, kelas.id AS kelas_id, kelas.class_name, guru.id AS guru_id, guru.nip, guru.name AS guru_name
-            FROM siswa
-            JOIN users ON siswa.user_id = users.id
-            JOIN kelas ON siswa.kelas_id = kelas.id
-            JOIN guru ON kelas.guru_id = guru.id
+    
+    $sql = "SELECT users.id AS user_id, users.username, users.password
+            FROM users
             WHERE users.username = ?";
     
     $stmt = $conn->prepare($sql);
@@ -38,74 +36,72 @@
     $result = $stmt->get_result();
     
     if ($result->num_rows > 0) {
-        $user = $result->fetch_assoc();
+        $user_data = $result->fetch_assoc();
+        $_SESSION["username"] = $user_data["username"];
+        $_SESSION["password"] = $user_data["password"];
         
-        $nis = $user['nis'];
-        $jk = $user['jk'];
-        $phone = $user['phone'];
-        $guru_name = $user['guru_name'];
-        $nip = $user['nip'];
-        $class_name = $user['class_name'];
-        $hashed_password = $user['password'];
-        
+    } else {
+        // Menangani jika data user tidak ditemukan
+        $_SESSION['error'] = "Data user tidak ditemukan.";
+        header('Location: /BK/users/index.php');
+        exit;
     }
 
-    // UBAH PASSWORD
+    //UBAH PASSWORD
     if (isset($_POST['submit'])) {
         $current_password = $_POST['current_password'];
         $new_password = $_POST['new_password'];
         $confirm_password = $_POST['confirm_password'];
-
+    
         // Validasi password baru dan konfirmasi password
         if ($new_password !== $confirm_password) {
             echo "<script>
                     alert('Konfirmasi password tidak sesuai!');
-                    window.location.href = '/BK/users/user-siswa/profil/index.php';
-                </script>";
+                    window.location.href = '/BK/users/user-admin/profil/index.php';
+                  </script>";
             exit;
         }
-
         // Validasi panjang password baru
         if (strlen($new_password) < 8) {
             echo "<script>
                     alert('Password baru harus minimal 8 karakter!');
-                    window.location.href = '/BK/users/user-siswa/profil/index.php';
+                    window.location.href = '/BK/users/user-guru/profil/index.php';
                 </script>";
             exit;
         }
-
+    
         // Validasi password lama
-        if (password_verify($current_password, $hashed_password)) {
+        if (password_verify($current_password, $_SESSION["password"])) {
             // Enkripsi password baru
             $hashed_new_password = password_hash($new_password, PASSWORD_DEFAULT);
-
+    
             // Update password di database
             $update_sql = $conn->prepare("UPDATE users SET password = ? WHERE username = ?");
             $update_sql->bind_param("ss", $hashed_new_password, $username);
-
+    
             if ($update_sql->execute()) {
                 echo "<script>
                         alert('Password berhasil diupdate!');
-                        window.location.href = '/BK/users/user-siswa/profil/index.php';
-                    </script>";
+                        window.location.href = '/BK/users/user-admin/profil/index.php';
+                      </script>";
                 exit;
             } else {
                 echo "<script>
                         alert('Terjadi kesalahan saat memperbarui password!');
-                        window.location.href = '/BK/users/user-siswa/profil/index.php';
-                    </script>";
+                        window.location.href = '/BK/users/user-admin/profil/index.php';
+                      </script>";
                 exit;
             }
         } else {
             // Password lama tidak sesuai
             echo "<script>
                     alert('Password lama tidak sesuai!');
-                    window.location.href = '/BK/users/user-siswa/profil/index.php';
-                </script>";
+                    window.location.href = '/BK/users/user-admin/profil/index.php';
+                  </script>";
             exit;
         }
+    
     }
-
     ?>
     <div class="wrapper">
         <aside id="sidebar">
@@ -120,7 +116,7 @@
             <ul class="sidebar-nav">
                 <li class="sidebar-item">
                     <a href="../dashboard.php" class="sidebar-link">
-                        <i class='bx bx-home' ></i>
+                        <i class="lni lni-home-2"></i>
                         <span>Dashboard</span>
                     </a>
                 </li>
@@ -131,34 +127,28 @@
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="../pendaftaran_konseling/index.php" class="sidebar-link">
-                        <i class='bx bxs-file-plus'></i>
-                        <span>Pendaftaran Konseling</span>
+                    <a href="../guru/index.php" class="sidebar-link">
+                        <i class="lni lni-user-4"></i>
+                        <span>Guru</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="../kunjungan/index.php" class="sidebar-link">
-                        <i class='bx bx-list-plus'></i>
-                        <span>Kunjungan Siswa</span>
+                    <a href="../siswa/index.php" class="sidebar-link">
+                        <i class="lni lni-user-multiple-4"></i>
+                        <span>Siswa</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="../kotak_saran/index.php" class="sidebar-link">
-                        <i class='bx bxs-inbox'></i>
-                        <span>Kotak Saran</span>
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a href="../catatan_kasus/index.php" class="sidebar-link">
-                        <i class='bx bx-error'></i>
-                        <span>Catatan Kasus</span>
+                    <a href="../Kelas/index.php" class="sidebar-link">
+                        <i class='bx bx-spreadsheet' ></i>
+                        <span>Kelas</span>
                     </a>
                 </li>
             </ul>
             <div class="user-profile-footer p-2 d-flex align-items-center">
                 <img src="../../../assets/images/profile.jpg" alt="User Avatar" class="rounded-circle me-2" style="width: 40px; height: 40px;">
                 <div class="user-info">
-                    <h6 class="text-white mb-0"><?php echo ($_SESSION['name']) ?></h6>
+                    <h6 class="text-white mb-0"><?php echo ($_SESSION['username']) ?></h6>
                     <small><?php echo ucfirst($_SESSION['role']) ?></small>
                 </div>
             </div>
@@ -176,44 +166,12 @@
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="#">Profil</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Overview</li>
+                            <li class="breadcrumb-item active" aria-current="page">Profil User</li>
                         </ol>
                     </nav>
-                    <h1 class="h2">Profil <?php echo($_SESSION['name'])?></h1>
+                    <h1 class="h2">Profil <?php echo($_SESSION['username'])?></h1>
                     <p>Anda dapat mengganti password pada halaman ini!</p>
-
-                    <div class="card">
-                        <div class="card-body">
-                            <table class="table">
-                                <tr>
-                                    <td class="data-label"><b>NIS</b></td>
-                                    <td><?php echo htmlspecialchars($nis); ?></td>
-                                </tr>
-                                <tr>
-                                    <td class="data-label"><b>Nama</b></td>
-                                    <td><?php echo htmlspecialchars($_SESSION['name']); ?></td>
-                                </tr>
-                                <tr>
-                                    <td class="data-label"><b>Jenis Kelamin</b></td>
-                                    <td><?php echo htmlspecialchars($jk); ?></td>
-                                </tr>
-                                <tr>
-                                    <td class="data-label"><b>No. Telepon</b></td>
-                                    <td><?php echo htmlspecialchars($phone); ?></td>
-                                </tr>
-                                <tr>
-                                    <td class="data-label"><b>Kelas</b></td>
-                                    <td><?php echo htmlspecialchars($class_name);?></td>
-                                </tr>
-                                <tr>
-                                    <td class="data-label"><b>Guru Pengampu</b></td>
-                                    <td><?php echo htmlspecialchars($guru_name);?> (NIP. <?php echo htmlspecialchars($nip); ?>)</td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-
-                    <br>
+                    
                     <b>Ubah Password</b>
                     <div class="card">
                             <div class="card-body">
@@ -224,7 +182,6 @@
                                     </div>
                                     <div class="mb-3">
                                         <label for="new_password" class="form-label">Password Baru</label>
-                                        <small style="color: red;"> *password minimal 8 karakter</small>
                                         <input type="password" class="form-control" id="new_password" name="new_password" required>
                                     </div>
                                     <div class="mb-3">

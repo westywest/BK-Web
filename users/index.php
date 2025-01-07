@@ -62,6 +62,7 @@
                                 $guru = $resultGuru->fetch_assoc();
                                 $_SESSION['guru_id'] = $guru['id'];
                                 $_SESSION['name'] = $guru['name'];
+                                $_SESSION['foto'] = $guru['foto'];
                             }
                         } elseif ($data['role'] === "siswa") {
                             $querySiswa = $conn->prepare("SELECT * FROM siswa WHERE user_id = ?");
@@ -88,7 +89,7 @@
                             exit;
                         }
                     } else {
-                        $_SESSION['error'] = "Password salah!";
+                        $_SESSION['error'] = "Username/Password salah!";
                     }
                 } else {
                     $_SESSION['error'] = "Username tidak ditemukan!";

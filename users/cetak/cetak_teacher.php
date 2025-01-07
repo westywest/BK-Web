@@ -47,7 +47,7 @@ $tanggalCetak = date('d-m-Y H:i:s');
                     <td class="text-cell">
                         <h1 class="school-name">SMP NEGERI 3 PURWOKERTO</h1>
                         <p class="school-address">
-                            Jl. Gereja No.20, Karangjengkol, Sokanegara, Kec. Purwokerto Tim., Kabupaten Banyumas, Jawa Tengah 53115
+                            Jl. Gereja No.20 Purwokerto, Sokanegara, Kec. Purwokerto Timur, Kab. Banyumas Prov. Jawa Tengah | Phone: (0281) 637842 | Email:smpn3pwt@gmail.com
                         </p>
                     </td>
                 </tr>
