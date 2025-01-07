@@ -33,7 +33,7 @@
         exit;
     }
     include '../../../function/connectDB.php';
-    $sql = "SELECT siswa.id AS siswa_id, siswa.user_id, siswa.nis, siswa.name AS nama_siswa, siswa.jk, siswa.tmp_lahir, siswa.tgl_lahir, siswa.phone, siswa.kelas_id, kelas.id AS kelas_id, kelas.class_name, kelas.guru_id, guru.id AS guru_id, guru.name AS nama_guru, users.id AS user_id, users.username, users.password
+    $sql = "SELECT siswa.id AS siswa_id, siswa.user_id, siswa.nis, siswa.name AS nama_siswa, siswa.jk, siswa.phone, siswa.kelas_id, kelas.id AS kelas_id, kelas.class_name, kelas.guru_id, guru.id AS guru_id, guru.name AS nama_guru, users.id AS user_id, users.username, users.password
     FROM siswa JOIN kelas ON siswa.kelas_id = kelas.id
     JOIN guru ON kelas.guru_id = guru.id
     JOIN users ON siswa.user_id = users.id
@@ -97,8 +97,8 @@
             <div class="user-profile-footer p-2 d-flex align-items-center">
                 <img src="../../../assets/images/profile.jpg" alt="User Avatar" class="rounded-circle me-2" style="width: 40px; height: 40px;">
                 <div class="user-info">
-                    <h6 class="text-white mb-0">Administrator</h6>
-                    <small><?php echo($_SESSION['username']) ?></small>
+                    <h6 class="text-white mb-0"><?php echo ($_SESSION['username']) ?></h6>
+                    <small><?php echo ucfirst($_SESSION['role']) ?></small>
                 </div>
             </div>
             <div class="sidebar-footer">
@@ -151,7 +151,6 @@
                                             <th scope="col">Nama</th>
                                             <th scope="col">Kelas</th>
                                             <th scope="col">L/P</th>
-                                            <th scope="col">Tempat, Tanggal Lahir</th>
                                             <th scope="col">No Telepon</th>
                                             <th scope="col">Guru Pengampu</th>
                                             <th scope="col">Aksi</th>
@@ -174,7 +173,6 @@
                                                     <td><?php echo htmlspecialchars($row['nama_siswa']); ?></td>
                                                     <td><?php echo htmlspecialchars($kelas); ?></td>
                                                     <td><?php echo htmlspecialchars($row['jk']); ?></td>
-                                                    <td><?php echo htmlspecialchars($row['tmp_lahir']); ?>, <?php echo date("d F Y", strtotime($row["tgl_lahir"])); ?></td>
                                                     <td><?php echo htmlspecialchars($row['phone']); ?></td>
                                                     <td><?php echo htmlspecialchars($row['nama_guru']); ?></td>
                                                     <td>

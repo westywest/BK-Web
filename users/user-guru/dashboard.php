@@ -29,23 +29,26 @@
     }
 
     $kunjunganPerBulan = [];
-    try {
-        // Query untuk menghitung jumlah kunjungan siswa per bulan
-        $sql = "SELECT DATE_FORMAT(date, '%M %Y') AS bulan, COUNT(id) AS total
-                FROM kunjungan_siswa
-                GROUP BY DATE_FORMAT(date, '%M %Y')
-                ORDER BY DATE_FORMAT(date, '%Y-%m')";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute();
-        $result = $stmt->get_result();
+try {
+    // Query untuk menghitung jumlah kunjungan siswa per bulan
+    $sql = "SELECT DATE_FORMAT(date, '%M %Y') AS bulan, COUNT(id) AS total
+            FROM kunjungan_siswa
+            WHERE date IS NOT NULL
+            GROUP BY DATE_FORMAT(date, '%M %Y')
+            ORDER BY DATE_FORMAT(date, '%Y-%m')";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-        while ($row = $result->fetch_assoc()) {
+    while ($row = $result->fetch_assoc()) {
+        if (!empty($row['bulan']) && $row['total'] !== null) {
             $kunjunganPerBulan[] = [$row['bulan'], (int)$row['total']];
         }
-        $stmt->close();
-    } catch (Exception $e) {
-        die("Error: " . $e->getMessage());
     }
+    $stmt->close();
+} catch (Exception $e) {
+    die("Error: " . $e->getMessage());
+}
     ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -102,6 +105,8 @@
                 title: 'Jumlah Kunjungan Siswa per Bulan',
                 hAxis: {
                     title: 'Bulan',
+                    slantedText: true, // Menyesuaikan label yang panjang
+                    slantedTextAngle: 45
                 },
                 vAxis: {
                     title: 'Jumlah Kunjungan',
@@ -113,6 +118,7 @@
             var chart = new google.visualization.ColumnChart(document.getElementById('bar_chart'));
             chart.draw(data, options);
         }
+
     </script>
 
 </head>
@@ -181,7 +187,7 @@
                 <img src="../../assets/images/profile.jpg" alt="User Avatar" class="rounded-circle me-2" style="width: 40px; height: 40px;">
                 <div class="user-info">
                     <h6 class="text-white mb-0"><?php echo htmlspecialchars($_SESSION['name']) ?></h6>
-                    <small><?php echo htmlspecialchars($_SESSION['role']) ?></small>
+                    <small><?php echo ucfirst($_SESSION['role']) ?></small>
                 </div>
             </div>
             <div class="sidebar-footer">
@@ -203,10 +209,17 @@
                     </nav>
                     <h1 class="h2">Selamat Datang <?php echo($_SESSION['name'])?>!</h1>
                     <p>Ini adalah halaman awal setelah anda berhasil login.</p>
-                    <div class="chart-container d-flex">
-                        <div id="donutchart" style="flex: 1; height: 500px;"></div>
-                        <div id="bar_chart" style="flex: 1; height: 500px;"></div>
-                    </div>
+                    <table style="width: 100%; border-collapse: collapse; text-align: center;">
+                        <tr>
+                            <td style="border: none;">
+                                <div id="donutchart" style="width: 700px; height: 400px;"></div>
+                            </td>
+                            <td style="border: none;">
+                                <div id="bar_chart" style="width: 700px; height: 400px;"></div>
+                            </td>
+                        </tr>
+                    </table>
+
                     <footer class="pt-5 d-flex justify-content-between">
                         <span>Copyright © 2024 <a href="#">BKSPENTHREE</a></span>
                         <ul class="nav m-0">

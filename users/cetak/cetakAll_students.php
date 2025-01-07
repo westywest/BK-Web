@@ -12,7 +12,7 @@ $selectedClass = $_POST['kelas'] ?? 'all';
 
 // Tentukan SQL berdasarkan kelas yang dipilih
 if ($selectedClass === 'all') {
-    $sql = "SELECT siswa.id AS siswa_id, siswa.nis, siswa.name AS nama_siswa, siswa.jk, siswa.tmp_lahir, siswa.tgl_lahir, siswa.phone, kelas.class_name, guru.name AS nama_guru
+    $sql = "SELECT siswa.id AS siswa_id, siswa.nis, siswa.name AS nama_siswa, siswa.jk, siswa.phone, kelas.class_name, guru.name AS nama_guru
             FROM siswa 
             JOIN kelas ON siswa.kelas_id = kelas.id
             JOIN guru ON kelas.guru_id = guru.id
@@ -21,7 +21,7 @@ if ($selectedClass === 'all') {
                 SUBSTRING(kelas.class_name, LENGTH(SUBSTRING_INDEX(kelas.class_name, ' ', -1)) + 2) ASC,  -- Urutkan berdasarkan huruf kelas
                 siswa.nis ASC";
 } else {
-    $sql = "SELECT siswa.id AS siswa_id, siswa.nis, siswa.name AS nama_siswa, siswa.jk, siswa.tmp_lahir, siswa.tgl_lahir, siswa.phone, kelas.class_name, guru.name AS nama_guru
+    $sql = "SELECT siswa.id AS siswa_id, siswa.nis, siswa.name AS nama_siswa, siswa.jk, siswa.phone, kelas.class_name, guru.name AS nama_guru
             FROM siswa 
             JOIN kelas ON siswa.kelas_id = kelas.id
             JOIN guru ON kelas.guru_id = guru.id
@@ -74,7 +74,6 @@ $tanggalCetak = date('d-m-Y H:i:s');
                         <th scope="col">Nama</th>
                         <th scope="col">Kelas</th>
                         <th scope="col">L/P</th>
-                        <th scope="col">Tempat, Tanggal Lahir</th>
                         <th scope="col">No Telepon</th>
                         <th scope="col">Guru Pengampu</th>
                     </tr>
@@ -90,7 +89,6 @@ $tanggalCetak = date('d-m-Y H:i:s');
                         <td><?php echo htmlspecialchars($row['nama_siswa']); ?></td>
                         <td><?php echo htmlspecialchars($row['class_name']); ?></td>
                         <td><?php echo htmlspecialchars($row['jk']); ?></td>
-                        <td><?php echo htmlspecialchars($row['tmp_lahir']); ?>, <?php echo date("d F Y", strtotime($row["tgl_lahir"])); ?></td>
                         <td><?php echo htmlspecialchars($row['phone']); ?></td>
                         <td><?php echo htmlspecialchars($row['nama_guru']); ?></td>
                     </tr>

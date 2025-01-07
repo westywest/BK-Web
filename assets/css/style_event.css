@@ -168,6 +168,7 @@ hr {
   margin: 0; /* Menghilangkan margin */
 }
 .card-title {
+  text-transform: uppercase;
   text-align: justify;
   font-size: 1.2rem;
   margin: 2px 0 16px 0;

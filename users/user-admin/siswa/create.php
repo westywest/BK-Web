@@ -25,8 +25,6 @@
         $nis = intval(trim($_POST['nis']));
         $name = htmlspecialchars(trim($_POST['name']));
         $jk = $_POST['jk'];
-        $tmp_lahir = trim($_POST['tmp_lahir']);
-        $tgl_lahir = trim($_POST['tgl_lahir']);
         $phone = trim($_POST['phone']);
         $kelas_id = intval($_POST['kelas_id']);
         $pass = password_hash($_POST['pass'], PASSWORD_DEFAULT);
@@ -54,7 +52,7 @@
             header("Location: " . $_SERVER['PHP_SELF']);
             exit;
         } else {
-            if (empty($nis) || empty($name) || empty($tmp_lahir) || empty($tgl_lahir) || empty($phone)){
+            if (empty($nis) || empty($name) || empty($phone)){
                 $_SESSION['error'] = "Semua field wajib diisi!";
                 header("Location: " . $_SERVER['PHP_SELF']);
                 exit;
@@ -66,11 +64,7 @@
                 $_SESSION['error'] = "Harap pilih kelas!";
                 header("Location: " . $_SERVER['PHP_SELF']);
                 exit;
-            } elseif (empty($tgl_lahir)) {
-                $_SESSION['error'] = "Tanggal Lahir harus diisi!";
-                header("Location: " . $_SERVER['PHP_SELF']);
-                exit;
-            } else {
+            }  else {
                 // Tambahkan data ke tabel users
                 $sql = "INSERT INTO users (id, username, password, role) VALUES (null, ?, ?, 'siswa')";
                 $datas = $conn->prepare($sql);
@@ -88,10 +82,10 @@
                     }
             
                     // Tambahkan data ke tabel siswa
-                    $sql = "INSERT INTO siswa (id, user_id, nis, name, jk, tmp_lahir, tgl_lahir, phone, kelas_id) 
-                            VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    $sql = "INSERT INTO siswa (id, user_id, nis, name, jk, phone, kelas_id) 
+                            VALUES (null, ?, ?, ?, ?, ?, ?)";
                     $datas = $conn->prepare($sql);
-                    $datas->bind_param("iissssss", $userId, $nis, $name, $jk, $tmp_lahir, $tgl_lahir, $phone, $kelas_id);
+                    $datas->bind_param("iissss", $userId, $nis, $name, $jk, $phone, $kelas_id);
             
                     if ($datas->execute() && $datas->affected_rows > 0) {
                         echo "<script>
@@ -153,8 +147,8 @@
             <div class="user-profile-footer p-2 d-flex align-items-center">
                 <img src="../../../assets/images/profile.jpg" alt="User Avatar" class="rounded-circle me-2" style="width: 40px; height: 40px;">
                 <div class="user-info">
-                    <h6 class="text-white mb-0">Administrator</h6>
-                    <small><?php echo($_SESSION['username']) ?></small>
+                    <h6 class="text-white mb-0"><?php echo ($_SESSION['username']) ?></h6>
+                    <small><?php echo ucfirst($_SESSION['role']) ?></small>
                 </div>
             </div>
             <div class="sidebar-footer">
@@ -203,21 +197,6 @@
                                         <option value="Laki-Laki">Laki-Laki</option>
                                         <option value="Perempuan">Perempuan</option>
                                     </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="tmp_lahir" class="form-label">Tempat Lahir</label>
-                                    <input type="text" class="form-control" id="tmp_lahir" name="tmp_lahir" placeholder="Masukkan Tempat Lahir" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="tgl_lahir" class="form-label">Tanggal Lahir</label>
-                                    <input 
-                                            type="date" 
-                                            class="form-control" 
-                                            id="tgl_lahir" 
-                                            name="tgl_lahir" 
-                                            required
-                                            min="1900-01-01" 
-                                            max="2024-12-31">
                                 </div>
                                 <div class="mb-3">
                                     <label for="phone" class="form-label">No. Telepon</label>

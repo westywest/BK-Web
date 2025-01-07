@@ -10,7 +10,7 @@ if (!isset($_SESSION['status']) || ($_SESSION['role'] !== "guru" && $_SESSION['r
 }
 
 $id = $_GET['id'];
-$sql = "SELECT siswa.id AS siswa_id, siswa.user_id, siswa.nis, siswa.name AS siswa_name, siswa.jk, siswa.tmp_lahir, siswa.tgl_lahir, siswa.kelas_id, siswa.phone, users.id AS user_id, kelas.id AS kelas_id, kelas.class_name, guru.id AS guru_id, guru.name AS guru_name
+$sql = "SELECT siswa.id AS siswa_id, siswa.user_id, siswa.nis, siswa.name AS siswa_name, siswa.jk, siswa.kelas_id, siswa.phone, users.id AS user_id, kelas.id AS kelas_id, kelas.class_name, guru.id AS guru_id, guru.name AS guru_name
 FROM siswa 
 JOIN users on siswa.user_id = users.id 
 JOIN kelas on siswa.kelas_id = kelas.id
@@ -25,8 +25,6 @@ $resultSiswa = $datas->get_result();
 if ($data = $resultSiswa->fetch_assoc()) {
     $nis = $data['nis'];
     $siswa_name = $data['siswa_name'];
-    $tmp_lahir = $data['tmp_lahir'];
-    $tgl_lahir = $data['tgl_lahir'];
     $jk = $data['jk'];
     $kelas_id = $data['kelas_id'];
     $class_name = $data['class_name'];
@@ -84,10 +82,6 @@ $tanggalCetak = date('d-m-Y H:i:s');
                 <tr>
                     <td><b>L/P</b></td>
                     <td><?php echo htmlspecialchars($jk); ?></td>
-                </tr>
-                <tr>
-                    <td><b>Tempat, Tanggal Lahir</b></td>
-                    <td><?php echo htmlspecialchars($tmp_lahir); ?>, <?php echo htmlspecialchars(date("d F Y", strtotime($tgl_lahir))); ?></td>
                 </tr>
                 <tr>
                     <td><b>No Telepon</b></td>

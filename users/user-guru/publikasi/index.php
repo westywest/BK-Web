@@ -125,7 +125,7 @@
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="../kotak_siswa/index.php" class="sidebar-link">
+                    <a href="../kotak_saran/index.php" class="sidebar-link">
                         <i class='bx bxs-inbox'></i>
                         <span>Kotak Saran</span>
                     </a>
@@ -141,7 +141,7 @@
                 <img src="../../../assets/images/profile.jpg" alt="User Avatar" class="rounded-circle me-2" style="width: 40px; height: 40px;">
                 <div class="user-info">
                     <h6 class="text-white mb-0"><?php echo ($_SESSION['name']) ?></h6>
-                    <small><?php echo($_SESSION['role']) ?></small>
+                    <small><?php echo ucfirst($_SESSION['role']) ?></small>
                 </div>
             </div>
             <div class="sidebar-footer">
@@ -206,7 +206,7 @@
                                                     <td><?php echo $rowNumber++; ?></td>
                                                     <td><?php echo htmlspecialchars(date("d F Y H:i:s", strtotime($row["date"])));?></td>
                                                     <td><?php echo htmlspecialchars($row['guru_name']); ?></td>
-                                                    <td><?php echo htmlspecialchars($row['title']); ?></td>
+                                                    <td style="text-transform: uppercase;"><?php echo htmlspecialchars($row['title']); ?></td>
                                                     <td><?php echo htmlspecialchars(ucfirst($row['jenis'])); ?></td>
                                                     <td>
                                                         <a class="btn btn-sm btn-info buttons" href="show.php?id=<?= htmlspecialchars($row['publikasi_id']); ?>"><i class="bx bx-show"></i></a>

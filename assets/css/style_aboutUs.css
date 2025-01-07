@@ -175,10 +175,10 @@ footer {
 }
 
 #teacher .card img {
-  width: 100%;
-  height: auto;
-  object-fit: cover; /* Gambar tetap proporsional */
-  max-width: 150px; /* Ukuran gambar proporsional */
+  width: 150px; /* Tetapkan ukuran lebar tetap */
+  height: 150px; /* Tetapkan ukuran tinggi tetap */
+  object-fit: cover; /* Gambar akan dipotong agar sesuai dengan ukuran */
+  border-radius: 8px; /* Opsional: Berikan sudut melengkung */
   margin-bottom: 15px; /* Jarak gambar dengan teks */
 }
 

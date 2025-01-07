@@ -25,7 +25,7 @@
     
     $username = $_SESSION['username'];
     // Query untuk mengambil data guru berdasarkan username yang login
-    $sql = "SELECT siswa.id AS siswa_id, siswa.nis, siswa.name, siswa.jk, siswa.tmp_lahir, siswa.tgl_lahir, siswa.phone, siswa.kelas_id, users.username, users.password, kelas.id AS kelas_id, kelas.class_name, guru.id AS guru_id, guru.nip, guru.name AS guru_name
+    $sql = "SELECT siswa.id AS siswa_id, siswa.nis, siswa.name, siswa.jk, siswa.phone, siswa.kelas_id, users.username, users.password, kelas.id AS kelas_id, kelas.class_name, guru.id AS guru_id, guru.nip, guru.name AS guru_name
             FROM siswa
             JOIN users ON siswa.user_id = users.id
             JOIN kelas ON siswa.kelas_id = kelas.id
@@ -42,8 +42,6 @@
         
         $nis = $user['nis'];
         $jk = $user['jk'];
-        $tmp_lahir = $user['tmp_lahir'];
-        $tgl_lahir = date("d F Y", strtotime($user["tgl_lahir"]));
         $phone = $user['phone'];
         $guru_name = $user['guru_name'];
         $nip = $user['nip'];
@@ -160,7 +158,7 @@
                 <img src="../../../assets/images/profile.jpg" alt="User Avatar" class="rounded-circle me-2" style="width: 40px; height: 40px;">
                 <div class="user-info">
                     <h6 class="text-white mb-0"><?php echo ($_SESSION['name']) ?></h6>
-                    <small><?php echo($_SESSION['role']) ?></small>
+                    <small><?php echo ucfirst($_SESSION['role']) ?></small>
                 </div>
             </div>
             <div class="sidebar-footer">
@@ -197,10 +195,6 @@
                                 <tr>
                                     <td class="data-label"><b>Jenis Kelamin</b></td>
                                     <td><?php echo htmlspecialchars($jk); ?></td>
-                                </tr>
-                                <tr>
-                                    <td class="data-label"><b>Tempat, Tanggal Lahir</b></td>
-                                    <td><?php echo htmlspecialchars($tmp_lahir);?>, <?php echo htmlspecialchars($tgl_lahir); ?></td>
                                 </tr>
                                 <tr>
                                     <td class="data-label"><b>No. Telepon</b></td>

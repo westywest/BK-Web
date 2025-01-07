@@ -22,7 +22,7 @@
     include '../../../function/connectDB.php';
 
     $id = $_GET['id'];
-    $sql = "SELECT siswa.id AS siswa_id, siswa.user_id, siswa.nis, siswa.name, siswa.jk, siswa.tmp_lahir, siswa.tgl_lahir, siswa.kelas_id, siswa.phone, users.id AS user_id, kelas.id AS kelas_id, kelas.class_name
+    $sql = "SELECT siswa.id AS siswa_id, siswa.user_id, siswa.nis, siswa.name, siswa.jk, siswa.kelas_id, siswa.phone, users.id AS user_id, kelas.id AS kelas_id, kelas.class_name
     FROM siswa 
     JOIN users on siswa.user_id = users.id 
     JOIN kelas on siswa.kelas_id = kelas.id
@@ -36,8 +36,6 @@
     if ($data = $resultSiswa->fetch_assoc()) {
         $nis = $data['nis'];
         $name = $data['name'];
-        $tmp_lahir = $data['tmp_lahir'];
-        $tgl_lahir = $data['tgl_lahir'];
         $jk = $data['jk'];
         $kelas_id = $data['kelas_id'];
         $class_name = $data['class_name'];
@@ -46,15 +44,13 @@
 
     if(isset($_POST['submit'])) {
         $name = ($_POST['name']);
-        $tmp_lahir = $_POST['tmp_lahir'];
-        $tgl_lahir = $_POST['tgl_lahir'];
         $jk = $_POST['jk'];
         $kelas_id = $_POST['kelas_id'];
         $phone = $_POST['phone'];
         
-        $sql = "UPDATE siswa SET name=?, jk=?, tgl_lahir=?, tmp_lahir=?, kelas_id=?, phone=?  WHERE id=?";
+        $sql = "UPDATE siswa SET name=?, jk=?, kelas_id=?, phone=?  WHERE id=?";
         $updStmt = $conn->prepare($sql);
-        $updStmt->bind_param("ssssisi", $name, $jk, $tgl_lahir, $tmp_lahir, $kelas_id, $phone, $id);
+        $updStmt->bind_param("ssisi", $name, $jk, $kelas_id, $phone, $id);
         $updStmt->execute();
 
         if ($updStmt->affected_rows > 0) {
@@ -115,8 +111,8 @@
             <div class="user-profile-footer p-2 d-flex align-items-center">
                 <img src="../../../assets/images/profile.jpg" alt="User Avatar" class="rounded-circle me-2" style="width: 40px; height: 40px;">
                 <div class="user-info">
-                    <h6 class="text-white mb-0">Administrator</h6>
-                    <small><?php echo($_SESSION['username']) ?></small>
+                    <h6 class="text-white mb-0"><?php echo ($_SESSION['username']) ?></h6>
+                    <small><?php echo ucfirst($_SESSION['role']) ?></small>
                 </div>
             </div>
             <div class="sidebar-footer">
@@ -158,22 +154,6 @@
                                         <option value="Laki-Laki" <?= $jk == 'Laki-Laki' ? 'selected' : null ?>>Laki-Laki</option>
                                         <option value="Perempuan" <?= $jk == 'Perempuan' ? 'selected' : null ?>>Perempuan</option>
                                     </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="tmp_lahir" class="form-label">Tempat Lahir</label>
-                                    <input type="text" class="form-control" id="tmp_lahir" name="tmp_lahir" placeholder="Masukkan Tempat Lahir" required value="<?php echo htmlspecialchars($tmp_lahir) ?>">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="tgl_lahir" class="form-label">Tanggal Lahir</label>
-                                    <input 
-                                            type="date" 
-                                            class="form-control" 
-                                            id="tgl_lahir" 
-                                            name="tgl_lahir" 
-                                            required
-                                            value="<?php echo htmlspecialchars($tgl_lahir) ?>"
-                                            min="1900-01-01" 
-                                            max="2024-12-31">
                                 </div>
                                 <div class="mb-3">
                                     <label for="phone" class="form-label">No. Telepon</label>

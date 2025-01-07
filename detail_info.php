@@ -98,7 +98,7 @@ if ($data = $result->fetch_assoc()) {
                   </div>
                   <div class="center" style="text-align: center;"><img src="assets/images/uploads/<?php echo htmlspecialchars($foto);?>" class="det-img" alt=""></div>
                   <br>
-                  <p class="content"><?php echo htmlspecialchars($content) ?></p>
+                  <p class="content"><?php echo ($content) ?></p>
               </div>
           </div>
       </div>
@@ -110,7 +110,7 @@ if ($data = $result->fetch_assoc()) {
         <p class="text-white footer-p">
           Jl. Gereja No.20 Purwokerto, Sokanegara, Kec. Purwokerto Timur, Kab.
           Banyumas Prov. Jawa Tengah | Phone: (0281) 637842 | Email:
-          smpn3pwt@ymail.com
+          smpn3pwt@gmail.com
         </p>
         <p class="text-white footer-p">
           Copyright © 2024 Website BK SMP NEGERI 3 PURWOKERTO

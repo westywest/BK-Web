@@ -43,10 +43,10 @@
         
         // Cek apakah tidak ada gambar yang di-upload
         if ($error === 4) {
-            echo"<script>
-                alert('pilih gambar terlebih dahulu!');
-                </script>";
-        return false;
+            $_SESSION['error'] = "Upload gambar terlebih dahulu!";
+            
+            header("Location: " . $_SERVER['PHP_SELF']);
+        exit;
         }
     
         // Cek apakah file yang di-upload adalah gambar
@@ -61,8 +61,8 @@
         }
     
         // Cek jika ukuran file terlalu besar
-        if ($ukuranFile > 10485760) {
-            $_SESSION['error'] = "Ukuran foto terlalu besar!";
+        if ($ukuranFile > 2097152) {
+            $_SESSION['error'] = "Ukuran foto terlalu besar! Maksimal 2MB.";
             header("Location: " . $_SERVER['PHP_SELF']);
             exit;
         }
@@ -191,7 +191,7 @@
                 <img src="../../../assets/images/profile.jpg" alt="User Avatar" class="rounded-circle me-2" style="width: 40px; height: 40px;">
                 <div class="user-info">
                     <h6 class="text-white mb-0"><?php echo ($_SESSION['name']) ?></h6>
-                    <small><?php echo($_SESSION['role']) ?></small>
+                    <small><?php echo ucfirst($_SESSION['role']) ?></small>
                 </div>
             </div>
             <div class="sidebar-footer">
@@ -236,12 +236,12 @@
                                     <input type="text" class="form-control" name="title" id="title" required placeholder="Judul Publikasi">
                                 </div>
                                 <div class="mb-3">
-                                    <label for="foto" class="form-label">Foto</label> <small style="color: red;">Maks. ukuran 10 MB</small>
+                                    <label for="foto" class="form-label">Foto</label> <small style="color: red;">Maks. ukuran 2 MB</small>
                                     <input type="file" class="form-control" name="foto" id="foto">
                                 </div>
                                 <div class="mb-3">
                                     <label for="content" class="form-label">Isi Kontent</label>
-                                    <textarea name="content" id="content" class="form-control" rows="10" placeholder="Tulis isi konten disini..."></textarea>
+                                    <textarea name="content" id="editor" class="form-control" rows="10" placeholder="Tulis isi konten disini..."></textarea>
                                 </div>
                                 
                                 
@@ -264,5 +264,14 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../../assets/script/script_admin.js"></script>
+    <script src="https://cdn.tiny.cloud/1/vj6infomcca3x4pe8wkje1i3195ywbkcl8alu0cc0fibtmnt/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+    tinymce.init({
+        selector: '#editor',
+        plugins: 'lists',
+        toolbar: 'bold italic underline | bullist numlist',
+        height: 500
+    });
+    </script>
     </body>
 </html>

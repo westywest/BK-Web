@@ -131,7 +131,7 @@
         <p class="text-white footer-p">
           Jl. Gereja No.20 Purwokerto, Sokanegara, Kec. Purwokerto Timur, Kab.
           Banyumas Prov. Jawa Tengah | Phone: (0281) 637842 | Email:
-          smpn3pwt@ymail.com
+          smpn3pwt@gmail.com
         </p>
         <p class="text-white footer-p">
           Copyright © 2024 Website BK SMP NEGERI 3 PURWOKERTO

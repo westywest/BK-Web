@@ -112,7 +112,7 @@
                 <img src="../../../assets/images/profile.jpg" alt="User Avatar" class="rounded-circle me-2" style="width: 40px; height: 40px;">
                 <div class="user-info">
                     <h6 class="text-white mb-0"><?php echo ($_SESSION['name']) ?></h6>
-                    <small><?php echo($_SESSION['role']) ?></small>
+                    <small><?php echo ucfirst($_SESSION['role']) ?></small>
                 </div>
             </div>
             <div class="sidebar-footer">

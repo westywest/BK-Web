@@ -127,6 +127,7 @@ body {
     color: #0e2238;
     text-align: center;
     font-family: 'Roboto Black', sans-serif;
+    text-transform: uppercase;
 }
 .content{
     text-align: justify;

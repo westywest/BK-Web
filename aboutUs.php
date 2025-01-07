@@ -1,7 +1,9 @@
 <?php 
 include 'function/connectDB.php';
 
-$sql = "SELECT nip, name FROM guru";
+$sql = "SELECT nip, name, foto FROM guru";
+
+$fotoDefault = 'default.jpg';
 
 $datas = $conn->prepare($sql);
 $datas->execute();
@@ -117,9 +119,9 @@ $resulGuru = $datas->get_result();
               <div class="col-12 col-md-4 col-lg-4">
                   <div class="card text-center">
                       <div class="card-body">
-                          <img src="assets/images/profile.jpg" alt=""class="img-fluid rounded-circle"/>
+                      <img src="assets/images/teacher/<?php echo !empty($row['foto']) ? htmlspecialchars($row['foto']) : $fotoDefault; ?>" alt="" class="img-fluid rounded-circle"/>
                           <h3 class="card-tittle py-2"><?php echo htmlspecialchars($row['name']) ?></h3>
-                          <p class="card-text"><?php echo htmlspecialchars($row['nip']) ?></p>
+                          <p class="card-text">NIP. <?php echo htmlspecialchars($row['nip']) ?></p>
                       </div>
                   </div>
               </div>
@@ -136,7 +138,7 @@ $resulGuru = $datas->get_result();
         <p class="text-white footer-p">
           Jl. Gereja No.20 Purwokerto, Sokanegara, Kec. Purwokerto Timur, Kab.
           Banyumas Prov. Jawa Tengah | Phone: (0281) 637842 | Email:
-          smpn3pwt@ymail.com
+          smpn3pwt@gmail.com
         </p>
         <p class="text-white footer-p">
           Copyright © 2024 Website BK SMP NEGERI 3 PURWOKERTO
