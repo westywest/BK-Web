@@ -1,3 +1,84 @@
+<?php 
+session_start();
+        
+include '../function/connectDB.php';
+
+if (isset($_SESSION['status'])) {
+// Redirect sesuai role yang sudah login
+    if ($_SESSION['role'] === "admin") {
+        header("location:/BK/users/user-admin/dashboard.php");
+        exit;
+    } elseif ($_SESSION['role'] === "guru") {
+        header("location:/BK/users/user-guru/dashboard.php");
+        exit;
+    } elseif ($_SESSION['role'] === "siswa") {
+        header("location:/BK/users/user-siswa/dashboard.php");
+        exit;
+    }
+}
+            
+if (isset($_POST['login'])) {
+    $username = $_POST['username'];
+    $pass = $_POST['password'];
+    $sql = $conn->prepare("SELECT * FROM users WHERE username = ?");
+    $sql->bind_param("s", $username);
+    $sql->execute();
+    $result = $sql->get_result();
+            
+    if ($result->num_rows > 0) {
+        $data = $result->fetch_assoc();
+        if (password_verify($pass, $data['password'])) {
+            $_SESSION['role'] = $data['role'];
+            $_SESSION['user_id'] = $data['id']; // Menyimpan user_id
+            $_SESSION['username'] = $data['username'];
+            $_SESSION['status'] = "login";
+                        
+                    
+                        
+        if ($data['role'] === "guru") {
+            $queryGuru = $conn->prepare("SELECT * FROM guru WHERE user_id = ?");
+            $queryGuru->bind_param("i", $data['id']);
+            $queryGuru->execute();
+            $resultGuru = $queryGuru->get_result();
+                            
+            if($resultGuru->num_rows > 0) {
+                $guru = $resultGuru->fetch_assoc();
+                $_SESSION['guru_id'] = $guru['id'];
+                $_SESSION['name'] = $guru['name'];
+                $_SESSION['foto'] = $guru['foto'];
+            }
+        } elseif ($data['role'] === "siswa") {
+            $querySiswa = $conn->prepare("SELECT * FROM siswa WHERE user_id = ?");
+            $querySiswa->bind_param("i", $data['id']);
+            $querySiswa->execute();
+            $resultSiswa = $querySiswa->get_result();
+                            
+            if($resultSiswa->num_rows > 0) {
+                $siswa = $resultSiswa->fetch_assoc();
+                $_SESSION['siswa_id'] = $siswa['id'];
+                $_SESSION['name'] = $siswa['name'];
+            }
+        }
+
+        // Redirect sesuai role
+        if ($data['role'] === "admin") {
+            header('location:/BK/users/user-admin/dashboard.php');
+            exit;
+        } elseif ($data['role'] === "guru") {
+            header("location:/BK/users/user-guru/dashboard.php");
+            exit;
+        } elseif ($data['role'] === "siswa") {
+            header('location:/BK/users/user-siswa/dashboard.php');
+            exit;
+        }
+        } else {
+            $_SESSION['error'] = "Username/Password salah!";
+        }
+        } else {
+            $_SESSION['error'] = "Username tidak ditemukan!";
+        }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,89 +94,6 @@
 <body class="d-grid align-content-center background-countainer">
     <div class="wrapper">
         <form class="border rounded mx-auto w-100 p-4 rounded-3" method="post">
-            
-            <?php 
-            session_start();
-            
-            include '../function/connectDB.php';
-
-            if (isset($_SESSION['status'])) {
-                // Redirect sesuai role yang sudah login
-                if ($_SESSION['role'] === "admin") {
-                    header("location:/BK/users/user-admin/dashboard.php");
-                    exit;
-                } elseif ($_SESSION['role'] === "guru") {
-                    header("location:/BK/users/user-guru/dashboard.php");
-                    exit;
-                } elseif ($_SESSION['role'] === "siswa") {
-                    header("location:/BK/users/user-siswa/dashboard.php");
-                    exit;
-                }
-            }
-            
-            if (isset($_POST['login'])) {
-                $username = $_POST['username'];
-                $pass = $_POST['password'];
-            
-                $sql = $conn->prepare("SELECT * FROM users WHERE username = ?");
-                $sql->bind_param("s", $username);
-                $sql->execute();
-                $result = $sql->get_result();
-            
-                if ($result->num_rows > 0) {
-                    $data = $result->fetch_assoc();
-                    if (password_verify($pass, $data['password'])) {
-                        $_SESSION['role'] = $data['role'];
-                        $_SESSION['user_id'] = $data['id']; // Menyimpan user_id
-                        $_SESSION['username'] = $data['username'];
-                        $_SESSION['status'] = "login";
-                        
-                    
-                        
-                        if ($data['role'] === "guru") {
-                            $queryGuru = $conn->prepare("SELECT * FROM guru WHERE user_id = ?");
-                            $queryGuru->bind_param("i", $data['id']);
-                            $queryGuru->execute();
-                            $resultGuru = $queryGuru->get_result();
-                            
-                            if($resultGuru->num_rows > 0) {
-                                $guru = $resultGuru->fetch_assoc();
-                                $_SESSION['guru_id'] = $guru['id'];
-                                $_SESSION['name'] = $guru['name'];
-                                $_SESSION['foto'] = $guru['foto'];
-                            }
-                        } elseif ($data['role'] === "siswa") {
-                            $querySiswa = $conn->prepare("SELECT * FROM siswa WHERE user_id = ?");
-                            $querySiswa->bind_param("i", $data['id']);
-                            $querySiswa->execute();
-                            $resultSiswa = $querySiswa->get_result();
-                            
-                            if($resultSiswa->num_rows > 0) {
-                                $siswa = $resultSiswa->fetch_assoc();
-                                $_SESSION['siswa_id'] = $siswa['id'];
-                                $_SESSION['name'] = $siswa['name'];
-                            }
-                        }
-
-                        // Redirect sesuai role
-                        if ($data['role'] === "admin") {
-                            header('location:/BK/users/user-admin/dashboard.php');
-                            exit;
-                        } elseif ($data['role'] === "guru") {
-                            header("location:/BK/users/user-guru/dashboard.php");
-                            exit;
-                        } elseif ($data['role'] === "siswa") {
-                            header('location:/BK/users/user-siswa/dashboard.php');
-                            exit;
-                        }
-                    } else {
-                        $_SESSION['error'] = "Username/Password salah!";
-                    }
-                } else {
-                    $_SESSION['error'] = "Username tidak ditemukan!";
-                }
-            }
-            ?>
             <div class="text-center">
                 <img src="../assets/images/logoname.png" class="img-fluid profile-image-pic my-3" width="200px" alt="profile">
             </div>

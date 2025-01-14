@@ -1,33 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-    <link href="https://cdn.lineicons.com/5.0/lineicons.css" rel="stylesheet" />
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="../../../assets/css/style_user.css">
-    <title>Profil | Guru</title>
-    <style>
-    .table {
-        border-spacing: 0;
-        border-collapse: collapse;
-        width: 100%;
-    }
-    .table td {
-        padding: 5px;
-        vertical-align: top;
-    }
-    .table .data-label {
-        width: 30%; /* Lebar kolom label */
-        text-align: left;
-        font-weight: bold;
-    }
-    </style>
-</head>
-<body>
-    <?php
+<?php
     session_start();
 
     // Cek apakah user sudah login dan memiliki role 'guru'
@@ -187,6 +158,35 @@
     }
 
     ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link href="https://cdn.lineicons.com/5.0/lineicons.css" rel="stylesheet" />
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="../../../assets/css/style_user.css">
+    <title>Profil | Guru</title>
+    <style>
+    .table {
+        border-spacing: 0;
+        border-collapse: collapse;
+        width: 100%;
+    }
+    .table td {
+        padding: 5px;
+        vertical-align: top;
+    }
+    .table .data-label {
+        width: 30%; /* Lebar kolom label */
+        text-align: left;
+        font-weight: bold;
+    }
+    </style>
+</head>
+<body>
     <div class="wrapper">
         <aside id="sidebar">
             <div class="d-flex sidebar-header">

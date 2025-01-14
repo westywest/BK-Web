@@ -1,3 +1,37 @@
+<?php 
+    session_start();
+    if (!isset($_SESSION['status']) || $_SESSION['role'] !== "admin") {
+        // Redirect ke halaman login jika bukan admin
+        header("Location: /BK/users/index.php");
+        exit;
+    }
+    include '../../../function/connectDB.php';
+
+    // Query dengan pengurutan kelas sesuai pola
+    $sql = "SELECT kelas.id AS kelas_id, kelas.class_name, kelas.guru_id, guru.id as guru_id, guru.nip, guru.name 
+    FROM kelas 
+    JOIN guru ON kelas.guru_id = guru.id
+    ORDER BY 
+        CASE
+            WHEN class_name LIKE 'VII%' THEN 1
+            WHEN class_name LIKE 'VIII%' THEN 2
+            WHEN class_name LIKE 'IX%' THEN 3
+            ELSE 4
+        END,
+        class_name ASC";
+
+    $datas = $conn->prepare($sql);
+    $datas->execute();
+    $resultKelas = $datas->get_result();
+
+    // Fungsi untuk memastikan format nama kelas
+    function formatClassName($className) {
+    if (preg_match('/^(VII|VIII|IX)\s([A-Z])$/', $className, $matches)) {
+    return $matches[1] . " " . $matches[2];
+    }
+    return $className; // Kembalikan nama asli jika format tidak sesuai
+    }
+    ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,25 +59,6 @@
     </style>
 </head>
 <body>
-    <?php 
-    session_start();
-    if (!isset($_SESSION['status']) || $_SESSION['role'] !== "admin") {
-        // Redirect ke halaman login jika bukan admin
-        header("Location: /BK/users/index.php");
-        exit;
-    }
-    include '../../../function/connectDB.php';
-
-    $sql = "SELECT kelas.id AS kelas_id, kelas.class_name, kelas.guru_id, guru.id as guru_id, guru.nip, guru.name FROM kelas 
-    JOIN guru on kelas.guru_id = guru.id
-    ORDER BY kelas_id ASC";
-
-    $datas = $conn->prepare($sql);
-    $datas->execute();
-    $resultKelas = $datas->get_result();
-
-
-    ?>
     <div class="wrapper">
         <aside id="sidebar">
             <div class="d-flex sidebar-header">

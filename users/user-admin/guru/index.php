@@ -1,3 +1,19 @@
+<?php 
+    session_start();
+    if (!isset($_SESSION['status']) || $_SESSION['role'] !== "admin") {
+        // Redirect ke halaman login jika bukan admin
+        header("Location: /BK/users/index.php");
+        exit;
+    }
+    include '../../../function/connectDB.php';
+    $sql = "SELECT guru.id AS guru_id, guru.user_id, guru.nip, guru.name, guru.phone, users.id as user_id, users.username, users.role FROM guru 
+    JOIN users ON guru.user_id = users.id
+    WHERE users.role = 'guru'
+    ORDER BY guru_id DESC";
+    $datas = $conn->prepare($sql);
+    $datas->execute();
+    $resulGuru = $datas->get_result();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,24 +41,6 @@
     </style>
 </head>
 <body>
-    <?php 
-    session_start();
-    if (!isset($_SESSION['status']) || $_SESSION['role'] !== "admin") {
-        // Redirect ke halaman login jika bukan admin
-        header("Location: /BK/users/index.php");
-        exit;
-    }
-    include '../../../function/connectDB.php';
-    $sql = "SELECT guru.id AS guru_id, guru.user_id, guru.nip, guru.name, guru.phone, users.id as user_id, users.username, users.role FROM guru 
-    JOIN users ON guru.user_id = users.id
-    WHERE users.role = 'guru'
-    ORDER BY guru_id DESC";
-    $datas = $conn->prepare($sql);
-    $datas->execute();
-    $resulGuru = $datas->get_result();
-    ?>
-
-    
     <div class="wrapper">
         <aside id="sidebar">
             <div class="d-flex sidebar-header">

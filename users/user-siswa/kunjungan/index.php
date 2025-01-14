@@ -1,3 +1,27 @@
+<?php 
+    session_start();
+
+    // Cek apakah user sudah login dan memiliki role 'siswa'
+    if (!isset($_SESSION['status']) || $_SESSION['role'] !== "siswa") {
+        
+        header("Location:/BK/users/index.php");
+        exit;
+    }
+    
+    include '../../../function/connectDB.php';
+    $user_id = $_SESSION['user_id'];
+    
+    $sql = "SELECT kunjungan_siswa.id AS kunjungan_id, kunjungan_siswa.user_id, kunjungan_siswa.guru_id, kunjungan_siswa.keperluan, kunjungan_siswa.date, users.id AS user_id, guru.id AS guru_id, guru.name AS guru_name
+    FROM kunjungan_siswa JOIN users ON kunjungan_siswa.user_id = users.id
+    JOIN guru ON kunjungan_siswa.guru_id = guru.id
+    WHERE users.id = ?";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,30 +49,6 @@
     </style>
 </head>
 <body>
-    <?php 
-    session_start();
-
-    // Cek apakah user sudah login dan memiliki role 'siswa'
-    if (!isset($_SESSION['status']) || $_SESSION['role'] !== "siswa") {
-        
-        header("Location:/BK/users/index.php");
-        exit;
-    }
-    
-    include '../../../function/connectDB.php';
-    $user_id = $_SESSION['user_id'];
-    
-    $sql = "SELECT kunjungan_siswa.id AS kunjungan_id, kunjungan_siswa.user_id, kunjungan_siswa.guru_id, kunjungan_siswa.keperluan, kunjungan_siswa.date, users.id AS user_id, guru.id AS guru_id, guru.name AS guru_name
-    FROM kunjungan_siswa JOIN users ON kunjungan_siswa.user_id = users.id
-    JOIN guru ON kunjungan_siswa.guru_id = guru.id
-    WHERE users.id = ?";
-
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    ?>
     <div class="wrapper">
         <aside id="sidebar">
             <div class="d-flex sidebar-header">

@@ -1,3 +1,13 @@
+<?php
+    session_start();
+    if (!isset($_SESSION['status']) || $_SESSION['role'] !== "siswa") {
+        // Redirect ke halaman login jika bukan siswa
+        header("Location:/BK/users/index.php");
+        exit;
+    }
+    
+    include '../../function/connectDB.php';
+    ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,16 +21,6 @@
     <title>Dashboard | Siswa</title>
 </head>
 <body>
-    <?php
-    session_start();
-    if (!isset($_SESSION['status']) || $_SESSION['role'] !== "siswa") {
-        // Redirect ke halaman login jika bukan siswa
-        header("Location:/BK/users/index.php");
-        exit;
-    }
-    
-    include '../../function/connectDB.php';
-    ?>
     <div class="wrapper">
         <aside id="sidebar">
             <div class="d-flex sidebar-header">

@@ -1,18 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-    <link href="https://cdn.lineicons.com/5.0/lineicons.css" rel="stylesheet" />
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap5.min.css">
-    <link rel="stylesheet" href="../../../assets/css/style_user.css">
-    <title>Kotak Konseling | Guru</title>
-</head>
-<body>
-    <?php 
+<?php 
     session_start();
     // Cek apakah user sudah login dan memiliki role 'guru'
     if (!isset($_SESSION['status']) || $_SESSION['role'] !== "guru") {
@@ -50,18 +36,29 @@
         JOIN siswa ON konseling.siswa_id = siswa.id
         JOIN kelas ON siswa.kelas_id = kelas.id
         WHERE konseling.guru_id = ? AND (konseling.status = 'pending' OR konseling.status = 'confirmed')
-        ORDER BY konseling.id DESC";
+        ORDER BY konseling.id ASC";
 
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $guru_id);
     $stmt->execute();
     $result = $stmt->get_result();
-
-
-
     ?>
 
-<div class="wrapper">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link href="https://cdn.lineicons.com/5.0/lineicons.css" rel="stylesheet" />
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="../../../assets/css/style_user.css">
+    <title>Kotak Konseling | Guru</title>
+</head>
+<body>
+    <div class="wrapper">
         <aside id="sidebar">
             <div class="d-flex sidebar-header">
                 <button class="toggle-btn" type="button">
@@ -151,7 +148,6 @@
                             <a class="btn btn-secondary mb-4" href="log.php" style="color: white; width: 50px;">
                                 <i class='bx bx-history'></i>
                             </a>
-                            <form method="POST" action="update_konseling.php"> <!-- Form untuk Submit -->
                                 <div class="table-responsive">
                                     <table class="table" id="table">
                                         <thead>
@@ -179,7 +175,7 @@
                                                 // Status Pending
                                                 if ($row['status'] === "pending") {
                                                     $badgeClass = 'bg-warning'; // Warna kuning untuk pending
-                                                    $dateField = '<input type="datetime-local" name="date[' . $row['id'] . ']" class="form-control" required>';
+                                                    $dateField = '<input type="datetime-local" name="date" class="form-control" required>';
                                                     $submitButton = '<button type="submit" name="submit_pending" value="' . $row['id'] . '" class="btn btn-sm btn-primary">Konfirmasi</button>';
                                                 }
                                                 // Status Confirmed
@@ -187,30 +183,38 @@
                                                     $badgeClass = 'bg-success'; // Warna hijau untuk confirmed
                                                     $dateValue = $row['tanggal_konseling']; // Asumsi ada kolom tanggal konseling
                                                     $dateField = '<input type="text" class="form-control" value="' . $dateValue . '" readonly>';
-                                                    $tindakLanjutField = '<input type="text" name="tindak_lanjut[' . $row['id'] . ']" class="form-control" placeholder="Isi Tindak Lanjut" required>';
+                                                    $tindakLanjutField = '<input type="text" name="tindak_lanjut" class="form-control" placeholder="Isi Tindak Lanjut" required>';
                                                     $submitButton = '<button type="submit" name="submit_confirmed" value="' . $row['id'] . '" class="btn btn-sm btn-primary">Submit</button>';
                                                 }
 
                                                 echo '
                                                 <tr>
                                                     <td>' . $rowNumber . '</td>
-                                                    <td>' . $row["name"] . '</td>
-                                                    <td>' . $row["class_name"] . '</td>
-                                                    <td>' . $row["keluhan"] . '</td>
+                                                    <td>' . htmlspecialchars($row["name"]) . '</td>
+                                                    <td>' . htmlspecialchars($row["class_name"]) . '</td>
+                                                    <td>' . htmlspecialchars($row["keluhan"]) . '</td>
                                                     <td>
                                                         <span class="badge ' . $badgeClass . '">' . ucfirst($row['status']) . '</span>
                                                     </td>
-                                                    <td>' . $dateField . '</td>
-                                                    <td>' . $tindakLanjutField . '</td>
-                                                    <td>' . $submitButton . '</td>
+                                                    <td>
+                                                        <form method="POST" action="update_konseling.php">
+                                                            ' . $dateField . '
+                                                    </td>
+                                                    <td>
+                                                            ' . $tindakLanjutField . '
+                                                    </td>
+                                                    <td>
+                                                            ' . $submitButton . '
+                                                        </form>
+                                                    </td>
                                                 </tr>';
                                                 $rowNumber++;
                                             }
                                             ?>
                                         </tbody>
+
                                     </table>
                                 </div>
-                            </form>
                         </div>
                     </div>
                     <footer class="pt-5 d-flex justify-content-between">

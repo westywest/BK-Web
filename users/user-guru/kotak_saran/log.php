@@ -1,3 +1,26 @@
+<?php
+    session_start();
+
+    // Cek apakah user sudah login dan memiliki role 'guru'
+    if (!isset($_SESSION['status']) || $_SESSION['role'] !== "guru") {
+        // Redirect ke halaman login jika bukan guru
+        header("Location:/BK/users/index.php");
+        exit;
+    }
+    $fotoDefault = 'default.jpg';
+    
+    include '../../../function/connectDB.php';
+    
+    $username = $_SESSION['username'];
+    
+    $user_id = $_SESSION['user_id'];
+    $guru_id = $_SESSION['guru_id'];
+    $sql = "SELECT id, date, message, reply, status FROM kotak WHERE guru_id = ? AND status = 'closed' ORDER BY id DESC";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $guru_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,30 +48,6 @@
     </style>
 </head>
 <body>
-    <?php
-    session_start();
-
-    // Cek apakah user sudah login dan memiliki role 'guru'
-    if (!isset($_SESSION['status']) || $_SESSION['role'] !== "guru") {
-        // Redirect ke halaman login jika bukan guru
-        header("Location:/BK/users/index.php");
-        exit;
-    }
-    $fotoDefault = 'default.jpg';
-    
-    include '../../../function/connectDB.php';
-    
-    $username = $_SESSION['username'];
-    
-    $user_id = $_SESSION['user_id'];
-    $guru_id = $_SESSION['guru_id'];
-    $sql = "SELECT id, date, message, reply, status FROM kotak WHERE guru_id = ? AND status = 'closed' ORDER BY id DESC";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $guru_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    ?>
     <div class="wrapper">
         <aside id="sidebar">
             <div class="d-flex sidebar-header">

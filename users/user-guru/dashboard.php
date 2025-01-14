@@ -1,4 +1,4 @@
-    <?php
+<?php
     session_start();
     if (!isset($_SESSION['status']) || $_SESSION['role'] !== "guru") {
         // Redirect ke halaman login jika bukan guru
