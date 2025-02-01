@@ -250,3 +250,41 @@ a.sidebar-link:hover {
 .chart-container div {
   width: 100%;
 }
+.notif-container {
+  position: relative;
+  display: inline-block;
+}
+
+.notif-box {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  width: 250px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.notif-box h6 {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.notif-box ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.notif-box ul li {
+  padding: 8px 10px;
+  border-bottom: 1px solid #ddd;
+  font-size: 14px;
+}
+
+.notif-box ul li:last-child {
+  border-bottom: none;
+}

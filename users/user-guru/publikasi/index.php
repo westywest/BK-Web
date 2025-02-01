@@ -209,8 +209,14 @@
                                                     <td><?php echo htmlspecialchars(ucfirst($row['jenis'])); ?></td>
                                                     <td>
                                                         <a class="btn btn-sm btn-info buttons" href="show.php?id=<?= htmlspecialchars($row['publikasi_id']); ?>"><i class="bx bx-show"></i></a>
-                                                        <a class="btn btn-sm btn-warning buttons" href="edit.php?id=<?= htmlspecialchars($row['publikasi_id']); ?>"><i class="lni lni-pencil-1"></i></a>
-                                                        <a onclick="return confirm('Apakah anda yakin?')" class="btn btn-sm btn-danger buttons" href="delete.php?id=<?= htmlspecialchars($row['publikasi_id']); ?>"><i class="lni lni-trash-3"></i></a>
+                                                        <?php if ($_SESSION['guru_id'] == $row['guru_id']) { ?>
+                                                            <a class="btn btn-sm btn-warning buttons" href="edit.php?id=<?= htmlspecialchars($row['publikasi_id']); ?>">
+                                                                <i class="lni lni-pencil-1"></i>
+                                                            </a>
+                                                            <a onclick="return confirm('Apakah anda yakin?')" class="btn btn-sm btn-danger buttons" href="delete.php?id=<?= htmlspecialchars($row['publikasi_id']); ?>">
+                                                                <i class="lni lni-trash-3"></i>
+                                                            </a>
+                                                        <?php } ?>
                                                     </td>
                                                 </tr>
                                             <?php }

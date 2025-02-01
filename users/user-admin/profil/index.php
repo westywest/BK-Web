@@ -1,7 +1,5 @@
 <?php
     session_start();
-
-    // Cek apakah user sudah login dan memiliki role 'admin'
     if (!isset($_SESSION['status']) || $_SESSION['role'] !== "admin") {
         // Redirect ke halaman login jika bukan admin
         header("Location:/BK/users/index.php");
@@ -10,9 +8,7 @@
     
     include '../../../function/connectDB.php';
     
-    // Ambil username dari session
     $username = $_SESSION['username'];
-    
     $sql = "SELECT users.id AS user_id, users.username, users.password
             FROM users
             WHERE users.username = ?";
@@ -28,19 +24,16 @@
         $_SESSION["password"] = $user_data["password"];
         
     } else {
-        // Menangani jika data user tidak ditemukan
         $_SESSION['error'] = "Data user tidak ditemukan.";
         header('Location: /BK/users/index.php');
         exit;
     }
 
-    //UBAH PASSWORD
     if (isset($_POST['submit'])) {
         $current_password = $_POST['current_password'];
         $new_password = $_POST['new_password'];
         $confirm_password = $_POST['confirm_password'];
     
-        // Validasi password baru dan konfirmasi password
         if ($new_password !== $confirm_password) {
             echo "<script>
                     alert('Konfirmasi password tidak sesuai!');
@@ -48,7 +41,6 @@
                   </script>";
             exit;
         }
-        // Validasi panjang password baru
         if (strlen($new_password) < 8) {
             echo "<script>
                     alert('Password baru harus minimal 8 karakter!');
@@ -57,12 +49,8 @@
             exit;
         }
     
-        // Validasi password lama
         if (password_verify($current_password, $_SESSION["password"])) {
-            // Enkripsi password baru
             $hashed_new_password = password_hash($new_password, PASSWORD_DEFAULT);
-    
-            // Update password di database
             $update_sql = $conn->prepare("UPDATE users SET password = ? WHERE username = ?");
             $update_sql->bind_param("ss", $hashed_new_password, $username);
     
@@ -80,7 +68,6 @@
                 exit;
             }
         } else {
-            // Password lama tidak sesuai
             echo "<script>
                     alert('Password lama tidak sesuai!');
                     window.location.href = '/BK/users/user-admin/profil/index.php';
@@ -88,7 +75,7 @@
             exit;
         }
     }
-    ?>
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

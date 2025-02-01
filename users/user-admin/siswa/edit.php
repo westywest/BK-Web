@@ -56,6 +56,31 @@
             exit;
         }
     }
+
+    if (isset($_POST['reset_pass'])) {
+        $new_password = $nis; // Reset password menjadi NIS
+        $hashed_password = password_hash($new_password, PASSWORD_DEFAULT); // Hash password
+    
+        // Update password di tabel `users`
+        $updatePasswordSQL = "UPDATE users SET password=? WHERE id=?";
+        $updatePasswordStmt = $conn->prepare($updatePasswordSQL);
+        $updatePasswordStmt->bind_param("si", $hashed_password, $data['user_id']);
+        $updatePasswordStmt->execute();
+    
+        if ($updatePasswordStmt->affected_rows > 0) {
+            echo "<script>
+                    alert('Password berhasil di-reset ke NIS!');
+                    window.location.href = '/BK/users/user-admin/siswa/index.php';
+                  </script>";
+        } else {
+            echo "<script>
+                    alert('Gagal mereset password!');
+                    window.location.href = '/BK/users/user-admin/siswa/index.php';
+                  </script>";
+        }
+        exit;
+    }
+    
     ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -176,6 +201,7 @@
                                     </select>     
                                 </div>
                                 <button class="btn btn-primary my-3" type="submit" name="submit" style="color: white;">Save</button>
+                                <button class="btn btn-danger my-3" onclick="return confirm('Apakah anda yakin? Password akan direset menjadi NIS')" type="submit" name="reset_pass" style="color: white;">Reset Password</button>
                             </form>
                         </div>
                     </div>

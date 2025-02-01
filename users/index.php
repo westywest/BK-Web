@@ -29,12 +29,10 @@ if (isset($_POST['login'])) {
         $data = $result->fetch_assoc();
         if (password_verify($pass, $data['password'])) {
             $_SESSION['role'] = $data['role'];
-            $_SESSION['user_id'] = $data['id']; // Menyimpan user_id
+            $_SESSION['user_id'] = $data['id'];
             $_SESSION['username'] = $data['username'];
             $_SESSION['status'] = "login";
-                        
-                    
-                        
+                          
         if ($data['role'] === "guru") {
             $queryGuru = $conn->prepare("SELECT * FROM guru WHERE user_id = ?");
             $queryGuru->bind_param("i", $data['id']);
@@ -60,7 +58,6 @@ if (isset($_POST['login'])) {
             }
         }
 
-        // Redirect sesuai role
         if ($data['role'] === "admin") {
             header('location:/BK/users/user-admin/dashboard.php');
             exit;

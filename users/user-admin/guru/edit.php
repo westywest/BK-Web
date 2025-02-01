@@ -49,6 +49,31 @@
             exit;
         }
     }
+    if (isset($_POST['reset_pass'])) {
+        // Reset password menjadi username + "123"
+        $new_password = $data['username'] . "123";
+        $hashed_password = password_hash($new_password, PASSWORD_DEFAULT); // Hash password
+    
+        // Update password di tabel `users`
+        $updatePasswordSQL = "UPDATE users SET password=? WHERE id=?";
+        $updatePasswordStmt = $conn->prepare($updatePasswordSQL);
+        $updatePasswordStmt->bind_param("si", $hashed_password, $data['user_id']);
+        $updatePasswordStmt->execute();
+    
+        if ($updatePasswordStmt->affected_rows > 0) {
+            echo "<script>
+                    alert('Password berhasil di-reset! Password baru adalah: {$data['username']}123');
+                    window.location.href = '/BK/users/user-admin/guru/index.php';
+                  </script>";
+        } else {
+            echo "<script>
+                    alert('Gagal mereset password!');
+                    window.location.href = '/BK/users/user-admin/guru/index.php';
+                  </script>";
+        }
+        exit;
+    }
+
     ?>
 
 <!DOCTYPE html>
@@ -156,6 +181,7 @@
                                 
                                 <p style="color:red; font-size: 12px;"><?php if(isset($_SESSION['error'])){ echo($_SESSION['error']);} ?></p>
                                 <button class="btn btn-primary my-3" type="submit" name="submit" style="color: white;">Save</button>
+                                <button class="btn btn-danger my-3" onclick="return confirm('Apakah anda yakin? Password akan direset menjadi <?php echo $data['username']; ?>123')" type="submit" name="reset_pass" style="color: white;">Reset Password</button>
                             </form>
                         </div>
                     </div>

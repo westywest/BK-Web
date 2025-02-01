@@ -14,25 +14,9 @@
         $jk = $_POST['jk'];
         $phone = trim($_POST['phone']);
         $kelas_id = intval($_POST['kelas_id']);
-        $new_password = $_POST['new_password'];
-        $confirm_password = $_POST['confirm_password'];
-
-        // Validasi password baru dan konfirmasi password
-        if ($new_password !== $confirm_password) {
-            $_SESSION['error'] = "Konfirmasi password tidak sesuai!";
-            header("Location: " . $_SERVER['PHP_SELF']); // Refresh halaman agar pesan error muncul
-            exit;
-        }
-        // Validasi panjang password baru
-        if (strlen($new_password) < 8) {
-            $_SESSION['error'] = "Minimal panjang karakter password 8!";
-            header("Location: " . $_SERVER['PHP_SELF']); // Refresh halaman agar pesan error muncul
-            exit;
-            
-        }
-        $hashed_new_password = password_hash($new_password, PASSWORD_DEFAULT);
+        $default_password = $nis; // Password default adalah NIS
+        $hashed_password = password_hash($default_password, PASSWORD_DEFAULT);
     
-
         // Cek apakah NIS sudah ada di database
         $sql = "SELECT COUNT(*) FROM siswa WHERE nis = ?";
         $checkNIS = $conn->prepare($sql);
@@ -41,7 +25,7 @@
         $checkNIS->bind_result($count);
         $checkNIS->fetch();
         $checkNIS->close();
-
+    
         // Cek apakah NIS sudah digunakan sebagai username di tabel users
         $sql = "SELECT COUNT(*) FROM users WHERE username = ?";
         $checkUSN = $conn->prepare($sql);
@@ -50,13 +34,13 @@
         $checkUSN->bind_result($countUsers);
         $checkUSN->fetch();
         $checkUSN->close();
-
+    
         if ($count > 0) {
             $_SESSION['error'] = "NIS sudah terdaftar!";
             header("Location: " . $_SERVER['PHP_SELF']);
             exit;
         } else {
-            if (empty($nis) || empty($name) || empty($phone)){
+            if (empty($nis) || empty($name) || empty($phone)) {
                 $_SESSION['error'] = "Semua field wajib diisi!";
                 header("Location: " . $_SERVER['PHP_SELF']);
                 exit;
@@ -68,29 +52,29 @@
                 $_SESSION['error'] = "Harap pilih kelas!";
                 header("Location: " . $_SERVER['PHP_SELF']);
                 exit;
-            }  else {
+            } else {
                 // Tambahkan data ke tabel users
                 $sql = "INSERT INTO users (id, username, password, role) VALUES (null, ?, ?, 'siswa')";
                 $datas = $conn->prepare($sql);
-                $datas->bind_param("ss", $nis, $hashed_new_password);
+                $datas->bind_param("ss", $nis, $hashed_password);
                 $datas->execute();
-            
+    
                 if ($datas->affected_rows > 0) {
                     $userId = $conn->insert_id;
-            
+    
                     // Pastikan userId valid
                     if (!$userId) {
                         $_SESSION['error'] = "Gagal membuat akun pengguna!";
                         header("Location: " . $_SERVER['PHP_SELF']);
                         exit;
                     }
-            
+    
                     // Tambahkan data ke tabel siswa
                     $sql = "INSERT INTO siswa (id, user_id, nis, name, jk, phone, kelas_id) 
                             VALUES (null, ?, ?, ?, ?, ?, ?)";
                     $datas = $conn->prepare($sql);
                     $datas->bind_param("iissss", $userId, $nis, $name, $jk, $phone, $kelas_id);
-            
+    
                     if ($datas->execute() && $datas->affected_rows > 0) {
                         echo "<script>
                                 alert('Data berhasil ditambahkan!');
@@ -108,8 +92,9 @@
                     exit;
                 }
             }
-        }        
+        }
     }
+    
     ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -235,20 +220,6 @@
                                             }
                                         ?>
                                     </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="new_password" class="form-label">Password</label><small style="color: red;"> *password minimal 8 karakter</small>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class='bx bxs-lock-alt'></i></span>
-                                        <input type="password" class="form-control" name="new_password" id="new_password" required placeholder="**********">
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="confirm_password" class="form-label">Konfirmasi Password</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class='bx bxs-lock-alt'></i></span>
-                                        <input type="password" class="form-control" name="confirm_password" id="confirm_password" required placeholder="**********">
-                                    </div>
                                 </div>
                                 <button class="btn btn-primary my-3" type="submit" name="submit" style="color: white;">Save</button>
                             </form>

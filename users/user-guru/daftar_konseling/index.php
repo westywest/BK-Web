@@ -36,12 +36,17 @@
         JOIN siswa ON konseling.siswa_id = siswa.id
         JOIN kelas ON siswa.kelas_id = kelas.id
         WHERE konseling.guru_id = ? AND (konseling.status = 'pending' OR konseling.status = 'confirmed')
-        ORDER BY konseling.id ASC";
+        ORDER BY 
+            CASE 
+                WHEN konseling.status = 'confirmed' THEN 1
+                WHEN konseling.status = 'pending' THEN 2
+            END, konseling.id ASC";
 
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $guru_id);
     $stmt->execute();
     $result = $stmt->get_result();
+
     ?>
 
 <!DOCTYPE html>
